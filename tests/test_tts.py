@@ -511,3 +511,136 @@ def test_write_chapters_schema(tmp_path):
     assert data[0]["section"] == "World"
     assert data[0]["start"] == pytest.approx(1.5)
     assert data[1]["id"] == "s2"
+
+
+# ---------------------------------------------------------------------------
+# 13. extract_chapters — fuzzy matching handles TTS punctuation
+# ---------------------------------------------------------------------------
+
+def test_extract_chapters_matches_despite_punctuation():
+    """edge-tts word boundaries often strip apostrophes, trailing commas,
+    and other punctuation. extract_chapters should still match titles."""
+    from build import extract_chapters
+
+    parsed = {
+        "date": "2026-03-19",
+        "duration_estimate": "5 minutes",
+        "intro": "Good morning.",
+        "sections": [
+            {
+                "title": "World News",
+                "stories": [
+                    {"title": "Iran's intelligence minister killed in strike",
+                     "body": "Details of the strike."},
+                ],
+            },
+            {
+                "title": "Tech & Developer",
+                "stories": [
+                    {"title": "Astral, Makers of Ruff and uv, Join OpenAI",
+                     "body": "Astral is joining OpenAI."},
+                ],
+            },
+        ],
+    }
+
+    # Simulate edge-tts stripping apostrophes and trailing commas
+    timings = [
+        {"text": "Good", "offset": 0.0},
+        {"text": "morning.", "offset": 0.3},
+        # Story 1: TTS returns "Irans" instead of "Iran's"
+        {"text": "Irans", "offset": 2.0},
+        {"text": "intelligence", "offset": 2.4},
+        {"text": "minister", "offset": 2.8},
+        {"text": "killed", "offset": 3.2},
+        {"text": "in", "offset": 3.5},
+        {"text": "strike", "offset": 3.8},
+        {"text": "Details", "offset": 4.5},
+        # Story 2: TTS strips trailing commas from "Astral," and "uv,"
+        {"text": "Astral", "offset": 20.0},
+        {"text": "Makers", "offset": 20.4},
+        {"text": "of", "offset": 20.7},
+        {"text": "Ruff", "offset": 20.9},
+        {"text": "and", "offset": 21.1},
+        {"text": "uv", "offset": 21.3},
+        {"text": "Join", "offset": 21.6},
+        {"text": "OpenAI", "offset": 21.9},
+        {"text": "Astral", "offset": 22.5},
+    ]
+
+    chapters = extract_chapters(parsed, timings)
+    assert len(chapters) == 2, f"Expected 2 chapters, got {len(chapters)}"
+    assert chapters[0]["start"] == pytest.approx(2.0)
+    assert chapters[1]["start"] == pytest.approx(20.0)
+
+
+def test_extract_chapters_from_sentence_boundaries():
+    """When timings contain sentence boundaries (modern edge-tts),
+    extract_chapters should match titles against sentence text."""
+    from build import extract_chapters
+
+    parsed = {
+        "date": "2026-03-19",
+        "duration_estimate": "7 minutes",
+        "intro": "Good morning.",
+        "sections": [
+            {
+                "title": "World News",
+                "stories": [
+                    {"title": "Europe Sleepwalks into Another Energy Crisis",
+                     "body": "The Bank of England held rates."},
+                ],
+            },
+            {
+                "title": "Hungary",
+                "stories": [
+                    {"title": "Hungary Deepens Ukraine Rift as Election Nears",
+                     "body": "Viktor Orban continues to block."},
+                ],
+            },
+        ],
+    }
+
+    timings = [
+        {"text": "Good morning.", "offset": 0.1, "type": "sentence"},
+        {"text": "Europe Sleepwalks into Another Energy Crisis.", "offset": 3.5, "type": "sentence"},
+        {"text": "The Bank of England held rates.", "offset": 8.2, "type": "sentence"},
+        {"text": "Hungary Deepens Ukraine Rift as Election Nears.", "offset": 25.0, "type": "sentence"},
+        {"text": "Viktor Orban continues to block.", "offset": 30.1, "type": "sentence"},
+    ]
+
+    chapters = extract_chapters(parsed, timings)
+    assert len(chapters) == 2
+    assert chapters[0]["title"] == "Europe Sleepwalks into Another Energy Crisis"
+    assert chapters[0]["start"] == pytest.approx(3.5)
+    assert chapters[1]["title"] == "Hungary Deepens Ukraine Rift as Election Nears"
+    assert chapters[1]["start"] == pytest.approx(25.0)
+
+
+def test_extract_chapters_matches_despite_curly_apostrophe():
+    """edge-tts may return curly apostrophes (\\u2019) while titles use
+    straight ones. Matching should normalise both."""
+    from build import extract_chapters
+
+    parsed = {
+        "date": "2026-03-19",
+        "duration_estimate": "3 minutes",
+        "intro": "Hello.",
+        "sections": [{
+            "title": "News",
+            "stories": [{"title": "UK Music's Big Win", "body": "Details."}],
+        }],
+    }
+
+    timings = [
+        {"text": "Hello.", "offset": 0.0},
+        {"text": "UK", "offset": 2.0},
+        {"text": "Music\u2019s", "offset": 2.3},
+        {"text": "Big", "offset": 2.6},
+        {"text": "Win", "offset": 2.9},
+        {"text": "Details.", "offset": 3.5},
+    ]
+
+    chapters = extract_chapters(parsed, timings)
+    assert len(chapters) == 1
+    assert chapters[0]["start"] == pytest.approx(2.0)

@@ -329,3 +329,14 @@ def test_date_in_human_readable_form(html):
     assert "19 March 2026" in html or "March 19, 2026" in html, (
         "Expected a human-readable date like '19 March 2026' in the HTML"
     )
+
+
+# ---------------------------------------------------------------------------
+# 12. Archive link in footer
+# ---------------------------------------------------------------------------
+
+def test_footer_archive_link_is_valid(html):
+    """The footer archive link should point to archive.html, not a
+    non-existent /archive/ path."""
+    assert "archive.html" in html
+    assert "/archive/" not in html

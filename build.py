@@ -232,12 +232,14 @@ def prepare_tts_text(parsed: dict[str, Any]) -> str:
 async def generate_audio(
     text: str, output_path: str | Path,
 ) -> list[dict[str, Any]]:
-    """Generate audio via edge-tts and return word-level timing data.
+    """Generate audio via edge-tts and return timing data.
+
+    Captures both ``WordBoundary`` and ``SentenceBoundary`` events.
+    Returns a list of dicts, each with ``text``, ``offset`` (seconds),
+    and ``type`` (``"word"`` or ``"sentence"``).
 
     Makes up to two attempts (one automatic retry) so that a transient
-    network hiccup does not immediately fail the pipeline.  On the first
-    failure the exception is logged and the call is retried; on the second
-    failure the exception propagates to the caller.
+    network hiccup does not immediately fail the pipeline.
     """
     import edge_tts
 
@@ -255,6 +257,13 @@ async def generate_audio(
                         timings.append({
                             "text": chunk["text"],
                             "offset": chunk["offset"] / _TICKS_PER_SECOND,
+                            "type": "word",
+                        })
+                    elif chunk["type"] == "SentenceBoundary":
+                        timings.append({
+                            "text": chunk["text"],
+                            "offset": chunk["offset"] / _TICKS_PER_SECOND,
+                            "type": "sentence",
                         })
             return timings
         except Exception:
@@ -268,30 +277,99 @@ async def generate_audio(
     raise AssertionError("unreachable")  # pragma: no cover
 
 
+_NORM_RE = re.compile(r"[^\w]", re.UNICODE)
+
+
+def _normalise_word(word: str) -> str:
+    """Strip punctuation and normalise apostrophes for fuzzy word matching."""
+    # Normalise curly apostrophes to straight before stripping.
+    word = word.replace("\u2019", "'").replace("\u2018", "'")
+    return _NORM_RE.sub("", word).lower()
+
+
+def _normalise_sentence(text: str) -> str:
+    """Normalise a sentence for fuzzy title matching."""
+    text = text.replace("\u2019", "'").replace("\u2018", "'")
+    return _NORM_RE.sub("", text).lower()
+
+
 def extract_chapters(
     parsed: dict[str, Any], timings: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Match story titles to word-level timing data and return chapter list.
+    """Match story titles to timing data and return chapter list.
 
-    Walks *timings* with a forward-only cursor so that body words that
-    repeat a title cannot produce false matches.
+    Supports two modes depending on what the TTS engine provides:
+
+    1. **Sentence boundaries** — each timing entry has full sentence text.
+       Titles are matched by normalised containment against sentence text.
+    2. **Word boundaries** — each timing entry is a single word.  Titles
+       are matched by sliding-window word comparison.
+
+    Both modes walk with a forward-only cursor to prevent false matches
+    from repeated words in story bodies.
     """
     stories = _flatten_stories(parsed)
+
+    word_timings = [t for t in timings if t.get("type") != "sentence"]
+    sentence_timings = [t for t in timings if t.get("type") == "sentence"]
+
+    # If we have sentence boundaries, prefer them — they're more reliable.
+    if sentence_timings:
+        return _extract_chapters_from_sentences(stories, sentence_timings)
+
+    # Legacy: fall back to word-level matching (also handles old-style
+    # timings without a "type" key).
+    if word_timings:
+        return _extract_chapters_from_words(stories, word_timings)
+
+    # No usable timings at all — return empty.
+    return []
+
+
+def _extract_chapters_from_sentences(
+    stories: list[dict[str, Any]],
+    sentence_timings: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Match story titles against sentence-level timing data."""
+    chapters: list[dict[str, Any]] = []
+    cursor = 0
+    for idx, story in enumerate(stories):
+        norm_title = _normalise_sentence(story["title"])
+        for i in range(cursor, len(sentence_timings)):
+            norm_sentence = _normalise_sentence(sentence_timings[i]["text"])
+            if norm_title == norm_sentence or norm_sentence.startswith(norm_title):
+                chapters.append({
+                    "id": f"s{idx + 1}",
+                    "title": story["title"],
+                    "section": story["section"],
+                    "start": sentence_timings[i]["offset"],
+                })
+                cursor = i + 1
+                break
+    return chapters
+
+
+def _extract_chapters_from_words(
+    stories: list[dict[str, Any]],
+    word_timings: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Match story titles against word-level timing data."""
+    norm_timings = [_normalise_word(t["text"]) for t in word_timings]
 
     chapters: list[dict[str, Any]] = []
     cursor = 0
     for idx, story in enumerate(stories):
-        title_words = story["title"].split()
+        title_words = [_normalise_word(w) for w in story["title"].split()]
         n = len(title_words)
-        for i in range(cursor, len(timings) - n + 1):
+        for i in range(cursor, len(word_timings) - n + 1):
             if all(
-                timings[i + j]["text"] == title_words[j] for j in range(n)
+                norm_timings[i + j] == title_words[j] for j in range(n)
             ):
                 chapters.append({
                     "id": f"s{idx + 1}",
                     "title": story["title"],
                     "section": story["section"],
-                    "start": timings[i]["offset"],
+                    "start": word_timings[i]["offset"],
                 })
                 cursor = i + n
                 break
@@ -583,6 +661,7 @@ def render_episode_page(
     lines.append('<meta charset="utf-8">')
     lines.append('<meta name="viewport" content="width=device-width, initial-scale=1">')
     lines.append(f'<title>Daycast {_EM_DASH} {date_str}</title>')
+    lines.append('<link rel="alternate" type="application/rss+xml" title="Daycast" href="feed.xml">')
     lines.append(
         '<link rel="preconnect" href="https://fonts.googleapis.com">'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
@@ -806,7 +885,7 @@ audio{width:0;height:0;position:absolute;opacity:0}
     # Footer
     lines.append(
         '<footer class="site-footer">'
-        f'<a href="/archive/{date_str}/">Archive</a> &middot; Powered by Daycast'
+        '<a href="archive.html">Archive</a> &middot; Powered by Daycast'
         '</footer>'
     )
 
@@ -1058,6 +1137,125 @@ def render_archive(episodes_dir: str | Path) -> str:
     )
 
 
+def _fmt_chapter_time(seconds: float) -> str:
+    """Format *seconds* as ``HH:MM:SS.mmm`` for Podlove Simple Chapters."""
+    h = int(seconds) // 3600
+    m = (int(seconds) % 3600) // 60
+    s = int(seconds) % 60
+    ms = int(round((seconds - int(seconds)) * 1000))
+    return f"{h:02d}:{m:02d}:{s:02d}.{ms:03d}"
+
+
+def render_feed(
+    episodes_dir: str | Path,
+    config: dict[str, Any],
+) -> str:
+    """Generate a podcast RSS feed with iTunes and Podlove Simple Chapters.
+
+    Scans *episodes_dir* for episodes (newest-first), reads their
+    ``script.md`` and ``chapters.json``, and returns a complete RSS 2.0
+    XML string.
+
+    *config* must contain: ``title``, ``description``, ``site_url``,
+    ``language``, ``author``.
+    """
+    episodes_dir = Path(episodes_dir)
+    site_url = config["site_url"].rstrip("/")
+    title = config["title"]
+    description = config["description"]
+    language = config["language"]
+    author = config["author"]
+
+    episodes: list[dict[str, Any]] = []
+    for subdir in episodes_dir.iterdir():
+        script = subdir / "script.md"
+        if subdir.is_dir() and script.exists():
+            try:
+                parsed = parse_script(script)
+            except Exception:
+                _log.warning("Feed: skipping malformed episode %s", subdir.name)
+                continue
+
+            chapters: list[dict[str, Any]] = []
+            ch_path = subdir / "chapters.json"
+            if ch_path.exists():
+                try:
+                    chapters = json.loads(ch_path.read_text(encoding="utf-8"))
+                except Exception:
+                    pass
+
+            audio_path = subdir / "audio.mp3"
+            audio_size = audio_path.stat().st_size if audio_path.exists() else 0
+
+            episodes.append({
+                "date": parsed["date"],
+                "duration_estimate": parsed["duration_estimate"],
+                "intro": parsed.get("intro", ""),
+                "chapters": chapters,
+                "audio_size": audio_size,
+                "stories": _flatten_stories(parsed),
+            })
+
+    episodes.sort(key=lambda e: e["date"], reverse=True)
+
+    # Build XML
+    items: list[str] = []
+    for ep in episodes:
+        date_str = ep["date"]
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        pub_date = dt.strftime("%a, %d %b %Y 06:00:00 +0000")
+        ep_url = f"{site_url}/episodes/{date_str}"
+        audio_url = f"{ep_url}/audio.mp3"
+        guid = f"{site_url}/episodes/{date_str}"
+
+        # Build description from story titles
+        story_titles = [s["title"] for s in ep["stories"]]
+        desc = html_module.escape("; ".join(story_titles)) if story_titles else html_module.escape(ep["intro"])
+
+        # Podlove Simple Chapters
+        psc_xml = ""
+        if ep["chapters"]:
+            ch_items = "\n".join(
+                f'      <psc:chapter start="{_fmt_chapter_time(ch["start"])}" title="{html_module.escape(ch["title"])}" />'
+                for ch in ep["chapters"]
+            )
+            psc_xml = f"\n    <psc:chapters version=\"1.2\" xmlns:psc=\"http://podlove.org/simple-chapters\">\n{ch_items}\n    </psc:chapters>"
+
+        items.append(
+            f"  <item>\n"
+            f"    <title>Daycast \u2014 {date_str}</title>\n"
+            f"    <link>{ep_url}/index.html</link>\n"
+            f"    <guid isPermaLink=\"true\">{guid}</guid>\n"
+            f"    <pubDate>{pub_date}</pubDate>\n"
+            f"    <description>{desc}</description>\n"
+            f"    <enclosure url=\"{audio_url}\" length=\"{ep['audio_size']}\" type=\"audio/mpeg\" />\n"
+            f"    <itunes:duration>{ep['duration_estimate']}</itunes:duration>\n"
+            f"    <itunes:summary>{desc}</itunes:summary>{psc_xml}\n"
+            f"  </item>"
+        )
+
+    items_xml = "\n".join(items)
+
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0"\n'
+        '  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"\n'
+        '  xmlns:psc="http://podlove.org/simple-chapters"\n'
+        '  xmlns:atom="http://www.w3.org/2005/Atom">\n'
+        '<channel>\n'
+        f'  <title>{html_module.escape(title)}</title>\n'
+        f'  <link>{site_url}</link>\n'
+        f'  <description>{html_module.escape(description)}</description>\n'
+        f'  <language>{language}</language>\n'
+        f'  <itunes:author>{html_module.escape(author)}</itunes:author>\n'
+        f'  <itunes:category text="News" />\n'
+        f'  <atom:link href="{site_url}/feed.xml" rel="self" type="application/rss+xml" />\n'
+        f'{items_xml}\n'
+        '</channel>\n'
+        '</rss>'
+    )
+
+
 def publish(docs_dir: str | Path, audio_ok: bool = True) -> None:
     """Stage, commit, and push the docs directory via git.
 
@@ -1123,7 +1321,23 @@ def run_build(episode_dir: str | Path, db_path: str | Path, docs_dir: str | Path
         _log.error("Page rendering failed: %s", e)
         return
 
-    # 5. Copy and publish
+    # 5. Generate RSS feed
+    feed_config = {
+        "repo": "joeinnes/daycast",
+        "title": "Daycast",
+        "description": "A daily news briefing, automatically generated.",
+        "site_url": "https://joeinnes.github.io/daycast",
+        "language": "en-gb",
+        "author": "Daycast",
+    }
+    try:
+        episodes_root = Path(episode_dir).parent
+        feed_xml = render_feed(episodes_root, feed_config)
+        Path(docs_dir, "feed.xml").write_text(feed_xml, encoding="utf-8")
+    except Exception as e:
+        _log.warning("Feed generation failed: %s", e)
+
+    # 6. Copy and publish
     copy_latest_episode(episode_dir, docs_dir)
     publish(docs_dir, audio_ok=True)
 
