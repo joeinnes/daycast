@@ -5,6 +5,7 @@ Parses script.md files, generates audio, and builds episode pages.
 
 from __future__ import annotations
 
+import asyncio
 import html as html_module
 import json
 import logging
@@ -629,3 +630,53 @@ def publish(docs_dir: str | Path, audio_ok: bool = True) -> None:
     result = subprocess.run(["git", "push"])
     if result.returncode != 0:
         _log.error("git push failed (returncode=%d)", result.returncode)
+
+
+# ---------------------------------------------------------------------------
+# Error handling & logging (ticket day-3075)
+# ---------------------------------------------------------------------------
+
+def setup_logging(log_path: str | Path) -> None:
+    """Add a FileHandler to the 'build' logger with timestamped formatting."""
+    logger = logging.getLogger("build")
+    handler = logging.FileHandler(str(log_path))
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+
+
+def run_build(episode_dir: str | Path, db_path: str | Path, docs_dir: str | Path) -> None:
+    """Main build orchestrator. Calls pipeline functions in order with error handling."""
+    # 1. Parse script
+    try:
+        script_path = Path(episode_dir) / "script.md"
+        parsed = parse_script(script_path)
+    except Exception as e:
+        _log.error("Script parse failed: %s", e)
+        return
+
+    # 2. DB insert (non-fatal)
+    try:
+        conn = init_db(db_path)
+        insert_stories(conn, parsed)
+    except Exception as e:
+        _log.warning("DB insert failed: %s", e)
+
+    # 3. TTS audio generation
+    try:
+        tts_text = prepare_tts_text(parsed)
+        audio_path = Path(episode_dir) / "audio.mp3"
+        timings = asyncio.run(generate_audio(tts_text, audio_path))
+    except Exception as e:
+        _log.error("Audio generation failed: %s", e)
+        return
+
+    # 4. Extract chapters and render page
+    chapters = extract_chapters(parsed, timings)
+    html = render_episode_page(parsed, chapters, {"repo": "..."})
+    write_chapters(chapters, Path(episode_dir) / "chapters.json")
+    Path(episode_dir, "index.html").write_text(html)
+
+    # 5. Copy and publish
+    copy_latest_episode(episode_dir, docs_dir)
+    publish(docs_dir, audio_ok=True)
