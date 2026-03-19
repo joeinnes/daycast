@@ -85,7 +85,7 @@ def _extract_frontmatter(text: str) -> tuple[dict[str, Any], str]:
     closing ``---`` fence.  Raises ``ValueError`` if frontmatter is missing
     or lacks required fields.
     """
-    match = re.match(r"^---\n(.*?\n)---\n", text, re.DOTALL)
+    match = re.match(r"^---\n(.*?\n)---(?:\n|$)", text, re.DOTALL)
     if not match:
         raise ValueError("Missing YAML frontmatter")
 

@@ -390,3 +390,37 @@ def test_minimal_story(tmp_path):
     assert story["historical_note"] is None
     assert story["hn_url"] is None
     assert story["body"] == "Just a body."
+
+
+# ---------------------------------------------------------------------------
+# Adversarial edge case: metadata values containing colons
+# ---------------------------------------------------------------------------
+
+def test_metadata_value_with_colon(tmp_path):
+    """Metadata values containing colons (e.g. URLs) must be preserved intact."""
+    from build import parse_script
+
+    content = (
+        "---\n"
+        "date: 2026-01-01\n"
+        "duration_estimate: 2 minutes\n"
+        "---\n"
+        "\n"
+        "# Daily Briefing — Thursday, 1 January 2026\n"
+        "\n"
+        "Scene-setter.\n"
+        "\n"
+        "## Tech\n"
+        "\n"
+        "### Colon Story\n"
+        "source: Reuters: Breaking News\n"
+        "hn_url: https://news.ycombinator.com/item?id=123\n"
+        "\n"
+        "Body text.\n"
+    )
+    script = tmp_path / "script.md"
+    script.write_text(content)
+    result = parse_script(script)
+    story = result["sections"][0]["stories"][0]
+    assert story["source"] == "Reuters: Breaking News"
+    assert story["hn_url"] == "https://news.ycombinator.com/item?id=123"
