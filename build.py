@@ -661,7 +661,8 @@ def render_episode_page(
     lines.append('<meta charset="utf-8">')
     lines.append('<meta name="viewport" content="width=device-width, initial-scale=1">')
     lines.append(f'<title>Daycast {_EM_DASH} {date_str}</title>')
-    lines.append('<link rel="alternate" type="application/rss+xml" title="Daycast" href="feed.xml">')
+    base_path = '/' + config['repo'].split('/')[-1] + '/'
+    lines.append(f'<link rel="alternate" type="application/rss+xml" title="Daycast" href="{base_path}feed.xml">')
     lines.append(
         '<link rel="preconnect" href="https://fonts.googleapis.com">'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
@@ -885,7 +886,7 @@ audio{width:0;height:0;position:absolute;opacity:0}
     # Footer
     lines.append(
         '<footer class="site-footer">'
-        '<a href="archive.html">Archive</a> &middot; Powered by Daycast'
+        f'<a href="{base_path}archive.html">Archive</a> &middot; Powered by Daycast'
         '</footer>'
     )
 
@@ -1146,6 +1147,29 @@ def _fmt_chapter_time(seconds: float) -> str:
     return f"{h:02d}:{m:02d}:{s:02d}.{ms:03d}"
 
 
+def _fmt_duration_hhmmss(seconds: float) -> str:
+    """Format *seconds* as ``HH:MM:SS`` for iTunes duration."""
+    total = max(1, int(seconds))
+    h = total // 3600
+    m = (total % 3600) // 60
+    s = total % 60
+    return f"{h:02d}:{m:02d}:{s:02d}"
+
+
+def _get_episode_duration(chapters: list[dict], audio_size: int) -> str:
+    """Return an HH:MM:SS duration string for a podcast episode.
+
+    Uses chapter start times when available (last chapter start + 30s buffer),
+    otherwise estimates from the audio file size with a minimum floor of 1s.
+    """
+    if chapters:
+        last_start = max(ch["start"] for ch in chapters)
+        return _fmt_duration_hhmmss(last_start + 30)
+    # Rough estimate: ~48 kbps = 6000 bytes/sec
+    estimated = audio_size / 6000 if audio_size > 0 else 1
+    return _fmt_duration_hhmmss(max(1, estimated))
+
+
 def render_feed(
     episodes_dir: str | Path,
     config: dict[str, Any],
@@ -1229,7 +1253,7 @@ def render_feed(
             f"    <pubDate>{pub_date}</pubDate>\n"
             f"    <description>{desc}</description>\n"
             f"    <enclosure url=\"{audio_url}\" length=\"{ep['audio_size']}\" type=\"audio/mpeg\" />\n"
-            f"    <itunes:duration>{ep['duration_estimate']}</itunes:duration>\n"
+            f"    <itunes:duration>{_get_episode_duration(ep['chapters'], ep['audio_size'])}</itunes:duration>\n"
             f"    <itunes:summary>{desc}</itunes:summary>{psc_xml}\n"
             f"  </item>"
         )
