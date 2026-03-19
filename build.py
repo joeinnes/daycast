@@ -5,8 +5,8 @@ Parses script.md files, generates audio, and builds episode pages.
 
 from __future__ import annotations
 
-import asyncio
 import json
+import logging
 import re
 import sqlite3
 from datetime import date, timedelta
@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+_log = logging.getLogger(__name__)
 
 # Regex for a metadata line: `word_key: value` before the first blank line.
 _METADATA_RE = re.compile(r"^[\w_]+:\s")
@@ -164,28 +166,81 @@ def parse_script(path: str | Path) -> dict[str, Any]:
     }
 
 
+_SLUG_STRIP_RE = re.compile(r"[^a-z0-9 -]")
+_SLUG_COLLAPSE_RE = re.compile(r"-{2,}")
+
+_TTS_VOICE = "en-GB-RyanNeural"
+_TTS_MAX_ATTEMPTS = 2
+_TICKS_PER_SECOND = 10_000_000
+
+_STORIES_DDL = """\
+CREATE TABLE IF NOT EXISTS stories (
+    id TEXT PRIMARY KEY,
+    date TEXT,
+    title TEXT,
+    section TEXT,
+    body TEXT,
+    source TEXT,
+    previously_covered INTEGER,
+    update_note TEXT,
+    historical_callback INTEGER,
+    historical_note TEXT,
+    hn_url TEXT
+)"""
+
+_FTS_DDL = """\
+CREATE VIRTUAL TABLE IF NOT EXISTS stories_fts
+USING fts5(title, body, content=stories, content_rowid=rowid)"""
+
+
+def _flatten_stories(parsed: dict[str, Any]) -> list[dict[str, Any]]:
+    """Yield every story from *parsed*, annotated with its section title.
+
+    Each returned dict has at least ``title`` and ``section`` keys, plus
+    whatever keys the story already carries (``body``, metadata, etc.).
+    """
+    return [
+        {**story, "section": section["title"]}
+        for section in parsed["sections"]
+        for story in section["stories"]
+    ]
+
+
+# ---------------------------------------------------------------------------
+# TTS helpers (ticket day-0ae1)
+# ---------------------------------------------------------------------------
+
 def prepare_tts_text(parsed: dict[str, Any]) -> str:
-    """Concatenate intro and all story titles/bodies with pause markers."""
+    """Concatenate intro and all story titles/bodies with pause markers.
+
+    Stories are separated by ``...`` pause markers so the TTS engine
+    produces a brief silence between segments.
+    """
     parts: list[str] = [parsed["intro"]]
-    for section in parsed["sections"]:
-        for story in section["stories"]:
-            parts.append("...")
-            parts.append(story["title"])
-            parts.append(story["body"])
+    for story in _flatten_stories(parsed):
+        parts.append("...")
+        parts.append(story["title"])
+        parts.append(story["body"])
     return "\n\n".join(parts)
 
 
 async def generate_audio(
     text: str, output_path: str | Path,
 ) -> list[dict[str, Any]]:
-    """Generate audio via edge-tts with one retry on failure."""
+    """Generate audio via edge-tts and return word-level timing data.
+
+    Makes up to two attempts (one automatic retry) so that a transient
+    network hiccup does not immediately fail the pipeline.  On the first
+    failure the exception is logged and the call is retried; on the second
+    failure the exception propagates to the caller.
+    """
     import edge_tts
 
     output_path = Path(output_path)
 
-    for attempt in range(2):
+    for attempt in range(_TTS_MAX_ATTEMPTS):
         try:
-            comm = edge_tts.Communicate(text, voice="en-GB-RyanNeural")
+            comm = edge_tts.Communicate(text, voice=_TTS_VOICE)
             timings: list[dict[str, Any]] = []
             with open(output_path, "wb") as f:
                 async for chunk in comm.stream():
@@ -194,25 +249,27 @@ async def generate_audio(
                     elif chunk["type"] == "WordBoundary":
                         timings.append({
                             "text": chunk["text"],
-                            "offset": chunk["offset"] / 10_000_000,
+                            "offset": chunk["offset"] / _TICKS_PER_SECOND,
                         })
             return timings
         except Exception:
-            if attempt == 1:
+            if attempt + 1 == _TTS_MAX_ATTEMPTS:
                 raise
+            _log.warning("TTS attempt %d failed; retrying", attempt + 1)
+
+    # Unreachable — the loop always returns or raises — but keeps mypy happy.
+    raise AssertionError("unreachable")  # pragma: no cover
 
 
 def extract_chapters(
     parsed: dict[str, Any], timings: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Match story titles to word-level timing data and return chapter list."""
-    stories: list[dict[str, Any]] = []
-    for section in parsed["sections"]:
-        for story in section["stories"]:
-            stories.append({
-                "title": story["title"],
-                "section": section["title"],
-            })
+    """Match story titles to word-level timing data and return chapter list.
+
+    Walks *timings* with a forward-only cursor so that body words that
+    repeat a title cannot produce false matches.
+    """
+    stories = _flatten_stories(parsed)
 
     chapters: list[dict[str, Any]] = []
     cursor = 0
@@ -236,7 +293,7 @@ def extract_chapters(
 
 
 def write_chapters(chapters: list[dict[str, Any]], output_path: str | Path) -> None:
-    """Write chapters list as JSON to the given path."""
+    """Write *chapters* as pretty-printed JSON to *output_path*."""
     Path(output_path).write_text(
         json.dumps(chapters, indent=2, ensure_ascii=False),
         encoding="utf-8",
@@ -248,75 +305,70 @@ def write_chapters(chapters: list[dict[str, Any]], output_path: str | Path) -> N
 # ---------------------------------------------------------------------------
 
 def init_db(db_path: str | Path) -> sqlite3.Connection:
-    """Create/open the briefings database and ensure schema exists."""
+    """Create or open the briefings database and ensure the schema exists.
+
+    Returns a connection with ``row_factory`` set to ``sqlite3.Row`` for
+    convenient dict-style access.
+    """
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
-    conn.execute(
-        """CREATE TABLE IF NOT EXISTS stories (
-            id TEXT PRIMARY KEY,
-            date TEXT,
-            title TEXT,
-            section TEXT,
-            body TEXT,
-            source TEXT,
-            previously_covered INTEGER,
-            update_note TEXT,
-            historical_callback INTEGER,
-            historical_note TEXT,
-            hn_url TEXT
-        )"""
-    )
-    conn.execute(
-        """CREATE VIRTUAL TABLE IF NOT EXISTS stories_fts
-           USING fts5(title, body, content=stories, content_rowid=rowid)"""
-    )
+    conn.execute(_STORIES_DDL)
+    conn.execute(_FTS_DDL)
     conn.commit()
     return conn
 
 
 def make_story_id(date_str: str, title: str) -> str:
-    """Generate a slugified story ID from *date_str* and *title*."""
-    slug = title.lower()
-    # Strip non-alphanumeric characters (keep hyphens and spaces).
-    slug = re.sub(r"[^a-z0-9 -]", "", slug)
-    # Replace spaces with hyphens.
+    """Generate a slugified story ID from *date_str* and *title*.
+
+    The resulting ID is always shorter than 120 characters and contains
+    only lowercase alphanumerics and hyphens.
+    """
+    slug = _SLUG_STRIP_RE.sub("", title.lower())
     slug = slug.replace(" ", "-")
-    # Collapse multiple consecutive hyphens.
-    slug = re.sub(r"-{2,}", "-", slug)
-    # Truncate so the full ID stays under 120 chars.
-    max_slug = 119 - len(date_str) - 1  # 1 for the joining hyphen
-    slug = slug[:max_slug]
-    # Strip trailing hyphens left over from truncation.
-    slug = slug.rstrip("-")
+    slug = _SLUG_COLLAPSE_RE.sub("-", slug)
+    # Truncate so the full ID stays under 120 chars (date + hyphen + slug).
+    max_slug = 119 - len(date_str) - 1
+    slug = slug[:max_slug].rstrip("-")
     return f"{date_str}-{slug}"
 
 
+def _story_row(date_str: str, section_title: str, story: dict[str, Any]) -> tuple:
+    """Build a parameter tuple for inserting *story* into the stories table."""
+    return (
+        make_story_id(date_str, story["title"]),
+        date_str,
+        story["title"],
+        section_title,
+        story["body"],
+        story.get("source"),
+        int(story.get("previously_covered", False)),
+        story.get("update_note"),
+        int(story.get("historical_callback", False)),
+        story.get("historical_note"),
+        story.get("hn_url"),
+    )
+
+
 def insert_stories(conn: sqlite3.Connection, parsed: dict[str, Any]) -> None:
-    """Insert all stories from a *parsed* script into the database."""
+    """Insert all stories from a *parsed* script into the database.
+
+    Uses ``INSERT OR IGNORE`` so that re-inserting the same episode is a
+    safe no-op.  The FTS index is populated via a correlated sub-select
+    that only fires when the row actually exists.
+    """
     date_str = parsed["date"]
     for section in parsed["sections"]:
-        section_title = section["title"]
         for story in section["stories"]:
-            story_id = make_story_id(date_str, story["title"])
+            row = _story_row(date_str, section["title"], story)
+            story_id = row[0]
             conn.execute(
                 """INSERT OR IGNORE INTO stories
                    (id, date, title, section, body, source,
                     previously_covered, update_note,
                     historical_callback, historical_note, hn_url)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (
-                    story_id,
-                    date_str,
-                    story["title"],
-                    section_title,
-                    story["body"],
-                    story.get("source"),
-                    int(story.get("previously_covered", False)),
-                    story.get("update_note"),
-                    int(story.get("historical_callback", False)),
-                    story.get("historical_note"),
-                    story.get("hn_url"),
-                ),
+                row,
             )
             # Populate the FTS index for this story.
             conn.execute(
@@ -330,19 +382,21 @@ def insert_stories(conn: sqlite3.Connection, parsed: dict[str, Any]) -> None:
 def query_recent(conn: sqlite3.Connection, days: int = 3) -> list[sqlite3.Row]:
     """Return stories from the last *days* days, ordered by date descending."""
     cutoff = (date.today() - timedelta(days=days)).isoformat()
-    cursor = conn.execute(
+    return conn.execute(
         "SELECT * FROM stories WHERE date >= ? ORDER BY date DESC",
         (cutoff,),
-    )
-    return cursor.fetchall()
+    ).fetchall()
 
 
 def query_historical(
     conn: sqlite3.Connection, query_text: str, days_ago: int = 3,
 ) -> list[sqlite3.Row]:
-    """FTS search for *query_text* among stories older than *days_ago* days."""
+    """FTS search for *query_text* among stories older than *days_ago* days.
+
+    Returns at most three results, ordered by date descending.
+    """
     cutoff = (date.today() - timedelta(days=days_ago)).isoformat()
-    cursor = conn.execute(
+    return conn.execute(
         """SELECT stories.*
            FROM stories_fts
            JOIN stories ON stories.rowid = stories_fts.rowid
@@ -351,12 +405,16 @@ def query_historical(
            ORDER BY stories.date DESC
            LIMIT 3""",
         (query_text, cutoff),
-    )
-    return cursor.fetchall()
+    ).fetchall()
 
 
 def rebuild_db(db_path: str | Path, episodes_dir: str | Path) -> None:
-    """Drop all data, re-init the schema, and replay every episode."""
+    """Drop all data, re-initialise the schema, and replay every episode.
+
+    Opens a single connection, drops the existing tables, recreates them
+    via ``init_db``, then re-inserts every ``*/script.md`` found under
+    *episodes_dir*.
+    """
     conn = sqlite3.connect(str(db_path))
     conn.execute("DROP TABLE IF EXISTS stories_fts")
     conn.execute("DROP TABLE IF EXISTS stories")
