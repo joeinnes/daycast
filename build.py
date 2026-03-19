@@ -5,6 +5,7 @@ Parses script.md files, generates audio, and builds episode pages.
 
 from __future__ import annotations
 
+import html as html_module
 import json
 import logging
 import re
@@ -451,8 +452,8 @@ def _feedback_url(
     return (
         f"https://github.com/{repo}/issues/new?"
         f"title=Feedback:+{date_str}+{_EM_DASH}+{encoded_title}"
-        f"&labels=feedback"
-        f"&body=Date:+{date_str}%0A"
+        f"&amp;labels=feedback"
+        f"&amp;body=Date:+{date_str}%0A"
         f"Story:+{encoded_title}%0A"
         f"Signal:+{encoded_emoji}%0ANote:"
     )
@@ -492,13 +493,16 @@ def render_episode_page(
 
     # -- Transcript ----------------------------------------------------------
     parts: list[str] = []
+    _esc = lambda t: html_module.escape(t, quote=False)
+
     for section in parsed["sections"]:
-        parts.append(f'<h2>{section["title"]}</h2>')
+        parts.append(f'<h2>{_esc(section["title"])}</h2>')
         for story in section["stories"]:
             title = story["title"]
+            safe_title = _esc(title)
             story_lines: list[str] = []
             story_lines.append('<div class="story">')
-            story_lines.append(f'<h3>{title}</h3>')
+            story_lines.append(f'<h3>{safe_title}</h3>')
 
             if story.get("previously_covered"):
                 story_lines.append('<span class="badge follow-up">Follow-up</span>')
@@ -508,21 +512,21 @@ def render_episode_page(
                 )
                 note = story.get("historical_note", "")
                 if note:
-                    story_lines.append(f'<p class="historical-note">{note}</p>')
+                    story_lines.append(f'<p class="historical-note">{_esc(note)}</p>')
 
             source = story.get("source")
             if source:
-                story_lines.append(f'<p class="source">Source: {source}</p>')
+                story_lines.append(f'<p class="source">Source: {_esc(source)}</p>')
 
-            story_lines.append(f'<p>{story["body"]}</p>')
+            story_lines.append(f'<p>{_esc(story["body"])}</p>')
 
             thumbs_up_url = _feedback_url(repo, date_str, title, _THUMBS_UP)
             thumbs_down_url = _feedback_url(repo, date_str, title, _THUMBS_DOWN)
             story_lines.append(
-                f'<a class="feedback" href="{thumbs_up_url}">{_THUMBS_UP}</a>'
+                f'<a class="feedback" href="{thumbs_up_url}" target="_blank">{_THUMBS_UP}</a>'
             )
             story_lines.append(
-                f'<a class="feedback" href="{thumbs_down_url}">{_THUMBS_DOWN}</a>'
+                f'<a class="feedback" href="{thumbs_down_url}" target="_blank">{_THUMBS_DOWN}</a>'
             )
 
             story_lines.append('</div>')
