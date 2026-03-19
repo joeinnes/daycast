@@ -13,6 +13,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+from xml.sax.saxutils import escape as _xml_escape, quoteattr as _xml_quoteattr
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -1156,8 +1157,11 @@ def _fmt_chapter_time(seconds: float) -> str:
 
 
 def _fmt_duration_hhmmss(seconds: float) -> str:
-    """Format *seconds* as ``HH:MM:SS`` for iTunes duration."""
-    h, m, s = _hms(max(1, int(seconds)))
+    """Format *seconds* as ``HH:MM:SS`` for iTunes duration.
+
+    Callers are responsible for ensuring *seconds* is positive.
+    """
+    h, m, s = _hms(int(seconds))
     return f"{h:02d}:{m:02d}:{s:02d}"
 
 
@@ -1246,13 +1250,13 @@ def render_feed(
 
         # Build description from story titles
         story_titles = [s["title"] for s in ep["stories"]]
-        desc = html_module.escape("; ".join(story_titles)) if story_titles else html_module.escape(ep["intro"])
+        desc = _xml_escape("; ".join(story_titles)) if story_titles else _xml_escape(ep["intro"])
 
         # Podlove Simple Chapters
         psc_xml = ""
         if ep["chapters"]:
             ch_items = "\n".join(
-                f'      <psc:chapter start="{_fmt_chapter_time(ch["start"])}" title="{html_module.escape(ch["title"])}" />'
+                f'      <psc:chapter start="{_fmt_chapter_time(ch["start"])}" title={_xml_quoteattr(ch["title"])} />'
                 for ch in ep["chapters"]
             )
             psc_xml = f"\n    <psc:chapters version=\"1.2\" xmlns:psc=\"http://podlove.org/simple-chapters\">\n{ch_items}\n    </psc:chapters>"
@@ -1279,11 +1283,11 @@ def render_feed(
         '  xmlns:psc="http://podlove.org/simple-chapters"\n'
         '  xmlns:atom="http://www.w3.org/2005/Atom">\n'
         '<channel>\n'
-        f'  <title>{html_module.escape(title)}</title>\n'
+        f'  <title>{_xml_escape(title)}</title>\n'
         f'  <link>{site_url}</link>\n'
-        f'  <description>{html_module.escape(description)}</description>\n'
+        f'  <description>{_xml_escape(description)}</description>\n'
         f'  <language>{language}</language>\n'
-        f'  <itunes:author>{html_module.escape(author)}</itunes:author>\n'
+        f'  <itunes:author>{_xml_escape(author)}</itunes:author>\n'
         f'  <itunes:category text="News" />\n'
         f'  <atom:link href="{site_url}/feed.xml" rel="self" type="application/rss+xml" />\n'
         f'{items_xml}\n'
