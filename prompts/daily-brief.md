@@ -171,6 +171,9 @@ Save the completed script to `episodes/YYYY-MM-DD/script.md`, where
 
 ## Build Step
 
+If `prompts/local.md` exists, read and follow its setup instructions
+before proceeding.
+
 After writing the script, run the build pipeline:
 
 ```
@@ -180,3 +183,11 @@ python build.py episodes/YYYY-MM-DD
 This parses the script, generates TTS audio, builds the player page,
 updates the archive, and publishes to GitHub Pages. Check `error.log`
 if the build fails — the pipeline logs all errors with timestamps.
+
+After a successful build, commit and push:
+
+```
+git add episodes/ docs/ briefings.db
+git commit -m "Episode YYYY-MM-DD"
+git push
+```

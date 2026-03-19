@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *.db-journal
 error.log
+prompts/local.md
