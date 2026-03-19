@@ -437,6 +437,27 @@ def rebuild_db(db_path: str | Path, episodes_dir: str | Path) -> None:
 # Episode player page (ticket day-6ce5)
 # ---------------------------------------------------------------------------
 
+_THUMBS_UP = "\U0001F44D"
+_THUMBS_DOWN = "\U0001F44E"
+_EM_DASH = "\u2014"
+
+
+def _feedback_url(
+    repo: str, date_str: str, title: str, emoji: str
+) -> str:
+    """Build a GitHub issue URL for story-level feedback."""
+    encoded_title = quote_plus(title)
+    encoded_emoji = quote_plus(emoji)
+    return (
+        f"https://github.com/{repo}/issues/new?"
+        f"title=Feedback:+{date_str}+{_EM_DASH}+{encoded_title}"
+        f"&labels=feedback"
+        f"&body=Date:+{date_str}%0A"
+        f"Story:+{encoded_title}%0A"
+        f"Signal:+{encoded_emoji}%0ANote:"
+    )
+
+
 def render_episode_page(
     parsed: dict[str, Any],
     chapters: list[dict[str, Any]],
@@ -455,12 +476,12 @@ def render_episode_page(
     repo = config["repo"]
 
     # -- Chapter markers -----------------------------------------------------
-    chapter_markers = ""
-    for ch in chapters:
-        chapter_markers += (
-            f'<div class="chapter" data-start="{ch["start"]}">'
-            f'{ch["title"]}</div>\n'
-        )
+    chapter_lines = [
+        f'<div class="chapter" data-start="{ch["start"]}">'
+        f'{ch["title"]}</div>'
+        for ch in chapters
+    ]
+    chapter_markers = "\n".join(chapter_lines) + "\n" if chapter_lines else ""
 
     # -- Speed controls ------------------------------------------------------
     speeds = ["0.85", "1", "1.15", "1.3"]
@@ -470,58 +491,44 @@ def render_episode_page(
     )
 
     # -- Transcript ----------------------------------------------------------
-    transcript = ""
+    parts: list[str] = []
     for section in parsed["sections"]:
-        transcript += f'<h2>{section["title"]}</h2>\n'
+        parts.append(f'<h2>{section["title"]}</h2>')
         for story in section["stories"]:
             title = story["title"]
-            encoded_title = quote_plus(title)
-            em_dash = "\u2014"
-
-            def _feedback_url(
-                emoji: str,
-                _title: str = encoded_title,
-                _date: str = date_str,
-                _repo: str = repo,
-                _em: str = em_dash,
-            ) -> str:
-                encoded_emoji = quote_plus(emoji)
-                return (
-                    f"https://github.com/{_repo}/issues/new?"
-                    f"title=Feedback:+{_date}+{_em}+{_title}"
-                    f"&labels=feedback"
-                    f"&body=Date:+{_date}%0A"
-                    f"Story:+{_title}%0A"
-                    f"Signal:+{encoded_emoji}%0ANote:"
-                )
-
-            transcript += '<div class="story">\n'
-            transcript += f'<h3>{title}</h3>\n'
+            story_lines: list[str] = []
+            story_lines.append('<div class="story">')
+            story_lines.append(f'<h3>{title}</h3>')
 
             if story.get("previously_covered"):
-                transcript += '<span class="badge follow-up">Follow-up</span>\n'
+                story_lines.append('<span class="badge follow-up">Follow-up</span>')
             if story.get("historical_callback"):
-                transcript += '<span class="badge then-now">Then &amp; Now</span>\n'
+                story_lines.append(
+                    '<span class="badge then-now">Then &amp; Now</span>'
+                )
                 note = story.get("historical_note", "")
                 if note:
-                    transcript += f'<p class="historical-note">{note}</p>\n'
+                    story_lines.append(f'<p class="historical-note">{note}</p>')
 
             source = story.get("source")
             if source:
-                transcript += f'<p class="source">Source: {source}</p>\n'
+                story_lines.append(f'<p class="source">Source: {source}</p>')
 
-            transcript += f'<p>{story["body"]}</p>\n'
+            story_lines.append(f'<p>{story["body"]}</p>')
 
-            transcript += (
-                f'<a class="feedback" href="{_feedback_url(chr(0x1F44D))}">'
-                '\U0001F44D</a>\n'
+            thumbs_up_url = _feedback_url(repo, date_str, title, _THUMBS_UP)
+            thumbs_down_url = _feedback_url(repo, date_str, title, _THUMBS_DOWN)
+            story_lines.append(
+                f'<a class="feedback" href="{thumbs_up_url}">{_THUMBS_UP}</a>'
             )
-            transcript += (
-                f'<a class="feedback" href="{_feedback_url(chr(0x1F44E))}">'
-                '\U0001F44E</a>\n'
+            story_lines.append(
+                f'<a class="feedback" href="{thumbs_down_url}">{_THUMBS_DOWN}</a>'
             )
 
-            transcript += '</div>\n'
+            story_lines.append('</div>')
+            parts.append("\n".join(story_lines))
+
+    transcript = "\n".join(parts) + "\n" if parts else ""
 
     return (
         '<!DOCTYPE html>\n'
