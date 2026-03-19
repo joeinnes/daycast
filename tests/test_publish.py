@@ -232,6 +232,22 @@ def test_render_archive_contains_links(tmp_path):
 # 11. Handles empty episodes directory
 # ---------------------------------------------------------------------------
 
+def test_render_archive_has_feed_link(tmp_path):
+    """The archive page should include an RSS feed discovery link and a
+    visible subscribe link."""
+    from build import render_archive
+
+    ep = tmp_path / "2026-03-19"
+    ep.mkdir()
+    (ep / "script.md").write_text(_minimal_script("2026-03-19", "7 minutes"))
+
+    html = render_archive(tmp_path)
+    assert 'type="application/rss+xml"' in html, (
+        "Archive page should have a feed discovery <link>"
+    )
+    assert "feed.xml" in html
+
+
 def test_render_archive_empty_dir(tmp_path):
     """An empty episodes directory should produce valid HTML with no entries."""
     from build import render_archive
