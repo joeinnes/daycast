@@ -943,10 +943,30 @@ audio{width:0;height:0;position:absolute;opacity:0}
 # ---------------------------------------------------------------------------
 
 def copy_latest_episode(episode_dir: str | Path, docs_dir: str | Path) -> None:
-    """Copy the episode's index.html into *docs_dir*, creating it if needed."""
+    """Copy the episode into *docs_dir*, creating it if needed.
+
+    Copies index.html to ``docs/index.html`` (the landing page) and also
+    copies the full episode directory to ``docs/episodes/{date}/`` so that
+    GitHub Pages can serve the audio and chapter data.
+    """
+    episode_dir = Path(episode_dir)
     docs_dir = Path(docs_dir)
     docs_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(Path(episode_dir) / "index.html", docs_dir / "index.html")
+
+    # Landing page — latest episode (HTML + audio so player works)
+    shutil.copy2(episode_dir / "index.html", docs_dir / "index.html")
+    audio_src = episode_dir / "audio.mp3"
+    if audio_src.exists():
+        shutil.copy2(audio_src, docs_dir / "audio.mp3")
+
+    # Full episode directory for GitHub Pages
+    date_name = episode_dir.name
+    ep_dest = docs_dir / "episodes" / date_name
+    ep_dest.mkdir(parents=True, exist_ok=True)
+    for f in ("index.html", "audio.mp3", "chapters.json"):
+        src = episode_dir / f
+        if src.exists():
+            shutil.copy2(src, ep_dest / f)
 
 
 def render_archive(episodes_dir: str | Path) -> str:
@@ -975,8 +995,10 @@ def render_archive(episodes_dir: str | Path) -> str:
     episodes.sort(key=lambda e: e["date"], reverse=True)
 
     items = "\n".join(
-        f'<li>{ep["date"]} ({ep["duration_estimate"]}) '
-        f'— <a href="../episodes/{ep["date"]}/index.html">Listen</a></li>'
+        f'<a href="episodes/{ep["date"]}/index.html" class="ep">'
+        f'<span class="ep-date">{ep["date"]}</span>'
+        f'<span class="ep-dur">{ep["duration_estimate"]}</span>'
+        f'</a>'
         for ep in episodes
     )
 
@@ -985,11 +1007,52 @@ def render_archive(episodes_dir: str | Path) -> str:
         '<html lang="en">\n'
         '<head>\n'
         '<meta charset="utf-8">\n'
-        '<title>Archive</title>\n'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
+        '<title>Daycast Archive</title>\n'
+        '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+        '<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:'
+        'wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap"'
+        ' rel="stylesheet">\n'
+        '<style>\n'
+        ':root{\n'
+        '  --bg:#0c0c0c;--surface:#161616;--text:#e8e0d4;\n'
+        '  --text-secondary:#8a8279;--accent:#c4956a;\n'
+        '  --divider:#2a2a2a;\n'
+        '  --serif:"Newsreader",Georgia,serif;\n'
+        '  --sans:"Hanken Grotesk","Helvetica Neue",sans-serif;\n'
+        '}\n'
+        '*{margin:0;padding:0;box-sizing:border-box}\n'
+        'body{background:var(--bg);color:var(--text);font-family:var(--sans);'
+        'min-height:100vh;display:flex;flex-direction:column;align-items:center}\n'
+        '.wrap{width:100%;max-width:600px;padding:3rem 1.5rem}\n'
+        '.header{display:flex;justify-content:space-between;align-items:baseline;'
+        'margin-bottom:2.5rem;border-bottom:1px solid var(--divider);padding-bottom:1.5rem}\n'
+        '.wordmark{font-size:.8rem;font-weight:600;letter-spacing:.2em;'
+        'text-transform:uppercase;color:var(--text-secondary)}\n'
+        'h1{font-family:var(--serif);font-size:1.8rem;font-weight:700;'
+        'margin-bottom:2rem;color:var(--text)}\n'
+        '.episodes{display:flex;flex-direction:column;gap:.75rem}\n'
+        '.ep{display:flex;justify-content:space-between;align-items:center;'
+        'background:var(--surface);border-radius:8px;padding:1rem 1.25rem;'
+        'text-decoration:none;border-left:3px solid transparent;'
+        'transition:border-color .2s,background .2s}\n'
+        '.ep:hover{border-left-color:var(--accent);background:#1e1e1e}\n'
+        '.ep-date{font-family:var(--serif);font-size:1.05rem;color:var(--text)}\n'
+        '.ep-dur{font-size:.8rem;color:var(--text-secondary)}\n'
+        '.empty{color:var(--text-secondary);font-size:.9rem;font-style:italic}\n'
+        '.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--divider);'
+        'text-align:center;font-size:.7rem;color:var(--text-secondary);'
+        'letter-spacing:.05em}\n'
+        '</style>\n'
         '</head>\n'
         '<body>\n'
+        '<div class="wrap">\n'
+        '<div class="header"><span class="wordmark">Daycast</span></div>\n'
         '<h1>Episode Archive</h1>\n'
-        f'<ul>\n{items}\n</ul>\n'
+        f'<div class="episodes">\n{items if items else "<p class=empty>No episodes yet.</p>"}\n</div>\n'
+        '<div class="footer">Daycast</div>\n'
+        '</div>\n'
         '</body>\n'
         '</html>'
     )

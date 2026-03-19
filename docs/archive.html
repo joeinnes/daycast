@@ -2,12 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Archive</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daycast Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0c;--surface:#161616;--text:#e8e0d4;
+  --text-secondary:#8a8279;--accent:#c4956a;
+  --divider:#2a2a2a;
+  --serif:"Newsreader",Georgia,serif;
+  --sans:"Hanken Grotesk","Helvetica Neue",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.wrap{width:100%;max-width:600px;padding:3rem 1.5rem}
+.header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2.5rem;border-bottom:1px solid var(--divider);padding-bottom:1.5rem}
+.wordmark{font-size:.8rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text-secondary)}
+h1{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:2rem;color:var(--text)}
+.episodes{display:flex;flex-direction:column;gap:.75rem}
+.ep{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border-radius:8px;padding:1rem 1.25rem;text-decoration:none;border-left:3px solid transparent;transition:border-color .2s,background .2s}
+.ep:hover{border-left-color:var(--accent);background:#1e1e1e}
+.ep-date{font-family:var(--serif);font-size:1.05rem;color:var(--text)}
+.ep-dur{font-size:.8rem;color:var(--text-secondary)}
+.empty{color:var(--text-secondary);font-size:.9rem;font-style:italic}
+.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--divider);text-align:center;font-size:.7rem;color:var(--text-secondary);letter-spacing:.05em}
+</style>
 </head>
 <body>
+<div class="wrap">
+<div class="header"><span class="wordmark">Daycast</span></div>
 <h1>Episode Archive</h1>
-<ul>
-<li>2026-03-19 (7 minutes) — <a href="../episodes/2026-03-19/index.html">Listen</a></li>
-</ul>
+<div class="episodes">
+<a href="episodes/2026-03-19/index.html" class="ep"><span class="ep-date">2026-03-19</span><span class="ep-dur">7 minutes</span></a>
+</div>
+<div class="footer">Daycast</div>
+</div>
 </body>
 </html>
