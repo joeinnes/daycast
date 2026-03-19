@@ -20,6 +20,17 @@
     <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-19/audio.mp3" length="2312352" type="audio/mpeg" />
     <itunes:duration>7 minutes</itunes:duration>
     <itunes:summary>Europe Sleepwalks into Another Energy Crisis; Hungary Deepens Ukraine Rift as Election Nears; CPAC and Patriots Assembly Head to Budapest This Weekend; Hungarian Society Has Slipped Dramatically, ELTE Researchers Find; Government Backtracks on AI Copyright After Artist Outcry; Astral, Makers of Ruff and uv, Join OpenAI; A Sufficiently Detailed Spec Is Code; Quantum Cryptography Pioneers Win the Turing Award; Adrian Newey Departs Aston Martin as Wheatley Takes the Reins</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:13.700" title="Europe Sleepwalks into Another Energy Crisis" />
+      <psc:chapter start="00:01:04.025" title="Hungary Deepens Ukraine Rift as Election Nears" />
+      <psc:chapter start="00:01:58.875" title="CPAC and Patriots Assembly Head to Budapest This Weekend" />
+      <psc:chapter start="00:02:28.400" title="Hungarian Society Has Slipped Dramatically, ELTE Researchers Find" />
+      <psc:chapter start="00:02:59.162" title="Government Backtracks on AI Copyright After Artist Outcry" />
+      <psc:chapter start="00:03:50.963" title="Astral, Makers of Ruff and uv, Join OpenAI" />
+      <psc:chapter start="00:04:28.125" title="A Sufficiently Detailed Spec Is Code" />
+      <psc:chapter start="00:05:14.225" title="Quantum Cryptography Pioneers Win the Turing Award" />
+      <psc:chapter start="00:05:58.062" title="Adrian Newey Departs Aston Martin as Wheatley Takes the Reins" />
+    </psc:chapters>
   </item>
 </channel>
 </rss>

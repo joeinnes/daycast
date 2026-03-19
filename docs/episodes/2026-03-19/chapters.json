@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "id": "s1",
+    "title": "Europe Sleepwalks into Another Energy Crisis",
+    "section": "World News",
+    "start": 13.7
+  },
+  {
+    "id": "s2",
+    "title": "Hungary Deepens Ukraine Rift as Election Nears",
+    "section": "Hungary",
+    "start": 64.025
+  },
+  {
+    "id": "s3",
+    "title": "CPAC and Patriots Assembly Head to Budapest This Weekend",
+    "section": "Hungary",
+    "start": 118.875
+  },
+  {
+    "id": "s4",
+    "title": "Hungarian Society Has Slipped Dramatically, ELTE Researchers Find",
+    "section": "Hungary",
+    "start": 148.4
+  },
+  {
+    "id": "s5",
+    "title": "Government Backtracks on AI Copyright After Artist Outcry",
+    "section": "UK News",
+    "start": 179.1625
+  },
+  {
+    "id": "s6",
+    "title": "Astral, Makers of Ruff and uv, Join OpenAI",
+    "section": "Tech and Developer",
+    "start": 230.9625
+  },
+  {
+    "id": "s7",
+    "title": "A Sufficiently Detailed Spec Is Code",
+    "section": "Tech and Developer",
+    "start": 268.125
+  },
+  {
+    "id": "s8",
+    "title": "Quantum Cryptography Pioneers Win the Turing Award",
+    "section": "Tech and Developer",
+    "start": 314.225
+  },
+  {
+    "id": "s9",
+    "title": "Adrian Newey Departs Aston Martin as Wheatley Takes the Reins",
+    "section": "Formula 1",
+    "start": 358.0625
+  }
+]
