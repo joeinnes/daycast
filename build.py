@@ -637,12 +637,11 @@ def publish(docs_dir: str | Path, audio_ok: bool = True) -> None:
 # ---------------------------------------------------------------------------
 
 def setup_logging(log_path: str | Path) -> None:
-    """Add a FileHandler to the 'build' logger with timestamped formatting."""
-    logger = logging.getLogger("build")
+    """Add a FileHandler to the module logger with timestamped formatting."""
     handler = logging.FileHandler(str(log_path))
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
+    _log.addHandler(handler)
+    _log.setLevel(logging.DEBUG)
 
 
 def run_build(episode_dir: str | Path, db_path: str | Path, docs_dir: str | Path) -> None:
@@ -672,10 +671,14 @@ def run_build(episode_dir: str | Path, db_path: str | Path, docs_dir: str | Path
         return
 
     # 4. Extract chapters and render page
-    chapters = extract_chapters(parsed, timings)
-    html = render_episode_page(parsed, chapters, {"repo": "..."})
-    write_chapters(chapters, Path(episode_dir) / "chapters.json")
-    Path(episode_dir, "index.html").write_text(html)
+    try:
+        chapters = extract_chapters(parsed, timings)
+        html = render_episode_page(parsed, chapters, {"repo": "..."})
+        write_chapters(chapters, Path(episode_dir) / "chapters.json")
+        Path(episode_dir, "index.html").write_text(html)
+    except Exception as e:
+        _log.error("Page rendering failed: %s", e)
+        return
 
     # 5. Copy and publish
     copy_latest_episode(episode_dir, docs_dir)
