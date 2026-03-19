@@ -673,7 +673,7 @@ def run_build(episode_dir: str | Path, db_path: str | Path, docs_dir: str | Path
     # 4. Extract chapters and render page
     try:
         chapters = extract_chapters(parsed, timings)
-        html = render_episode_page(parsed, chapters, {"repo": "..."})
+        html = render_episode_page(parsed, chapters, {"repo": "joeinnes/daycast"})
         write_chapters(chapters, Path(episode_dir) / "chapters.json")
         Path(episode_dir, "index.html").write_text(html)
     except Exception as e:

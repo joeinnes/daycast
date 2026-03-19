@@ -22,10 +22,11 @@ Strong Interest ones.
 
 ## Historical Context
 
-Read `context.md` for the database queries available to you.
+Read `context.md` for the database queries available to you. If
+`briefings.db` does not yet exist (first run), skip this section entirely.
 
-Before writing, check the recency window (`query_recent`, last 3 days) to
-identify stories already covered. For those stories:
+When the database is available, check the recency window (`query_recent`,
+last 3 days) to identify stories already covered. For those stories:
 
 - Set `previously_covered: true`
 - Add an `update_note` explaining what is new
@@ -134,7 +135,7 @@ Before writing the briefing, process any pending listener feedback:
 
 1. **Fetch open feedback issues:**
    ```
-   gh issue list -R {repo} --label feedback --state open --json number,title,body
+   gh issue list -R joeinnes/daycast --label feedback --state open --json number,title,body
    ```
 
 2. **Parse each issue body.** The body follows this format:
@@ -158,7 +159,7 @@ Before writing the briefing, process any pending listener feedback:
 
 4. **Close each processed issue:**
    ```
-   gh issue close {number} -R {repo}
+   gh issue close {number} -R joeinnes/daycast
    ```
 
 5. If there are no open feedback issues, skip this section silently.
