@@ -9,7 +9,9 @@ import html as html_module
 import json
 import logging
 import re
+import shutil
 import sqlite3
+import subprocess
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -553,3 +555,73 @@ def render_episode_page(
         '</body>\n'
         '</html>'
     )
+
+
+# ---------------------------------------------------------------------------
+# Publishing helpers (ticket day-1595)
+# ---------------------------------------------------------------------------
+
+def copy_latest_episode(episode_dir: str | Path, docs_dir: str | Path) -> None:
+    """Copy the episode's index.html into *docs_dir*, creating it if needed."""
+    docs_dir = Path(docs_dir)
+    docs_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(Path(episode_dir) / "index.html", docs_dir / "index.html")
+
+
+def render_archive(episodes_dir: str | Path) -> str:
+    """Scan *episodes_dir* for episodes and return an HTML archive page.
+
+    Episodes are sorted newest-first.  Each entry shows the date, duration
+    estimate, and a link to the episode player page.
+    """
+    episodes_dir = Path(episodes_dir)
+    episodes: list[dict[str, Any]] = []
+
+    for subdir in episodes_dir.iterdir():
+        script = subdir / "script.md"
+        if subdir.is_dir() and script.exists():
+            parsed = parse_script(script)
+            episodes.append({
+                "date": parsed["date"],
+                "duration_estimate": parsed["duration_estimate"],
+            })
+
+    # Sort newest-first.
+    episodes.sort(key=lambda e: e["date"], reverse=True)
+
+    items = "\n".join(
+        f'<li>{ep["date"]} ({ep["duration_estimate"]}) '
+        f'— <a href="../episodes/{ep["date"]}/index.html">Listen</a></li>'
+        for ep in episodes
+    )
+
+    return (
+        '<!DOCTYPE html>\n'
+        '<html lang="en">\n'
+        '<head>\n'
+        '<meta charset="utf-8">\n'
+        '<title>Archive</title>\n'
+        '</head>\n'
+        '<body>\n'
+        '<h1>Episode Archive</h1>\n'
+        f'<ul>\n{items}\n</ul>\n'
+        '</body>\n'
+        '</html>'
+    )
+
+
+def publish(docs_dir: str | Path, audio_ok: bool = True) -> None:
+    """Stage, commit, and push the docs directory via git.
+
+    If *audio_ok* is ``False``, skip all git operations.  If ``git push``
+    fails, log the error but do not retry or raise.
+    """
+    if not audio_ok:
+        return
+
+    docs_dir = Path(docs_dir)
+    subprocess.run(["git", "add", "docs/"])
+    subprocess.run(["git", "commit", "-m", "Update published episode"])
+    result = subprocess.run(["git", "push"])
+    if result.returncode != 0:
+        _log.error("git push failed (returncode=%d)", result.returncode)
