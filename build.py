@@ -661,6 +661,8 @@ def render_episode_page(
     lines.append('<meta charset="utf-8">')
     lines.append('<meta name="viewport" content="width=device-width, initial-scale=1">')
     lines.append(f'<title>Daycast {_EM_DASH} {date_str}</title>')
+    # GitHub Pages serves the site at /<repo-name>/, so derive the root from
+    # the "owner/repo" slug in config rather than hard-coding it.
     base_path = '/' + config['repo'].split('/')[-1] + '/'
     lines.append(f'<link rel="alternate" type="application/rss+xml" title="Daycast" href="{base_path}feed.xml">')
     lines.append(
@@ -1138,35 +1140,45 @@ def render_archive(episodes_dir: str | Path) -> str:
     )
 
 
+def _hms(total_seconds: int) -> tuple[int, int, int]:
+    """Break *total_seconds* into ``(hours, minutes, seconds)``."""
+    h = total_seconds // 3600
+    m = (total_seconds % 3600) // 60
+    s = total_seconds % 60
+    return h, m, s
+
+
 def _fmt_chapter_time(seconds: float) -> str:
     """Format *seconds* as ``HH:MM:SS.mmm`` for Podlove Simple Chapters."""
-    h = int(seconds) // 3600
-    m = (int(seconds) % 3600) // 60
-    s = int(seconds) % 60
+    h, m, s = _hms(int(seconds))
     ms = int(round((seconds - int(seconds)) * 1000))
     return f"{h:02d}:{m:02d}:{s:02d}.{ms:03d}"
 
 
 def _fmt_duration_hhmmss(seconds: float) -> str:
     """Format *seconds* as ``HH:MM:SS`` for iTunes duration."""
-    total = max(1, int(seconds))
-    h = total // 3600
-    m = (total % 3600) // 60
-    s = total % 60
+    h, m, s = _hms(max(1, int(seconds)))
     return f"{h:02d}:{m:02d}:{s:02d}"
+
+
+# Rough estimate for audio duration when chapter data is unavailable:
+# assume ~48 kbps mono MP3, which works out to ~6 000 bytes per second.
+_AUDIO_BYTES_PER_SEC = 6000
+# Add this many seconds beyond the last chapter start to approximate episode end.
+_CHAPTER_END_BUFFER_SECS = 30
 
 
 def _get_episode_duration(chapters: list[dict], audio_size: int) -> str:
     """Return an HH:MM:SS duration string for a podcast episode.
 
-    Uses chapter start times when available (last chapter start + 30s buffer),
-    otherwise estimates from the audio file size with a minimum floor of 1s.
+    Uses chapter start times when available (last chapter start +
+    ``_CHAPTER_END_BUFFER_SECS``), otherwise estimates from the audio file
+    size with a minimum floor of 1s.
     """
     if chapters:
         last_start = max(ch["start"] for ch in chapters)
-        return _fmt_duration_hhmmss(last_start + 30)
-    # Rough estimate: ~48 kbps = 6000 bytes/sec
-    estimated = audio_size / 6000 if audio_size > 0 else 1
+        return _fmt_duration_hhmmss(last_start + _CHAPTER_END_BUFFER_SECS)
+    estimated = audio_size / _AUDIO_BYTES_PER_SEC if audio_size > 0 else 1
     return _fmt_duration_hhmmss(max(1, estimated))
 
 
