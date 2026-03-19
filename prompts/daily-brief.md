@@ -167,3 +167,15 @@ Before writing the briefing, process any pending listener feedback:
 
 Save the completed script to `episodes/YYYY-MM-DD/script.md`, where
 `YYYY-MM-DD` is today's date. Create the directory if it does not exist.
+
+## Build Step
+
+After writing the script, run the build pipeline:
+
+```
+python build.py episodes/YYYY-MM-DD
+```
+
+This parses the script, generates TTS audio, builds the player page,
+updates the archive, and publishes to GitHub Pages. Check `error.log`
+if the build fails — the pipeline logs all errors with timestamps.

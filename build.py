@@ -683,3 +683,19 @@ def run_build(episode_dir: str | Path, db_path: str | Path, docs_dir: str | Path
     # 5. Copy and publish
     copy_latest_episode(episode_dir, docs_dir)
     publish(docs_dir, audio_ok=True)
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Usage: python build.py <episode_dir>")
+        sys.exit(1)
+
+    episode = Path(sys.argv[1])
+    setup_logging(episode / "error.log")
+    run_build(
+        episode_dir=episode,
+        db_path=Path("briefings.db"),
+        docs_dir=Path("docs"),
+    )
