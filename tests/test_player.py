@@ -340,3 +340,50 @@ def test_footer_archive_link_is_valid(html):
     non-existent /archive/ path."""
     assert "archive.html" in html
     assert "/archive/" not in html
+
+
+# ---------------------------------------------------------------------------
+# 13. Archive link works from subdirectories (ticket day-sly2)
+# ---------------------------------------------------------------------------
+
+def test_archive_link_not_bare_relative(html):
+    """The archive link href must be absolute or root-relative so it
+    works from episode subpages too."""
+    import re
+
+    match = re.search(r'href="([^"]*archive\.html[^"]*)"', html)
+    assert match, "No archive link found in HTML"
+    href = match.group(1)
+    assert href.startswith('/') or href.startswith('http'), (
+        f"Archive link href must be absolute or root-relative, got: '{href}'"
+    )
+
+
+# ---------------------------------------------------------------------------
+# 14. Feed discovery link works from subdirectories (ticket day-13m6)
+# ---------------------------------------------------------------------------
+
+def test_feed_link_not_bare_relative(html):
+    """The RSS feed discovery <link> href must be absolute or root-relative
+    so it works from episode subpages too."""
+    import re
+
+    match = re.search(
+        r'<link[^>]*type="application/rss\+xml"[^>]*href="([^"]*)"', html
+    )
+    assert match, "No RSS feed discovery <link> found in HTML"
+    href = match.group(1)
+    assert href.startswith('/') or href.startswith('http'), (
+        f"Feed link href must be absolute or root-relative, got: '{href}'"
+    )
+    assert 'feed.xml' in href
+
+
+def test_feed_link_has_rel_alternate(html):
+    """The feed discovery link must have rel="alternate" for clients to
+    recognise it."""
+    import re
+
+    assert re.search(
+        r'<link[^>]*rel="alternate"[^>]*type="application/rss\+xml"', html
+    ), "Feed discovery <link> must have rel=\"alternate\""

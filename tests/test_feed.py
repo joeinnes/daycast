@@ -262,3 +262,44 @@ def test_feed_xml_written_to_docs(tmp_path, feed_config):
 
     assert (docs / "feed.xml").exists()
     ET.fromstring((docs / "feed.xml").read_text())
+
+
+# ---------------------------------------------------------------------------
+# 8. itunes:duration format (ticket day-5iul)
+# ---------------------------------------------------------------------------
+
+def test_itunes_duration_is_hhmmss_format(root):
+    """Every <itunes:duration> must be HH:MM:SS, not a human string."""
+    import re
+    items = root.findall("channel/item")
+    for item in items:
+        dur = item.find("{%s}duration" % _NS["itunes"])
+        assert dur is not None
+        assert re.match(r"^\d{2}:\d{2}:\d{2}$", dur.text), (
+            f"Expected HH:MM:SS but got {dur.text!r}"
+        )
+
+
+def test_itunes_duration_is_not_frontmatter_estimate(root):
+    """<itunes:duration> must not be the frontmatter duration_estimate string."""
+    items = root.findall("channel/item")
+    # The fixture episodes have duration_estimate values "7 minutes" and "5 minutes".
+    human_strings = {"5 minutes", "7 minutes"}
+    for item in items:
+        dur = item.find("{%s}duration" % _NS["itunes"])
+        assert dur is not None
+        assert dur.text not in human_strings, (
+            f"Duration should come from the audio file, not frontmatter (got {dur.text!r})"
+        )
+
+
+def test_itunes_duration_is_nonzero(root):
+    """<itunes:duration> must not be 00:00:00 — it should reflect actual
+    audio length."""
+    items = root.findall("channel/item")
+    for item in items:
+        dur = item.find("{%s}duration" % _NS["itunes"])
+        assert dur is not None
+        assert dur.text != "00:00:00", (
+            "Duration must not be zero — should reflect audio file length"
+        )
