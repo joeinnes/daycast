@@ -2,92 +2,415 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Daily Briefing — 2026-03-19</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-03-19</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
 </head>
 <body>
-<h1>Daily Briefing — 19 March 2026</h1>
-<p>2026-03-19</p>
-<div class="player">
+<div class="container">
+<header class="site-header">
+<span class="wordmark">DAYCAST</span>
+<span class="header-date">19 March 2026<span class="header-iso">2026-03-19</span></span>
+</header>
+<div class="player-card">
 <audio src="audio.mp3" controls></audio>
-<div class="speed-controls">
-<button class="speed-btn" data-speed="0.85">0.85x</button>
-<button class="speed-btn" data-speed="1">1x</button>
-<button class="speed-btn" data-speed="1.15">1.15x</button>
-<button class="speed-btn" data-speed="1.3">1.3x</button>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
 </div>
 </div>
-<div class="chapters">
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+</ul>
 </div>
 <div class="transcript">
-<h2>World News</h2>
+<h2 class="section-heading">World News</h2>
 <div class="story">
-<h3>Europe Sleepwalks into Another Energy Crisis</h3>
+<h3 class="story-title">Europe Sleepwalks into Another Energy Crisis</h3>
 <p class="source">Source: BBC News</p>
-<p>The Bank of England held interest rates at three point seven five per cent today, but the real story is the tone shift. Governor Andrew Bailey warned the Bank is ready to raise rates if the energy price shock from the Iran conflict persists, reversing months of cautious cutting. Brent crude sits above a hundred and eight dollars a barrel after Israeli strikes on Iran's South Pars gasfield and the near-total shutdown of tanker traffic through the Strait of Hormuz. The disruption is not just a British problem. Across Europe, governments are scrambling for alternatives as the continent confronts its second major energy crisis in four years. Beijing's oil reserves and renewable energy push are being tested too, but Europe, having only recently weaned itself off Russian gas dependence, is especially exposed.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Europe+Sleepwalks+into+Another+Energy+Crisis&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Europe+Sleepwalks+into+Another+Energy+Crisis%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Europe+Sleepwalks+into+Another+Energy+Crisis&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Europe+Sleepwalks+into+Another+Energy+Crisis%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">The Bank of England held interest rates at three point seven five per cent today, but the real story is the tone shift. Governor Andrew Bailey warned the Bank is ready to raise rates if the energy price shock from the Iran conflict persists, reversing months of cautious cutting. Brent crude sits above a hundred and eight dollars a barrel after Israeli strikes on Iran's South Pars gasfield and the near-total shutdown of tanker traffic through the Strait of Hormuz. The disruption is not just a British problem. Across Europe, governments are scrambling for alternatives as the continent confronts its second major energy crisis in four years. Beijing's oil reserves and renewable energy push are being tested too, but Europe, having only recently weaned itself off Russian gas dependence, is especially exposed.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Europe+Sleepwalks+into+Another+Energy+Crisis&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Europe+Sleepwalks+into+Another+Energy+Crisis%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Europe+Sleepwalks+into+Another+Energy+Crisis&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Europe+Sleepwalks+into+Another+Energy+Crisis%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
 </div>
-<h2>Hungary</h2>
+</div>
+<h2 class="section-heading">Hungary</h2>
 <div class="story">
-<h3>Hungary Deepens Ukraine Rift as Election Nears</h3>
+<h3 class="story-title">Hungary Deepens Ukraine Rift as Election Nears</h3>
 <p class="source">Source: Telex</p>
-<p>Viktor Orbán continues to block a ninety-billion euro European Union loan to Ukraine, linking it to a dispute over Druzhba pipeline oil deliveries. Twenty of twenty-six other member state leaders publicly criticised the move this week, and the European Council president repeated that the reversal breaches EU legal principles. Budapest has also banned three Ukrainian citizens from entering Hungary and the Schengen area — a retired intelligence officer, a former presidential adviser, and a military figure — as the bilateral relationship deteriorates further. In a striking development at the government press conference, Minister Gergely Gulyás said that if Donald Trump requested military assistance in freeing the Strait of Hormuz, Hungary would consider it. With the parliamentary election on the twelfth of April approaching, each of these moves carries domestic as well as diplomatic weight.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungary+Deepens+Ukraine+Rift+as+Election+Nears&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungary+Deepens+Ukraine+Rift+as+Election+Nears%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungary+Deepens+Ukraine+Rift+as+Election+Nears&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungary+Deepens+Ukraine+Rift+as+Election+Nears%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Viktor Orbán continues to block a ninety-billion euro European Union loan to Ukraine, linking it to a dispute over Druzhba pipeline oil deliveries. Twenty of twenty-six other member state leaders publicly criticised the move this week, and the European Council president repeated that the reversal breaches EU legal principles. Budapest has also banned three Ukrainian citizens from entering Hungary and the Schengen area — a retired intelligence officer, a former presidential adviser, and a military figure — as the bilateral relationship deteriorates further. In a striking development at the government press conference, Minister Gergely Gulyás said that if Donald Trump requested military assistance in freeing the Strait of Hormuz, Hungary would consider it. With the parliamentary election on the twelfth of April approaching, each of these moves carries domestic as well as diplomatic weight.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungary+Deepens+Ukraine+Rift+as+Election+Nears&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungary+Deepens+Ukraine+Rift+as+Election+Nears%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungary+Deepens+Ukraine+Rift+as+Election+Nears&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungary+Deepens+Ukraine+Rift+as+Election+Nears%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
 </div>
 <div class="story">
-<h3>CPAC and Patriots Assembly Head to Budapest This Weekend</h3>
+<h3 class="story-title">CPAC and Patriots Assembly Head to Budapest This Weekend</h3>
 <p class="source">Source: Telex</p>
-<p>Budapest hosts the fifth CPAC Hungary conference on Saturday, followed by a Patriots for Europe grand assembly at the Millenáris Park on Sunday. The lineup includes Marine Le Pen, Matteo Salvini, Geert Wilders, and Herbert Kickl, with Orbán delivering the keynote. The events arrive in a week when international press freedom organisations condemned the forcible removal of Telex reporters from a ruling party campaign event.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Budapest hosts the fifth CPAC Hungary conference on Saturday, followed by a Patriots for Europe grand assembly at the Millenáris Park on Sunday. The lineup includes Marine Le Pen, Matteo Salvini, Geert Wilders, and Herbert Kickl, with Orbán delivering the keynote. The events arrive in a week when international press freedom organisations condemned the forcible removal of Telex reporters from a ruling party campaign event.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+CPAC+and+Patriots+Assembly+Head+to+Budapest+This+Weekend%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
 </div>
 <div class="story">
-<h3>Hungarian Society Has Slipped Dramatically, ELTE Researchers Find</h3>
+<h3 class="story-title">Hungarian Society Has Slipped Dramatically, ELTE Researchers Find</h3>
 <p class="source">Source: Telex</p>
-<p>Researchers at ELTE university published findings showing what they describe as a dramatic decline in Hungarian social stratification over the past four years. The proportion of people in the lowest income segments has grown substantially while the upper-middle class has visibly thinned. The researchers also noted a high share of respondents who conceal their political preferences, making election polling unusually uncertain ahead of April's vote.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Researchers at ELTE university published findings showing what they describe as a dramatic decline in Hungarian social stratification over the past four years. The proportion of people in the lowest income segments has grown substantially while the upper-middle class has visibly thinned. The researchers also noted a high share of respondents who conceal their political preferences, making election polling unusually uncertain ahead of April's vote.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Hungarian+Society+Has+Slipped+Dramatically%2C+ELTE+Researchers+Find%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
 </div>
-<h2>UK News</h2>
+</div>
+<h2 class="section-heading">UK News</h2>
 <div class="story">
-<h3>Government Backtracks on AI Copyright After Artist Outcry</h3>
+<h3 class="story-title">Government Backtracks on AI Copyright After Artist Outcry</h3>
 <p class="source">Source: BBC News</p>
-<p>The UK government has dropped its preferred approach to artificial intelligence and copyright, which would have allowed tech firms to train models on copyrighted works unless rights holders explicitly opted out. Technology Secretary Liz Kendall confirmed the reversal after a consultation drew more than eleven thousand five hundred responses, with the overwhelming majority from creators and publishers rejecting the proposal. Artists including Sir Elton John and Dua Lipa had campaigned against it. The government now says it has no preferred option, with four proposals still on the table ranging from leaving copyright law unchanged to a full waiver granting AI companies unrestricted access. UK Music's chief executive called it a major victory for campaigners, but the lack of a clear path forward means uncertainty continues for both sides.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">The UK government has dropped its preferred approach to artificial intelligence and copyright, which would have allowed tech firms to train models on copyrighted works unless rights holders explicitly opted out. Technology Secretary Liz Kendall confirmed the reversal after a consultation drew more than eleven thousand five hundred responses, with the overwhelming majority from creators and publishers rejecting the proposal. Artists including Sir Elton John and Dua Lipa had campaigned against it. The government now says it has no preferred option, with four proposals still on the table ranging from leaving copyright law unchanged to a full waiver granting AI companies unrestricted access. UK Music's chief executive called it a major victory for campaigners, but the lack of a clear path forward means uncertainty continues for both sides.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Government+Backtracks+on+AI+Copyright+After+Artist+Outcry%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
 </div>
-<h2>Tech and Developer</h2>
+</div>
+<h2 class="section-heading">Tech and Developer</h2>
 <div class="story">
-<h3>Astral, Makers of Ruff and uv, Join OpenAI</h3>
-<span class="badge follow-up">Follow-up</span>
+<h3 class="story-title">Astral, Makers of Ruff and uv, Join OpenAI</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
 <p class="source">Source: Hacker News</p>
-<p>Astral, the company behind the Rust-based Python tools Ruff and uv, is joining OpenAI's Codex team. Founder Charlie Marsh says the open-source tools will continue to be maintained in the open, but the Hacker News discussion — now one of the day's biggest threads — reflects real scepticism about whether an OpenAI-owned tooling company stays as community-focused as an independent one. For anyone who has built uv into their Python workflow, the immediate message is continuity. The longer-term question is harder to answer.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Astral, the company behind the Rust-based Python tools Ruff and uv, is joining OpenAI's Codex team. Founder Charlie Marsh says the open-source tools will continue to be maintained in the open, but the Hacker News discussion — now one of the day's biggest threads — reflects real scepticism about whether an OpenAI-owned tooling company stays as community-focused as an independent one. For anyone who has built uv into their Python workflow, the immediate message is continuity. The longer-term question is harder to answer.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Astral%2C+Makers+of+Ruff+and+uv%2C+Join+OpenAI%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
 </div>
 <div class="story">
-<h3>A Sufficiently Detailed Spec Is Code</h3>
+<h3 class="story-title">A Sufficiently Detailed Spec Is Code</h3>
 <p class="source">Source: Hacker News</p>
-<p>Gabriella Gonzalez has published an essay arguing that the premise behind agentic coding — write a detailed specification, let the model generate the implementation — rests on two false assumptions. The first is that specifications are simpler than code. The second is that writing them requires more thoughtfulness than coding. She demonstrates through OpenAI's own Symphony project that supposedly spec-driven output actually contains prose database schemas, pseudocode, and explicit code sections. The piece quotes Dijkstra on the irreducible complexity of interfaces. It is a sharp counterpoint to the "just describe what you want" school of AI-assisted development, and it has gathered over five hundred points on Hacker News.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+A+Sufficiently+Detailed+Spec+Is+Code&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+A+Sufficiently+Detailed+Spec+Is+Code%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+A+Sufficiently+Detailed+Spec+Is+Code&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+A+Sufficiently+Detailed+Spec+Is+Code%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Gabriella Gonzalez has published an essay arguing that the premise behind agentic coding — write a detailed specification, let the model generate the implementation — rests on two false assumptions. The first is that specifications are simpler than code. The second is that writing them requires more thoughtfulness than coding. She demonstrates through OpenAI's own Symphony project that supposedly spec-driven output actually contains prose database schemas, pseudocode, and explicit code sections. The piece quotes Dijkstra on the irreducible complexity of interfaces. It is a sharp counterpoint to the "just describe what you want" school of AI-assisted development, and it has gathered over five hundred points on Hacker News.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+A+Sufficiently+Detailed+Spec+Is+Code&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+A+Sufficiently+Detailed+Spec+Is+Code%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+A+Sufficiently+Detailed+Spec+Is+Code&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+A+Sufficiently+Detailed+Spec+Is+Code%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
 </div>
 <div class="story">
-<h3>Quantum Cryptography Pioneers Win the Turing Award</h3>
+<h3 class="story-title">Quantum Cryptography Pioneers Win the Turing Award</h3>
 <p class="source">Source: BBC News</p>
-<p>Charles Bennett and Gilles Brassard have received the twenty twenty-five ACM Turing Award for their foundational work in quantum information science. Their BB84 protocol, introduced in nineteen eighty-four, demonstrated that two parties could establish a secret encryption key with security guaranteed by the laws of physics, not by computational assumptions. Any attempt at eavesdropping leaves detectable traces before information is compromised. It is the first time the award has recognised work rooted in quantum physics, and it matters because BB84's security model holds even against future quantum computers — a property no classical encryption scheme can claim.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Quantum+Cryptography+Pioneers+Win+the+Turing+Award&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Quantum+Cryptography+Pioneers+Win+the+Turing+Award%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Quantum+Cryptography+Pioneers+Win+the+Turing+Award&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Quantum+Cryptography+Pioneers+Win+the+Turing+Award%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Charles Bennett and Gilles Brassard have received the twenty twenty-five ACM Turing Award for their foundational work in quantum information science. Their BB84 protocol, introduced in nineteen eighty-four, demonstrated that two parties could establish a secret encryption key with security guaranteed by the laws of physics, not by computational assumptions. Any attempt at eavesdropping leaves detectable traces before information is compromised. It is the first time the award has recognised work rooted in quantum physics, and it matters because BB84's security model holds even against future quantum computers — a property no classical encryption scheme can claim.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Quantum+Cryptography+Pioneers+Win+the+Turing+Award&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Quantum+Cryptography+Pioneers+Win+the+Turing+Award%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Quantum+Cryptography+Pioneers+Win+the+Turing+Award&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Quantum+Cryptography+Pioneers+Win+the+Turing+Award%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
 </div>
-<h2>Formula 1</h2>
+</div>
+<h2 class="section-heading">Formula 1</h2>
 <div class="story">
-<h3>Adrian Newey Departs Aston Martin as Wheatley Takes the Reins</h3>
+<h3 class="story-title">Adrian Newey Departs Aston Martin as Wheatley Takes the Reins</h3>
 <p class="source">Source: Telex</p>
-<p>Adrian Newey, the most decorated designer in Formula One history, has resigned from his role at Aston Martin after less than a year. Jonathan Wheatley, previously at Audi, replaces him. Newey's departure after such a short stint raises questions about the team's direction, and with the Japanese Grand Prix at Suzuka coming up on the twenty-ninth, the paddock will have plenty to discuss.</p>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank">👍</a>
-<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank">👎</a>
+<p class="story-body">Adrian Newey, the most decorated designer in Formula One history, has resigned from his role at Aston Martin after less than a year. Jonathan Wheatley, previously at Audi, replaces him. Newey's departure after such a short stint raises questions about the team's direction, and with the Japanese Grand Prix at Suzuka coming up on the twenty-ninth, the paddock will have plenty to discuss.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-19+—+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins&amp;labels=feedback&amp;body=Date:+2026-03-19%0AStory:+Adrian+Newey+Departs+Aston+Martin+as+Wheatley+Takes+the+Reins%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
 </div>
 </div>
+</div>
+<footer class="site-footer"><a href="/archive/2026-03-19/">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
 </body>
 </html>

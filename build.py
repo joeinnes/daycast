@@ -478,84 +478,464 @@ def render_episode_page(
     human_date = f"{dt.day} {dt.strftime('%B')} {dt.year}"
 
     repo = config["repo"]
+    _esc = lambda t: html_module.escape(t, quote=False)
 
-    # -- Chapter markers -----------------------------------------------------
-    chapter_lines = [
-        f'<div class="chapter" data-start="{ch["start"]}">'
-        f'{ch["title"]}</div>'
-        for ch in chapters
-    ]
-    chapter_markers = "\n".join(chapter_lines) + "\n" if chapter_lines else ""
+    # -- Chapter list --------------------------------------------------------
+    chapter_items: list[str] = []
+    for i, ch in enumerate(chapters):
+        start = ch["start"]
+        mins = int(start) // 60
+        secs = int(start) % 60
+        ts = f"{mins}:{secs:02d}"
+        chapter_items.append(
+            f'<li class="chapter-item" data-start="{start}" role="button" tabindex="0">'
+            f'<span class="chapter-num">{i + 1:02d}</span>'
+            f'<span class="chapter-info">'
+            f'<span class="chapter-title">{_esc(ch["title"])}</span>'
+            f'<span class="chapter-section">{_esc(ch["section"])}</span>'
+            f'</span>'
+            f'<span class="chapter-ts">{ts}</span>'
+            f'</li>'
+        )
+
+    # -- Chapter marker ticks (for progress bar) -----------------------------
+    chapter_ticks: list[str] = []
+    for ch in chapters:
+        chapter_ticks.append(
+            f'<div class="chapter-tick" data-start="{ch["start"]}"></div>'
+        )
 
     # -- Speed controls ------------------------------------------------------
     speeds = ["0.85", "1", "1.15", "1.3"]
     speed_buttons = "".join(
-        f'<button class="speed-btn" data-speed="{s}">{s}x</button>\n'
+        f'<button class="speed-btn{" active" if s == "1" else ""}" '
+        f'data-speed="{s}">{s}x</button>'
         for s in speeds
     )
 
     # -- Transcript ----------------------------------------------------------
-    parts: list[str] = []
-    _esc = lambda t: html_module.escape(t, quote=False)
+    transcript_parts: list[str] = []
 
     for section in parsed["sections"]:
-        parts.append(f'<h2>{_esc(section["title"])}</h2>')
+        transcript_parts.append(
+            f'<h2 class="section-heading">{_esc(section["title"])}</h2>'
+        )
         for story in section["stories"]:
             title = story["title"]
             safe_title = _esc(title)
-            story_lines: list[str] = []
-            story_lines.append('<div class="story">')
-            story_lines.append(f'<h3>{safe_title}</h3>')
+            s: list[str] = []
+            s.append('<div class="story">')
+            s.append(f'<h3 class="story-title">{safe_title}</h3>')
 
+            # Badges row
+            badges: list[str] = []
             if story.get("previously_covered"):
-                story_lines.append('<span class="badge follow-up">Follow-up</span>')
+                badges.append(
+                    '<span class="badge follow-up">Follow-up</span>'
+                )
             if story.get("historical_callback"):
-                story_lines.append(
+                badges.append(
                     '<span class="badge then-now">Then &amp; Now</span>'
                 )
+            if badges:
+                s.append('<div class="badge-row">' + "".join(badges) + '</div>')
+
+            # Historical note
+            if story.get("historical_callback"):
                 note = story.get("historical_note", "")
                 if note:
-                    story_lines.append(f'<p class="historical-note">{_esc(note)}</p>')
+                    s.append(
+                        f'<blockquote class="historical-note">{_esc(note)}</blockquote>'
+                    )
 
+            # Source
             source = story.get("source")
             if source:
-                story_lines.append(f'<p class="source">Source: {_esc(source)}</p>')
+                s.append(f'<p class="source">Source: {_esc(source)}</p>')
 
-            story_lines.append(f'<p>{_esc(story["body"])}</p>')
+            # Body
+            s.append(f'<p class="story-body">{_esc(story["body"])}</p>')
 
+            # Feedback
             thumbs_up_url = _feedback_url(repo, date_str, title, _THUMBS_UP)
             thumbs_down_url = _feedback_url(repo, date_str, title, _THUMBS_DOWN)
-            story_lines.append(
-                f'<a class="feedback" href="{thumbs_up_url}" target="_blank">{_THUMBS_UP}</a>'
+            s.append('<div class="feedback-row">')
+            s.append(
+                f'<a class="feedback" href="{thumbs_up_url}" '
+                f'target="_blank" title="Useful">{_THUMBS_UP}</a>'
             )
-            story_lines.append(
-                f'<a class="feedback" href="{thumbs_down_url}" target="_blank">{_THUMBS_DOWN}</a>'
+            s.append(
+                f'<a class="feedback" href="{thumbs_down_url}" '
+                f'target="_blank" title="Not useful">{_THUMBS_DOWN}</a>'
             )
+            s.append('</div>')
 
-            story_lines.append('</div>')
-            parts.append("\n".join(story_lines))
+            s.append('</div>')
+            transcript_parts.append("\n".join(s))
 
-    transcript = "\n".join(parts) + "\n" if parts else ""
+    transcript_html = "\n".join(transcript_parts) + "\n" if transcript_parts else ""
 
-    return (
-        '<!DOCTYPE html>\n'
-        '<html lang="en">\n'
-        '<head>\n'
-        '<meta charset="utf-8">\n'
-        f'<title>Daily Briefing \u2014 {date_str}</title>\n'
-        '</head>\n'
-        '<body>\n'
-        f'<h1>Daily Briefing \u2014 {human_date}</h1>\n'
-        f'<p>{date_str}</p>\n'
-        '<div class="player">\n'
-        f'<audio src="audio.mp3" controls></audio>\n'
-        f'<div class="speed-controls">\n{speed_buttons}</div>\n'
-        '</div>\n'
-        f'<div class="chapters">\n{chapter_markers}</div>\n'
-        f'<div class="transcript">\n{transcript}</div>\n'
-        '</body>\n'
-        '</html>'
+    # -- Full page assembly --------------------------------------------------
+    lines: list[str] = []
+    lines.append('<!DOCTYPE html>')
+    lines.append('<html lang="en">')
+    lines.append('<head>')
+    lines.append('<meta charset="utf-8">')
+    lines.append('<meta name="viewport" content="width=device-width, initial-scale=1">')
+    lines.append(f'<title>Daycast {_EM_DASH} {date_str}</title>')
+    lines.append(
+        '<link rel="preconnect" href="https://fonts.googleapis.com">'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600'
+        '&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">'
     )
+    lines.append('<style>')
+    lines.append("""\
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+""")
+    lines.append('</style>')
+    lines.append('</head>')
+    lines.append('<body>')
+    lines.append('<div class="container">')
+
+    # Header
+    lines.append('<header class="site-header">')
+    lines.append('<span class="wordmark">DAYCAST</span>')
+    lines.append(
+        f'<span class="header-date">{human_date}'
+        f'<span class="header-iso">{date_str}</span></span>'
+    )
+    lines.append('</header>')
+
+    # Player card
+    lines.append('<div class="player-card">')
+    lines.append('<audio src="audio.mp3" controls></audio>')
+    lines.append('<div class="player-controls">')
+    lines.append('<button class="btn-skip" id="prev-ch" title="Previous chapter">\u25c0\u25c0</button>')
+    lines.append('<button class="btn-play" id="play-btn" title="Play">\u25b6</button>')
+    lines.append('<button class="btn-skip" id="next-ch" title="Next chapter">\u25b6\u25b6</button>')
+    lines.append('<div class="progress-wrap">')
+    lines.append('<div class="progress-bar" id="progress-bar">')
+    lines.append('<div class="progress-fill" id="progress-fill"></div>')
+    lines.append("\n".join(chapter_ticks))
+    lines.append('</div>')
+    lines.append('<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>')
+    lines.append('</div>')  # progress-wrap
+    lines.append('</div>')  # player-controls
+    lines.append(f'<div class="speed-row">{speed_buttons}</div>')
+    lines.append('</div>')  # player-card
+
+    # Chapters
+    lines.append('<div class="chapters-section">')
+    lines.append('<button class="chapters-toggle" id="ch-toggle"><span class="arrow">\u25b6</span> Chapters</button>')
+    lines.append('<ul class="chapter-list" id="chapter-list">')
+    lines.extend(chapter_items)
+    lines.append('</ul>')
+    lines.append('</div>')
+
+    # Transcript
+    lines.append(f'<div class="transcript">\n{transcript_html}</div>')
+
+    # Footer
+    lines.append(
+        '<footer class="site-footer">'
+        f'<a href="/archive/{date_str}/">Archive</a> &middot; Powered by Daycast'
+        '</footer>'
+    )
+
+    lines.append('</div>')  # container
+
+    # JavaScript
+    lines.append('<script>')
+    lines.append("""\
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\\u275A\\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+""")
+    lines.append('</script>')
+
+    lines.append('</body>')
+    lines.append('</html>')
+
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
