@@ -4,7 +4,7 @@ about: Submit feedback on a daily briefing story
 labels: feedback
 ---
 
-**Date:**
-**Story:**
-**Signal:** 👍 / 👎
-**Note:**
+Date: YYYY-MM-DD
+Story: Story Title
+Signal: 👍
+Note:

@@ -128,6 +128,41 @@ Story body text. Two to six sentences written for audio delivery.
 
 Omit optional fields entirely when not applicable (do not write `previously_covered: false`).
 
+## Feedback Processing
+
+Before writing the briefing, process any pending listener feedback:
+
+1. **Fetch open feedback issues:**
+   ```
+   gh issue list -R {repo} --label feedback --state open --json number,title,body
+   ```
+
+2. **Parse each issue body.** The body follows this format:
+   ```
+   Date: YYYY-MM-DD
+   Story: Story Title
+   Signal: 👍 or 👎
+   Note: optional free-text
+   ```
+
+3. **Update `interests.md`** — append a dated entry under the
+   "Explicit Feedback Notes" section:
+   ```
+   - YYYY-MM-DD: 👍 Story Title
+   - YYYY-MM-DD: 👎 Story Title — listener note text here
+   ```
+   Only add the note text after an em-dash if the Note field is non-empty.
+   Do not modify any other section of `interests.md` directly. Over time,
+   use accumulated signal to revise the "Inferred Preferences" section
+   when clear patterns emerge (e.g. repeated 👎 on a topic category).
+
+4. **Close each processed issue:**
+   ```
+   gh issue close {number} -R {repo}
+   ```
+
+5. If there are no open feedback issues, skip this section silently.
+
 ## Output Instruction
 
 Save the completed script to `episodes/YYYY-MM-DD/script.md`, where
