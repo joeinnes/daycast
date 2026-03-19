@@ -9,9 +9,10 @@ import json
 import logging
 import re
 import sqlite3
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote_plus
 
 import yaml
 
@@ -430,3 +431,114 @@ def rebuild_db(db_path: str | Path, episodes_dir: str | Path) -> None:
         insert_stories(conn, parsed)
     conn.commit()
     conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Episode player page (ticket day-6ce5)
+# ---------------------------------------------------------------------------
+
+def render_episode_page(
+    parsed: dict[str, Any],
+    chapters: list[dict[str, Any]],
+    config: dict[str, Any],
+) -> str:
+    """Render a complete HTML player page for an episode.
+
+    *parsed* is the output of ``parse_script``, *chapters* a list of chapter
+    dicts with ``id``, ``title``, ``section``, and ``start`` keys, and
+    *config* a dict containing at least ``repo``.
+    """
+    date_str = parsed["date"]
+    dt = datetime.strptime(date_str, "%Y-%m-%d")
+    human_date = f"{dt.day} {dt.strftime('%B')} {dt.year}"
+
+    repo = config["repo"]
+
+    # -- Chapter markers -----------------------------------------------------
+    chapter_markers = ""
+    for ch in chapters:
+        chapter_markers += (
+            f'<div class="chapter" data-start="{ch["start"]}">'
+            f'{ch["title"]}</div>\n'
+        )
+
+    # -- Speed controls ------------------------------------------------------
+    speeds = ["0.85", "1", "1.15", "1.3"]
+    speed_buttons = "".join(
+        f'<button class="speed-btn" data-speed="{s}">{s}x</button>\n'
+        for s in speeds
+    )
+
+    # -- Transcript ----------------------------------------------------------
+    transcript = ""
+    for section in parsed["sections"]:
+        transcript += f'<h2>{section["title"]}</h2>\n'
+        for story in section["stories"]:
+            title = story["title"]
+            encoded_title = quote_plus(title)
+            em_dash = "\u2014"
+
+            def _feedback_url(
+                emoji: str,
+                _title: str = encoded_title,
+                _date: str = date_str,
+                _repo: str = repo,
+                _em: str = em_dash,
+            ) -> str:
+                encoded_emoji = quote_plus(emoji)
+                return (
+                    f"https://github.com/{_repo}/issues/new?"
+                    f"title=Feedback:+{_date}+{_em}+{_title}"
+                    f"&labels=feedback"
+                    f"&body=Date:+{_date}%0A"
+                    f"Story:+{_title}%0A"
+                    f"Signal:+{encoded_emoji}%0ANote:"
+                )
+
+            transcript += '<div class="story">\n'
+            transcript += f'<h3>{title}</h3>\n'
+
+            if story.get("previously_covered"):
+                transcript += '<span class="badge follow-up">Follow-up</span>\n'
+            if story.get("historical_callback"):
+                transcript += '<span class="badge then-now">Then &amp; Now</span>\n'
+                note = story.get("historical_note", "")
+                if note:
+                    transcript += f'<p class="historical-note">{note}</p>\n'
+
+            source = story.get("source")
+            if source:
+                transcript += f'<p class="source">Source: {source}</p>\n'
+
+            transcript += f'<p>{story["body"]}</p>\n'
+
+            transcript += (
+                f'<a class="feedback" href="{_feedback_url(chr(0x1F44D))}">'
+                '\U0001F44D</a>\n'
+            )
+            transcript += (
+                f'<a class="feedback" href="{_feedback_url(chr(0x1F44E))}">'
+                '\U0001F44E</a>\n'
+            )
+
+            transcript += '</div>\n'
+
+    return (
+        '<!DOCTYPE html>\n'
+        '<html lang="en">\n'
+        '<head>\n'
+        '<meta charset="utf-8">\n'
+        f'<title>Daily Briefing \u2014 {date_str}</title>\n'
+        '</head>\n'
+        '<body>\n'
+        f'<h1>Daily Briefing \u2014 {human_date}</h1>\n'
+        f'<p>{date_str}</p>\n'
+        '<div class="player">\n'
+        f'<audio src="audio.mp3" controls></audio>\n'
+        f'<div class="speed-controls">\n{speed_buttons}</div>\n'
+        '</div>\n'
+        f'<div class="chapters">\n{chapter_markers}</div>\n'
+        f'<div class="transcript">\n{transcript}</div>\n'
+        '</body>\n'
+        '</html>'
+    )
