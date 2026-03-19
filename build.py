@@ -254,6 +254,8 @@ async def generate_audio(
             return timings
         except Exception:
             if attempt + 1 == _TTS_MAX_ATTEMPTS:
+                if output_path.exists():
+                    output_path.unlink()
                 raise
             _log.warning("TTS attempt %d failed; retrying", attempt + 1)
 
@@ -362,7 +364,7 @@ def insert_stories(conn: sqlite3.Connection, parsed: dict[str, Any]) -> None:
         for story in section["stories"]:
             row = _story_row(date_str, section["title"], story)
             story_id = row[0]
-            conn.execute(
+            cursor = conn.execute(
                 """INSERT OR IGNORE INTO stories
                    (id, date, title, section, body, source,
                     previously_covered, update_note,
@@ -370,12 +372,13 @@ def insert_stories(conn: sqlite3.Connection, parsed: dict[str, Any]) -> None:
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 row,
             )
-            # Populate the FTS index for this story.
-            conn.execute(
-                """INSERT INTO stories_fts(rowid, title, body)
-                   SELECT rowid, title, body FROM stories WHERE id = ?""",
-                (story_id,),
-            )
+            # Populate the FTS index only when a new row was inserted.
+            if cursor.rowcount > 0:
+                conn.execute(
+                    """INSERT INTO stories_fts(rowid, title, body)
+                       SELECT rowid, title, body FROM stories WHERE id = ?""",
+                    (story_id,),
+                )
     conn.commit()
 
 
