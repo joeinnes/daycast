@@ -580,7 +580,11 @@ def render_archive(episodes_dir: str | Path) -> str:
     for subdir in episodes_dir.iterdir():
         script = subdir / "script.md"
         if subdir.is_dir() and script.exists():
-            parsed = parse_script(script)
+            try:
+                parsed = parse_script(script)
+            except Exception:
+                _log.warning("Skipping malformed episode: %s", subdir.name)
+                continue
             episodes.append({
                 "date": parsed["date"],
                 "duration_estimate": parsed["duration_estimate"],
