@@ -5,7 +5,11 @@ Parses script.md files, generates audio, and builds episode pages.
 
 from __future__ import annotations
 
+import asyncio
+import json
 import re
+import sqlite3
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -158,3 +162,210 @@ def parse_script(path: str | Path) -> dict[str, Any]:
         "intro": intro,
         "sections": sections,
     }
+
+
+def prepare_tts_text(parsed: dict[str, Any]) -> str:
+    """Concatenate intro and all story titles/bodies with pause markers."""
+    parts: list[str] = [parsed["intro"]]
+    for section in parsed["sections"]:
+        for story in section["stories"]:
+            parts.append("...")
+            parts.append(story["title"])
+            parts.append(story["body"])
+    return "\n\n".join(parts)
+
+
+async def generate_audio(
+    text: str, output_path: str | Path,
+) -> list[dict[str, Any]]:
+    """Generate audio via edge-tts with one retry on failure."""
+    import edge_tts
+
+    output_path = Path(output_path)
+
+    for attempt in range(2):
+        try:
+            comm = edge_tts.Communicate(text, voice="en-GB-RyanNeural")
+            timings: list[dict[str, Any]] = []
+            with open(output_path, "wb") as f:
+                async for chunk in comm.stream():
+                    if chunk["type"] == "audio":
+                        f.write(chunk["data"])
+                    elif chunk["type"] == "WordBoundary":
+                        timings.append({
+                            "text": chunk["text"],
+                            "offset": chunk["offset"] / 10_000_000,
+                        })
+            return timings
+        except Exception:
+            if attempt == 1:
+                raise
+
+
+def extract_chapters(
+    parsed: dict[str, Any], timings: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Match story titles to word-level timing data and return chapter list."""
+    stories: list[dict[str, Any]] = []
+    for section in parsed["sections"]:
+        for story in section["stories"]:
+            stories.append({
+                "title": story["title"],
+                "section": section["title"],
+            })
+
+    chapters: list[dict[str, Any]] = []
+    cursor = 0
+    for idx, story in enumerate(stories):
+        title_words = story["title"].split()
+        n = len(title_words)
+        for i in range(cursor, len(timings) - n + 1):
+            if all(
+                timings[i + j]["text"] == title_words[j] for j in range(n)
+            ):
+                chapters.append({
+                    "id": f"s{idx + 1}",
+                    "title": story["title"],
+                    "section": story["section"],
+                    "start": timings[i]["offset"],
+                })
+                cursor = i + n
+                break
+
+    return chapters
+
+
+def write_chapters(chapters: list[dict[str, Any]], output_path: str | Path) -> None:
+    """Write chapters list as JSON to the given path."""
+    Path(output_path).write_text(
+        json.dumps(chapters, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Database layer (ticket day-0e69)
+# ---------------------------------------------------------------------------
+
+def init_db(db_path: str | Path) -> sqlite3.Connection:
+    """Create/open the briefings database and ensure schema exists."""
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS stories (
+            id TEXT PRIMARY KEY,
+            date TEXT,
+            title TEXT,
+            section TEXT,
+            body TEXT,
+            source TEXT,
+            previously_covered INTEGER,
+            update_note TEXT,
+            historical_callback INTEGER,
+            historical_note TEXT,
+            hn_url TEXT
+        )"""
+    )
+    conn.execute(
+        """CREATE VIRTUAL TABLE IF NOT EXISTS stories_fts
+           USING fts5(title, body, content=stories, content_rowid=rowid)"""
+    )
+    conn.commit()
+    return conn
+
+
+def make_story_id(date_str: str, title: str) -> str:
+    """Generate a slugified story ID from *date_str* and *title*."""
+    slug = title.lower()
+    # Strip non-alphanumeric characters (keep hyphens and spaces).
+    slug = re.sub(r"[^a-z0-9 -]", "", slug)
+    # Replace spaces with hyphens.
+    slug = slug.replace(" ", "-")
+    # Collapse multiple consecutive hyphens.
+    slug = re.sub(r"-{2,}", "-", slug)
+    # Truncate so the full ID stays under 120 chars.
+    max_slug = 119 - len(date_str) - 1  # 1 for the joining hyphen
+    slug = slug[:max_slug]
+    # Strip trailing hyphens left over from truncation.
+    slug = slug.rstrip("-")
+    return f"{date_str}-{slug}"
+
+
+def insert_stories(conn: sqlite3.Connection, parsed: dict[str, Any]) -> None:
+    """Insert all stories from a *parsed* script into the database."""
+    date_str = parsed["date"]
+    for section in parsed["sections"]:
+        section_title = section["title"]
+        for story in section["stories"]:
+            story_id = make_story_id(date_str, story["title"])
+            conn.execute(
+                """INSERT OR IGNORE INTO stories
+                   (id, date, title, section, body, source,
+                    previously_covered, update_note,
+                    historical_callback, historical_note, hn_url)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    story_id,
+                    date_str,
+                    story["title"],
+                    section_title,
+                    story["body"],
+                    story.get("source"),
+                    int(story.get("previously_covered", False)),
+                    story.get("update_note"),
+                    int(story.get("historical_callback", False)),
+                    story.get("historical_note"),
+                    story.get("hn_url"),
+                ),
+            )
+            # Populate the FTS index for this story.
+            conn.execute(
+                """INSERT INTO stories_fts(rowid, title, body)
+                   SELECT rowid, title, body FROM stories WHERE id = ?""",
+                (story_id,),
+            )
+    conn.commit()
+
+
+def query_recent(conn: sqlite3.Connection, days: int = 3) -> list[sqlite3.Row]:
+    """Return stories from the last *days* days, ordered by date descending."""
+    cutoff = (date.today() - timedelta(days=days)).isoformat()
+    cursor = conn.execute(
+        "SELECT * FROM stories WHERE date >= ? ORDER BY date DESC",
+        (cutoff,),
+    )
+    return cursor.fetchall()
+
+
+def query_historical(
+    conn: sqlite3.Connection, query_text: str, days_ago: int = 3,
+) -> list[sqlite3.Row]:
+    """FTS search for *query_text* among stories older than *days_ago* days."""
+    cutoff = (date.today() - timedelta(days=days_ago)).isoformat()
+    cursor = conn.execute(
+        """SELECT stories.*
+           FROM stories_fts
+           JOIN stories ON stories.rowid = stories_fts.rowid
+           WHERE stories_fts MATCH ?
+             AND stories.date < ?
+           ORDER BY stories.date DESC
+           LIMIT 3""",
+        (query_text, cutoff),
+    )
+    return cursor.fetchall()
+
+
+def rebuild_db(db_path: str | Path, episodes_dir: str | Path) -> None:
+    """Drop all data, re-init the schema, and replay every episode."""
+    conn = sqlite3.connect(str(db_path))
+    conn.execute("DROP TABLE IF EXISTS stories_fts")
+    conn.execute("DROP TABLE IF EXISTS stories")
+    conn.commit()
+    conn.close()
+
+    conn = init_db(db_path)
+    for script in sorted(Path(episodes_dir).glob("*/script.md")):
+        parsed = parse_script(script)
+        insert_stories(conn, parsed)
+    conn.commit()
+    conn.close()
