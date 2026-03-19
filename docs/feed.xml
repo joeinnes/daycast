@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:psc="http://podlove.org/simple-chapters"
+  xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Daycast</title>
+  <link>https://joeinnes.github.io/daycast</link>
+  <description>A daily news briefing, automatically generated.</description>
+  <language>en-gb</language>
+  <itunes:author>Daycast</itunes:author>
+  <itunes:category text="News" />
+  <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>Daycast — 2026-03-19</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-19/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-19</guid>
+    <pubDate>Thu, 19 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Europe Sleepwalks into Another Energy Crisis; Hungary Deepens Ukraine Rift as Election Nears; CPAC and Patriots Assembly Head to Budapest This Weekend; Hungarian Society Has Slipped Dramatically, ELTE Researchers Find; Government Backtracks on AI Copyright After Artist Outcry; Astral, Makers of Ruff and uv, Join OpenAI; A Sufficiently Detailed Spec Is Code; Quantum Cryptography Pioneers Win the Turing Award; Adrian Newey Departs Aston Martin as Wheatley Takes the Reins</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-19/audio.mp3" length="2312352" type="audio/mpeg" />
+    <itunes:duration>7 minutes</itunes:duration>
+    <itunes:summary>Europe Sleepwalks into Another Energy Crisis; Hungary Deepens Ukraine Rift as Election Nears; CPAC and Patriots Assembly Head to Budapest This Weekend; Hungarian Society Has Slipped Dramatically, ELTE Researchers Find; Government Backtracks on AI Copyright After Artist Outcry; Astral, Makers of Ruff and uv, Join OpenAI; A Sufficiently Detailed Spec Is Code; Quantum Cryptography Pioneers Win the Turing Award; Adrian Newey Departs Aston Martin as Wheatley Takes the Reins</itunes:summary>
+  </item>
+</channel>
+</rss>
