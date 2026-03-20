@@ -12,6 +12,32 @@
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Daycast — 2026-03-20</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-20/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-20</guid>
+    <pubDate>Fri, 20 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Iran Conflict Deepens as Israel Strikes Tehran Again; Denmark Had Plans to Blow Up Greenland Runways If the US Invaded; Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy; COVID Inquiry Finds NHS Came Close to Collapse; EU Leaders Line Up Against Orbán Over Ukrainian Loan; Fuel Crisis Hits Hungarian Gas Stations; Hungarian Soldiers Return from Iraq as NATO Withdraws; Bahrain and Saudi Grands Prix Cancelled as Season Shrinks; Newey Departs Aston Martin; Astral Joins OpenAI; Claude Code Gets Channels for Pushing Events into Running Sessions; Noq: A New QUIC Implementation in Rust; KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes; CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-20/audio.mp3" length="3409344" type="audio/mpeg" />
+    <itunes:duration>00:09:18</itunes:duration>
+    <itunes:summary>Iran Conflict Deepens as Israel Strikes Tehran Again; Denmark Had Plans to Blow Up Greenland Runways If the US Invaded; Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy; COVID Inquiry Finds NHS Came Close to Collapse; EU Leaders Line Up Against Orbán Over Ukrainian Loan; Fuel Crisis Hits Hungarian Gas Stations; Hungarian Soldiers Return from Iraq as NATO Withdraws; Bahrain and Saudi Grands Prix Cancelled as Season Shrinks; Newey Departs Aston Martin; Astral Joins OpenAI; Claude Code Gets Channels for Pushing Events into Running Sessions; Noq: A New QUIC Implementation in Rust; KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes; CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:12.363" title="Iran Conflict Deepens as Israel Strikes Tehran Again" />
+      <psc:chapter start="00:01:26.100" title="Denmark Had Plans to Blow Up Greenland Runways If the US Invaded" />
+      <psc:chapter start="00:01:53.487" title="Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy" />
+      <psc:chapter start="00:02:37.500" title="COVID Inquiry Finds NHS Came Close to Collapse" />
+      <psc:chapter start="00:03:01.775" title="EU Leaders Line Up Against Orbán Over Ukrainian Loan" />
+      <psc:chapter start="00:03:52.537" title="Fuel Crisis Hits Hungarian Gas Stations" />
+      <psc:chapter start="00:04:23.375" title="Hungarian Soldiers Return from Iraq as NATO Withdraws" />
+      <psc:chapter start="00:04:53.312" title="Bahrain and Saudi Grands Prix Cancelled as Season Shrinks" />
+      <psc:chapter start="00:05:29.038" title="Newey Departs Aston Martin" />
+      <psc:chapter start="00:06:02.163" title="Astral Joins OpenAI" />
+      <psc:chapter start="00:06:54.750" title="Claude Code Gets Channels for Pushing Events into Running Sessions" />
+      <psc:chapter start="00:07:30.938" title="Noq: A New QUIC Implementation in Rust" />
+      <psc:chapter start="00:08:10.500" title="KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes" />
+      <psc:chapter start="00:08:48.038" title="CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider" />
+    </psc:chapters>
+  </item>
+  <item>
     <title>Daycast — 2026-03-19</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-19/index.html</link>
     <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-19</guid>
