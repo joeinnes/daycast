@@ -327,17 +327,39 @@ def extract_chapters(
     return []
 
 
+def _first_sentence(text: str) -> str:
+    """Extract the first sentence from *text*."""
+    # Split on sentence-ending punctuation followed by a space.
+    match = re.match(r"^(.+?[.!?])(?:\s|$)", text)
+    return match.group(1) if match else text
+
+
 def _extract_chapters_from_sentences(
     stories: list[dict[str, Any]],
     sentence_timings: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Match story titles against sentence-level timing data."""
+    """Match stories against sentence-level timing data.
+
+    Tries to match the first sentence of each story's body against
+    sentence timings.  Falls back to title matching if the body
+    match fails.
+    """
     chapters: list[dict[str, Any]] = []
     cursor = 0
     for idx, story in enumerate(stories):
+        body_first = _normalise_sentence(_first_sentence(story["body"]))
         norm_title = _normalise_sentence(story["title"])
         for i in range(cursor, len(sentence_timings)):
             norm_sentence = _normalise_sentence(sentence_timings[i]["text"])
+            if norm_sentence == body_first or norm_sentence.startswith(body_first):
+                chapters.append({
+                    "id": f"s{idx + 1}",
+                    "title": story["title"],
+                    "section": story["section"],
+                    "start": sentence_timings[i]["offset"],
+                })
+                cursor = i + 1
+                break
             if norm_title == norm_sentence or norm_sentence.startswith(norm_title):
                 chapters.append({
                     "id": f"s{idx + 1}",

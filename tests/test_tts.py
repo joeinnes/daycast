@@ -589,7 +589,8 @@ def test_prepare_tts_text_excludes_titles(parsed):
 
 def test_extract_chapters_from_sentence_boundaries():
     """When timings contain sentence boundaries (modern edge-tts),
-    extract_chapters should match titles against sentence text."""
+    extract_chapters should match the first sentence of each story's
+    body against sentence timing text."""
     from build import extract_chapters
 
     parsed = {
@@ -598,28 +599,29 @@ def test_extract_chapters_from_sentence_boundaries():
         "intro": "Good morning.",
         "sections": [
             {
-                "title": "World News",
+                "title": "Europe Sleepwalks into Another Energy Crisis",
                 "stories": [
                     {"title": "Europe Sleepwalks into Another Energy Crisis",
-                     "body": "The Bank of England held rates."},
+                     "body": "The Bank of England held rates. More details follow."},
                 ],
             },
             {
                 "title": "Hungary",
                 "stories": [
                     {"title": "Hungary Deepens Ukraine Rift as Election Nears",
-                     "body": "Viktor Orban continues to block."},
+                     "body": "Viktor Orban continues to block. Further text here."},
                 ],
             },
         ],
     }
 
+    # Sentence timings from body text (titles are no longer in TTS)
     timings = [
         {"text": "Good morning.", "offset": 0.1, "type": "sentence"},
-        {"text": "Europe Sleepwalks into Another Energy Crisis.", "offset": 3.5, "type": "sentence"},
-        {"text": "The Bank of England held rates.", "offset": 8.2, "type": "sentence"},
-        {"text": "Hungary Deepens Ukraine Rift as Election Nears.", "offset": 25.0, "type": "sentence"},
-        {"text": "Viktor Orban continues to block.", "offset": 30.1, "type": "sentence"},
+        {"text": "The Bank of England held rates.", "offset": 3.5, "type": "sentence"},
+        {"text": "More details follow.", "offset": 8.2, "type": "sentence"},
+        {"text": "Viktor Orban continues to block.", "offset": 25.0, "type": "sentence"},
+        {"text": "Further text here.", "offset": 30.1, "type": "sentence"},
     ]
 
     chapters = extract_chapters(parsed, timings)
