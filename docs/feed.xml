@@ -18,8 +18,24 @@
     <pubDate>Fri, 20 Mar 2026 06:00:00 +0000</pubDate>
     <description>Iran Conflict Deepens as Israel Strikes Tehran Again; Denmark Had Plans to Blow Up Greenland Runways If the US Invaded; Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy; COVID Inquiry Finds NHS Came Close to Collapse; EU Leaders Line Up Against Orbán Over Ukrainian Loan; Fuel Crisis Hits Hungarian Gas Stations; Hungarian Soldiers Return from Iraq as NATO Withdraws; Bahrain and Saudi Grands Prix Cancelled as Season Shrinks; Newey Departs Aston Martin; Astral Joins OpenAI; Claude Code Gets Channels for Pushing Events into Running Sessions; Noq: A New QUIC Implementation in Rust; KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes; CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider</description>
     <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-20/audio.mp3" length="2345328" type="audio/mpeg" />
-    <itunes:duration>00:06:30</itunes:duration>
+    <itunes:duration>00:06:24</itunes:duration>
     <itunes:summary>Iran Conflict Deepens as Israel Strikes Tehran Again; Denmark Had Plans to Blow Up Greenland Runways If the US Invaded; Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy; COVID Inquiry Finds NHS Came Close to Collapse; EU Leaders Line Up Against Orbán Over Ukrainian Loan; Fuel Crisis Hits Hungarian Gas Stations; Hungarian Soldiers Return from Iraq as NATO Withdraws; Bahrain and Saudi Grands Prix Cancelled as Season Shrinks; Newey Departs Aston Martin; Astral Joins OpenAI; Claude Code Gets Channels for Pushing Events into Running Sessions; Noq: A New QUIC Implementation in Rust; KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes; CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:12.363" title="Iran Conflict Deepens as Israel Strikes Tehran Again" />
+      <psc:chapter start="00:01:05.875" title="Denmark Had Plans to Blow Up Greenland Runways If the US Invaded" />
+      <psc:chapter start="00:01:28.688" title="Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy" />
+      <psc:chapter start="00:01:53.825" title="COVID Inquiry Finds NHS Came Close to Collapse" />
+      <psc:chapter start="00:02:13.988" title="EU Leaders Line Up Against Orbán Over Ukrainian Loan" />
+      <psc:chapter start="00:02:45.387" title="Fuel Crisis Hits Hungarian Gas Stations" />
+      <psc:chapter start="00:03:11.625" title="Hungarian Soldiers Return from Iraq as NATO Withdraws" />
+      <psc:chapter start="00:03:38.238" title="Bahrain and Saudi Grands Prix Cancelled as Season Shrinks" />
+      <psc:chapter start="00:04:09.838" title="Newey Departs Aston Martin" />
+      <psc:chapter start="00:04:28.113" title="Astral Joins OpenAI" />
+      <psc:chapter start="00:04:52.275" title="Claude Code Gets Channels for Pushing Events into Running Sessions" />
+      <psc:chapter start="00:05:12.025" title="Noq: A New QUIC Implementation in Rust" />
+      <psc:chapter start="00:05:35.400" title="KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes" />
+      <psc:chapter start="00:05:54.925" title="CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider" />
+    </psc:chapters>
   </item>
   <item>
     <title>Daycast — 2026-03-19</title>
