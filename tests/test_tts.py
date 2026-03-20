@@ -574,6 +574,19 @@ def test_extract_chapters_matches_despite_punctuation():
     assert chapters[1]["start"] == pytest.approx(20.0)
 
 
+def test_prepare_tts_text_excludes_titles(parsed):
+    """Story titles should NOT appear verbatim in the TTS text — they are
+    for the web UI only. The body text is self-contained."""
+    from build import prepare_tts_text
+
+    result = prepare_tts_text(parsed)
+    for section in parsed["sections"]:
+        for story in section["stories"]:
+            assert story["title"] not in result, (
+                f"Title '{story['title']}' should not appear in TTS text"
+            )
+
+
 def test_extract_chapters_from_sentence_boundaries():
     """When timings contain sentence boundaries (modern edge-tts),
     extract_chapters should match titles against sentence text."""

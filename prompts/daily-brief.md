@@ -48,7 +48,7 @@ Fetch from these sources each day:
 | BBC News | RSS | Fetch the World, UK, and Technology feeds |
 | Telex.hu | RSS | Fetch the main feed; translate to English for selection and writing |
 | Hacker News | API | Fetch top 30 stories by score; filter by interests.md |
-| formula1.com | RSS | Fetch the news feed; always include on race weekends |
+| motorsport.com/f1 | HTML/Web | Fetch the news feed; always include on race weekends |
 
 Adding a new source: edit this table. No code changes needed.
 
@@ -56,9 +56,9 @@ Adding a new source: edit this table. No code changes needed.
 
 1. Start with Always Include topics — find the day's top story for each
 2. Scan Strong Interest topics for meaningful developments
-3. Check HN top 30 against interests.md — pick 1-3 with genuine technical substance
+3. Check HN top 50 against interests.md — pick a number of articles with genuine technical substance
 4. Check Low Interest topics — only include if the story would be the lead elsewhere
-5. Target 5-8 stories total, aiming for the `duration_estimate` of ~7 minutes
+5. Target 10-15 stories total, aiming for the `duration_estimate` of ~10-15 minutes
 6. Group stories into sections: use the source's natural domain (World News,
    Tech & Developer, Formula 1, Hungary, etc.)
 
@@ -81,6 +81,12 @@ Adding a new source: edit this table. No code changes needed.
   e.g. "When this story first broke in March last year, X was the concern.
   Today, Y."
 - HN stories: include the core technical idea, not just the headline
+- Story titles are **not read aloud** — they appear only in the web player
+  and RSS feed. Write them as natural sentence fragments, not newspaper
+  headlines. Good: "The conflict in Iran deepens as Israel strikes Tehran
+  again". Bad: "Iran Conflict Deepens as Israel Strikes Tehran Again".
+- The body must be self-contained — do not assume the listener has heard
+  the title. The body's opening sentence should introduce the topic.
 - 2-4 sentences per story for standard items; up to 6 for lead stories
 - Opening line sets the date and tone. No "Good morning" — just begin.
 - British English spellings throughout
@@ -113,6 +119,9 @@ hn_url: https://news.ycombinator.com/item?id=...
 Story body text. Two to six sentences written for audio delivery.
 
 ---
+
+Closing line wrapping up today's briefing.
+
 *End of briefing.*
 ```
 
@@ -129,16 +138,22 @@ Story body text. Two to six sentences written for audio delivery.
 
 Omit optional fields entirely when not applicable (do not write `previously_covered: false`).
 
+**Important:** All metadata fields for a story must appear on consecutive
+lines directly below the `### Title` line, before any blank line or body
+text. Do not place `hn_url` or other metadata after the story body.
+
 ## Feedback Processing
 
 Before writing the briefing, process any pending listener feedback:
 
 1. **Fetch open feedback issues:**
+
    ```
    gh issue list -R joeinnes/daycast --label feedback --state open --json number,title,body
    ```
 
 2. **Parse each issue body.** The body follows this format:
+
    ```
    Date: YYYY-MM-DD
    Story: Story Title
@@ -148,16 +163,19 @@ Before writing the briefing, process any pending listener feedback:
 
 3. **Update `interests.md`** — append a dated entry under the
    "Explicit Feedback Notes" section:
+
    ```
    - YYYY-MM-DD: 👍 Story Title
    - YYYY-MM-DD: 👎 Story Title — listener note text here
    ```
+
    Only add the note text after an em-dash if the Note field is non-empty.
    Do not modify any other section of `interests.md` directly. Over time,
    use accumulated signal to revise the "Inferred Preferences" section
    when clear patterns emerge (e.g. repeated 👎 on a topic category).
 
 4. **Close each processed issue:**
+
    ```
    gh issue close {number} -R joeinnes/daycast
    ```

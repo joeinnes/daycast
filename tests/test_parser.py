@@ -424,3 +424,79 @@ def test_metadata_value_with_colon(tmp_path):
     story = result["sections"][0]["stories"][0]
     assert story["source"] == "Reuters: Breaking News"
     assert story["hn_url"] == "https://news.ycombinator.com/item?id=123"
+
+
+# ---------------------------------------------------------------------------
+# Metadata lines after blank lines must still be extracted
+# ---------------------------------------------------------------------------
+
+def test_metadata_after_blank_line_extracted(tmp_path):
+    """Metadata fields appearing after a blank line (e.g. when the AI
+    separates source from previously_covered) must still be parsed as
+    metadata, not included in the body."""
+    from build import parse_script
+
+    content = (
+        "---\n"
+        "date: 2026-03-20\n"
+        "duration_estimate: 5 minutes\n"
+        "---\n"
+        "\n"
+        "# Daily Briefing — Friday, 20 March 2026\n"
+        "\n"
+        "Scene-setter.\n"
+        "\n"
+        "## World News\n"
+        "\n"
+        "### Some Story\n"
+        "source: BBC News\n"
+        "\n"
+        "previously_covered: true\n"
+        "update_note: What changed since last coverage\n"
+        "\n"
+        "The actual body text of the story.\n"
+    )
+    script = tmp_path / "script.md"
+    script.write_text(content)
+    result = parse_script(script)
+    story = result["sections"][0]["stories"][0]
+
+    assert story["previously_covered"] is True
+    assert story["update_note"] == "What changed since last coverage"
+    assert "previously_covered" not in story["body"]
+    assert "update_note" not in story["body"]
+    assert "The actual body text" in story["body"]
+
+
+def test_hn_url_after_body_extracted(tmp_path):
+    """hn_url placed after the body text must still be extracted as
+    metadata, not included in the body."""
+    from build import parse_script
+
+    content = (
+        "---\n"
+        "date: 2026-03-20\n"
+        "duration_estimate: 5 minutes\n"
+        "---\n"
+        "\n"
+        "# Daily Briefing — Friday, 20 March 2026\n"
+        "\n"
+        "Scene-setter.\n"
+        "\n"
+        "## Tech\n"
+        "\n"
+        "### HN Story\n"
+        "source: Hacker News\n"
+        "\n"
+        "The body text of the story.\n"
+        "\n"
+        "hn_url: https://news.ycombinator.com/item?id=12345\n"
+    )
+    script = tmp_path / "script.md"
+    script.write_text(content)
+    result = parse_script(script)
+    story = result["sections"][0]["stories"][0]
+
+    assert story["hn_url"] == "https://news.ycombinator.com/item?id=12345"
+    assert "hn_url" not in story["body"]
+    assert "The body text" in story["body"]

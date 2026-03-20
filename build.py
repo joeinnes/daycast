@@ -45,29 +45,28 @@ _FIELD_DEFAULTS: list[tuple[str, Any, Any]] = [
 ]
 
 
+_KNOWN_METADATA_KEYS = {field for field, _, _ in _FIELD_DEFAULTS}
+
+
 def _parse_story_block(lines: list[str]) -> dict[str, Any]:
     """Parse a single story's lines (everything after the ### heading).
 
-    Lines before the first blank line that match ``key: value`` are treated
-    as metadata; everything from the first blank line onward (or from the
-    first non-metadata line) is the body.
+    Known metadata fields (source, previously_covered, update_note, etc.)
+    are extracted regardless of where they appear in the block — the Cowork
+    AI sometimes places them after blank lines or even after body text.
+    Everything else is body.
     """
     metadata: dict[str, str] = {}
     body_lines: list[str] = []
-    in_body = False
 
     for line in lines:
-        if in_body:
-            body_lines.append(line)
-        elif line.strip() == "":
-            in_body = True
-        elif _METADATA_RE.match(line):
+        if _METADATA_RE.match(line):
             key, _, value = line.partition(":")
-            metadata[key.strip()] = value.strip()
-        else:
-            # Non-metadata, non-blank line before a blank line -- body starts.
-            in_body = True
-            body_lines.append(line)
+            key = key.strip()
+            if key in _KNOWN_METADATA_KEYS:
+                metadata[key] = value.strip()
+                continue
+        body_lines.append(line)
 
     story: dict[str, Any] = {}
     for field, default, coerce in _FIELD_DEFAULTS:
@@ -217,15 +216,16 @@ def _flatten_stories(parsed: dict[str, Any]) -> list[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 def prepare_tts_text(parsed: dict[str, Any]) -> str:
-    """Concatenate intro and all story titles/bodies with pause markers.
+    """Concatenate intro and all story bodies with pause markers.
 
+    Titles are omitted — they serve the web UI, not the audio. The body
+    text is self-contained and reads naturally without a headline prefix.
     Stories are separated by ``...`` pause markers so the TTS engine
     produces a brief silence between segments.
     """
     parts: list[str] = [parsed["intro"]]
     for story in _flatten_stories(parsed):
         parts.append("...")
-        parts.append(story["title"])
         parts.append(story["body"])
     return "\n\n".join(parts)
 
