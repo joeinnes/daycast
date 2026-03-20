@@ -26,10 +26,18 @@ Read `context.md` for the database queries available to you. If
 `briefings.db` does not yet exist (first run), skip this section entirely.
 
 When the database is available, check the recency window (`query_recent`,
-last 3 days) to identify stories already covered. For those stories:
+last 3 days) to identify stories already covered. **Read the full body
+text** of previous coverage — do not rely on titles alone. For those
+stories:
 
+- Only include the story if there is a **genuinely new development**
+  that was not mentioned in the previous coverage. A detail already
+  reported yesterday is not new today, even if today's source frames
+  it differently.
 - Set `previously_covered: true`
-- Add an `update_note` explaining what is new
+- Add an `update_note` that precisely describes what has changed since
+  the last coverage. Verify each claim in the update_note against the
+  previous body text — if it was already stated, do not repeat it.
 - Keep the body concise — do not re-explain background
 
 For stories with deeper history, use `query_historical` to search for earlier
