@@ -1,0 +1,98 @@
+[
+  {
+    "id": "s1",
+    "title": "The US lifts sanctions on its own enemy's oil as prices hit new highs",
+    "section": "World News",
+    "start": 11.25
+  },
+  {
+    "id": "s2",
+    "title": "Iranian man and companion arrested at Britain's nuclear submarine base",
+    "section": "World News",
+    "start": 42.4375
+  },
+  {
+    "id": "s3",
+    "title": "Trump compares the attack on Iran to Pearl Harbor in meeting with Japan's prime minister",
+    "section": "World News",
+    "start": 70.2625
+  },
+  {
+    "id": "s4",
+    "title": "Israel strikes Syria, saying it will not tolerate attacks on the Druze",
+    "section": "World News",
+    "start": 94.8125
+  },
+  {
+    "id": "s5",
+    "title": "A jury finds Elon Musk misled Twitter investors ahead of the forty-four billion dollar takeover",
+    "section": "World News",
+    "start": 121.3625
+  },
+  {
+    "id": "s6",
+    "title": "CPAC Hungary and the Patriots rally bring Europe's far right to Budapest",
+    "section": "Hungary",
+    "start": 148.7875
+  },
+  {
+    "id": "s7",
+    "title": "National Election Commission fines public media for biased coverage",
+    "section": "Hungary",
+    "start": 182.4875
+  },
+  {
+    "id": "s8",
+    "title": "Fertiliser supply disrupted as Hungary lacks emergency reserves",
+    "section": "Hungary",
+    "start": 204.0625
+  },
+  {
+    "id": "s9",
+    "title": "Energy bills forecast to rise by three hundred and thirty-two pounds a year from July",
+    "section": "UK",
+    "start": 230.4125
+  },
+  {
+    "id": "s10",
+    "title": "Audi confirm Wheatley's immediate departure as Aston Martin move takes shape",
+    "section": "Formula 1",
+    "start": 254.65
+  },
+  {
+    "id": "s11",
+    "title": "NASA's Artemis Two moon rocket rolls to the launch pad for a possible April liftoff",
+    "section": "Space",
+    "start": 281.1
+  },
+  {
+    "id": "s12",
+    "title": "ArXiv, the pioneering preprint server, declares independence from Cornell",
+    "section": "Tech & Developer",
+    "start": 317.25
+  },
+  {
+    "id": "s13",
+    "title": "OpenCode launches as an open-source AI coding agent",
+    "section": "Tech & Developer",
+    "start": 353.5875
+  },
+  {
+    "id": "s14",
+    "title": "A team rewrote their Rust WebAssembly parser in TypeScript and it got faster",
+    "section": "Tech & Developer",
+    "start": 378.2875
+  },
+  {
+    "id": "s15",
+    "title": "Someone built a Bluesky client in Fortran, because of course they did",
+    "section": "Tech & Developer",
+    "start": 402.925
+  },
+  {
+    "id": "s16",
+    "title": "A French sailor's fitness app revealed the aircraft carrier Charles de Gaulle's location",
+    "section": "Tech & Developer",
+    "start": 426.675
+  }
+]

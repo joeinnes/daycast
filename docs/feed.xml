@@ -9,8 +9,37 @@
   <description>A daily news briefing, automatically generated.</description>
   <language>en-gb</language>
   <itunes:author>Daycast</itunes:author>
+  <itunes:image href="https://joeinnes.github.io/daycast/cover.jpg" />
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>Daycast — 2026-03-21</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-21/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-21</guid>
+    <pubDate>Sat, 21 Mar 2026 06:00:00 +0000</pubDate>
+    <description>The US lifts sanctions on its own enemy's oil as prices hit new highs; Iranian man and companion arrested at Britain's nuclear submarine base; Trump compares the attack on Iran to Pearl Harbor in meeting with Japan's prime minister; Israel strikes Syria, saying it will not tolerate attacks on the Druze; A jury finds Elon Musk misled Twitter investors ahead of the forty-four billion dollar takeover; CPAC Hungary and the Patriots rally bring Europe's far right to Budapest; National Election Commission fines public media for biased coverage; Fertiliser supply disrupted as Hungary lacks emergency reserves; Energy bills forecast to rise by three hundred and thirty-two pounds a year from July; Audi confirm Wheatley's immediate departure as Aston Martin move takes shape; NASA's Artemis Two moon rocket rolls to the launch pad for a possible April liftoff; ArXiv, the pioneering preprint server, declares independence from Cornell; OpenCode launches as an open-source AI coding agent; A team rewrote their Rust WebAssembly parser in TypeScript and it got faster; Someone built a Bluesky client in Fortran, because of course they did; A French sailor's fitness app revealed the aircraft carrier Charles de Gaulle's location</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-21/audio.mp3" length="2778336" type="audio/mpeg" />
+    <itunes:duration>00:07:36</itunes:duration>
+    <itunes:summary>The US lifts sanctions on its own enemy's oil as prices hit new highs; Iranian man and companion arrested at Britain's nuclear submarine base; Trump compares the attack on Iran to Pearl Harbor in meeting with Japan's prime minister; Israel strikes Syria, saying it will not tolerate attacks on the Druze; A jury finds Elon Musk misled Twitter investors ahead of the forty-four billion dollar takeover; CPAC Hungary and the Patriots rally bring Europe's far right to Budapest; National Election Commission fines public media for biased coverage; Fertiliser supply disrupted as Hungary lacks emergency reserves; Energy bills forecast to rise by three hundred and thirty-two pounds a year from July; Audi confirm Wheatley's immediate departure as Aston Martin move takes shape; NASA's Artemis Two moon rocket rolls to the launch pad for a possible April liftoff; ArXiv, the pioneering preprint server, declares independence from Cornell; OpenCode launches as an open-source AI coding agent; A team rewrote their Rust WebAssembly parser in TypeScript and it got faster; Someone built a Bluesky client in Fortran, because of course they did; A French sailor's fitness app revealed the aircraft carrier Charles de Gaulle's location</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:11.250" title="The US lifts sanctions on its own enemy's oil as prices hit new highs" />
+      <psc:chapter start="00:00:42.438" title="Iranian man and companion arrested at Britain's nuclear submarine base" />
+      <psc:chapter start="00:01:10.263" title="Trump compares the attack on Iran to Pearl Harbor in meeting with Japan's prime minister" />
+      <psc:chapter start="00:01:34.812" title="Israel strikes Syria, saying it will not tolerate attacks on the Druze" />
+      <psc:chapter start="00:02:01.362" title="A jury finds Elon Musk misled Twitter investors ahead of the forty-four billion dollar takeover" />
+      <psc:chapter start="00:02:28.787" title="CPAC Hungary and the Patriots rally bring Europe's far right to Budapest" />
+      <psc:chapter start="00:03:02.488" title="National Election Commission fines public media for biased coverage" />
+      <psc:chapter start="00:03:24.062" title="Fertiliser supply disrupted as Hungary lacks emergency reserves" />
+      <psc:chapter start="00:03:50.412" title="Energy bills forecast to rise by three hundred and thirty-two pounds a year from July" />
+      <psc:chapter start="00:04:14.650" title="Audi confirm Wheatley's immediate departure as Aston Martin move takes shape" />
+      <psc:chapter start="00:04:41.100" title="NASA's Artemis Two moon rocket rolls to the launch pad for a possible April liftoff" />
+      <psc:chapter start="00:05:17.250" title="ArXiv, the pioneering preprint server, declares independence from Cornell" />
+      <psc:chapter start="00:05:53.587" title="OpenCode launches as an open-source AI coding agent" />
+      <psc:chapter start="00:06:18.288" title="A team rewrote their Rust WebAssembly parser in TypeScript and it got faster" />
+      <psc:chapter start="00:06:42.925" title="Someone built a Bluesky client in Fortran, because of course they did" />
+      <psc:chapter start="00:07:06.675" title="A French sailor's fitness app revealed the aircraft carrier Charles de Gaulle's location" />
+    </psc:chapters>
+  </item>
   <item>
     <title>Daycast — 2026-03-20</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-20/index.html</link>
