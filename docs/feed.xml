@@ -13,6 +13,33 @@
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Daycast — 2026-03-22</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-22/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-22</guid>
+    <pubDate>Sun, 22 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Iran strikes towns near Israel's nuclear research centre at Dimona; Iran fires missiles at Diego Garcia, revealing range far beyond official claims; Trump at a crossroads as conditions on the ground defy talk of a quick end; Robert Mueller, former FBI director who led the Trump-Russia inquiry, dies at eighty-one; Food prices set to rise within weeks as Iran war disrupts supply chains; Foreign Secretary Cooper says UK does not agree with Trump on every issue; CPAC Hungary and Patriots assembly bring Europe's populist right to Budapest; Orbán's Slovenian ally Janša faces tight race in parliamentary election; Entire Carpathian Basin faces critically low soil moisture ahead of planting season; Tens of thousands protest in Prague against Babiš government; The three pillars of JavaScript bloat; Armin Ronacher argues that some things just take time; Ubuntu 26.04 ends forty-six years of silent sudo password entry; European digital rights groups warn against turning child protection into internet access control; Japanese Grand Prix at Suzuka next weekend as season enters five-week gap</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-22/audio.mp3" length="3111408" type="audio/mpeg" />
+    <itunes:duration>00:08:26</itunes:duration>
+    <itunes:summary>Iran strikes towns near Israel's nuclear research centre at Dimona; Iran fires missiles at Diego Garcia, revealing range far beyond official claims; Trump at a crossroads as conditions on the ground defy talk of a quick end; Robert Mueller, former FBI director who led the Trump-Russia inquiry, dies at eighty-one; Food prices set to rise within weeks as Iran war disrupts supply chains; Foreign Secretary Cooper says UK does not agree with Trump on every issue; CPAC Hungary and Patriots assembly bring Europe's populist right to Budapest; Orbán's Slovenian ally Janša faces tight race in parliamentary election; Entire Carpathian Basin faces critically low soil moisture ahead of planting season; Tens of thousands protest in Prague against Babiš government; The three pillars of JavaScript bloat; Armin Ronacher argues that some things just take time; Ubuntu 26.04 ends forty-six years of silent sudo password entry; European digital rights groups warn against turning child protection into internet access control; Japanese Grand Prix at Suzuka next weekend as season enters five-week gap</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:15.650" title="Iran strikes towns near Israel's nuclear research centre at Dimona" />
+      <psc:chapter start="00:01:05.500" title="Iran fires missiles at Diego Garcia, revealing range far beyond official claims" />
+      <psc:chapter start="00:01:43.513" title="Trump at a crossroads as conditions on the ground defy talk of a quick end" />
+      <psc:chapter start="00:02:11.287" title="Robert Mueller, former FBI director who led the Trump-Russia inquiry, dies at eighty-one" />
+      <psc:chapter start="00:02:45.500" title="Food prices set to rise within weeks as Iran war disrupts supply chains" />
+      <psc:chapter start="00:03:16.988" title="Foreign Secretary Cooper says UK does not agree with Trump on every issue" />
+      <psc:chapter start="00:03:39.950" title="CPAC Hungary and Patriots assembly bring Europe's populist right to Budapest" />
+      <psc:chapter start="00:04:18.137" title="Orbán's Slovenian ally Janša faces tight race in parliamentary election" />
+      <psc:chapter start="00:04:47.050" title="Entire Carpathian Basin faces critically low soil moisture ahead of planting season" />
+      <psc:chapter start="00:05:16.275" title="Tens of thousands protest in Prague against Babiš government" />
+      <psc:chapter start="00:05:38.288" title="The three pillars of JavaScript bloat" />
+      <psc:chapter start="00:06:14.950" title="Armin Ronacher argues that some things just take time" />
+      <psc:chapter start="00:06:50.438" title="Ubuntu 26.04 ends forty-six years of silent sudo password entry" />
+      <psc:chapter start="00:07:23.125" title="European digital rights groups warn against turning child protection into internet access control" />
+      <psc:chapter start="00:07:56.350" title="Japanese Grand Prix at Suzuka next weekend as season enters five-week gap" />
+    </psc:chapters>
+  </item>
+  <item>
     <title>Daycast — 2026-03-21</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-21/index.html</link>
     <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-21</guid>
