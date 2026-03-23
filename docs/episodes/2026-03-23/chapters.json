@@ -1,0 +1,80 @@
+[
+  {
+    "id": "s1",
+    "title": "Israel announces expanded ground and air operations against Hezbollah in Lebanon",
+    "section": "World News",
+    "start": 14.025
+  },
+  {
+    "id": "s2",
+    "title": "France's Socialists hold Paris and Marseille in municipal elections as far right gains ground",
+    "section": "World News",
+    "start": 63.4125
+  },
+  {
+    "id": "s3",
+    "title": "Iranian missiles injure a hundred and eighty in towns near Israel's nuclear research site",
+    "section": "World News",
+    "start": 96.325
+  },
+  {
+    "id": "s4",
+    "title": "Four ambulances set on fire in London in suspected antisemitic hate crime",
+    "section": "UK",
+    "start": 124.1375
+  },
+  {
+    "id": "s5",
+    "title": "Government backtracks on artificial intelligence and copyright after outcry from artists",
+    "section": "UK",
+    "start": 150.2625
+  },
+  {
+    "id": "s6",
+    "title": "Orbán campaigns in opposition strongholds ahead of April election",
+    "section": "Hungary & Central Europe",
+    "start": 185.0875
+  },
+  {
+    "id": "s7",
+    "title": "Russian disinformation network spreads false assassination claims about Orbán",
+    "section": "Hungary & Central Europe",
+    "start": 224.668
+  },
+  {
+    "id": "s8",
+    "title": "Germany's far right reaches twenty per cent in western state election",
+    "section": "Hungary & Central Europe",
+    "start": 258.293
+  },
+  {
+    "id": "s9",
+    "title": "Bram Cohen outlines Mañana, a new approach to version control",
+    "section": "Tech & Developer",
+    "start": 284.1055
+  },
+  {
+    "id": "s10",
+    "title": "Reports of code's death are greatly exaggerated",
+    "section": "Tech & Developer",
+    "start": 327.0305
+  },
+  {
+    "id": "s11",
+    "title": "Flash-MoE demonstrates running a three hundred and ninety-seven billion parameter model on a laptop",
+    "section": "Tech & Developer",
+    "start": 362.193
+  },
+  {
+    "id": "s12",
+    "title": "Quantum encryption pioneers Charles Bennett and Gilles Brassard win Turing Award",
+    "section": "Tech & Developer",
+    "start": 392.693
+  },
+  {
+    "id": "s13",
+    "title": "Racing Bulls unveil special livery for the Japanese Grand Prix",
+    "section": "Formula 1",
+    "start": 428.418
+  }
+]

@@ -13,6 +13,31 @@
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Daycast — 2026-03-23</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-23/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-23</guid>
+    <pubDate>Mon, 23 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Israel announces expanded ground and air operations against Hezbollah in Lebanon; France's Socialists hold Paris and Marseille in municipal elections as far right gains ground; Iranian missiles injure a hundred and eighty in towns near Israel's nuclear research site; Four ambulances set on fire in London in suspected antisemitic hate crime; Government backtracks on artificial intelligence and copyright after outcry from artists; Orbán campaigns in opposition strongholds ahead of April election; Russian disinformation network spreads false assassination claims about Orbán; Germany's far right reaches twenty per cent in western state election; Bram Cohen outlines Mañana, a new approach to version control; Reports of code's death are greatly exaggerated; Flash-MoE demonstrates running a three hundred and ninety-seven billion parameter model on a laptop; Quantum encryption pioneers Charles Bennett and Gilles Brassard win Turing Award; Racing Bulls unveil special livery for the Japanese Grand Prix</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-23/audio.mp3" length="2801664" type="audio/mpeg" />
+    <itunes:duration>00:07:38</itunes:duration>
+    <itunes:summary>Israel announces expanded ground and air operations against Hezbollah in Lebanon; France's Socialists hold Paris and Marseille in municipal elections as far right gains ground; Iranian missiles injure a hundred and eighty in towns near Israel's nuclear research site; Four ambulances set on fire in London in suspected antisemitic hate crime; Government backtracks on artificial intelligence and copyright after outcry from artists; Orbán campaigns in opposition strongholds ahead of April election; Russian disinformation network spreads false assassination claims about Orbán; Germany's far right reaches twenty per cent in western state election; Bram Cohen outlines Mañana, a new approach to version control; Reports of code's death are greatly exaggerated; Flash-MoE demonstrates running a three hundred and ninety-seven billion parameter model on a laptop; Quantum encryption pioneers Charles Bennett and Gilles Brassard win Turing Award; Racing Bulls unveil special livery for the Japanese Grand Prix</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:14.025" title="Israel announces expanded ground and air operations against Hezbollah in Lebanon" />
+      <psc:chapter start="00:01:03.413" title="France's Socialists hold Paris and Marseille in municipal elections as far right gains ground" />
+      <psc:chapter start="00:01:36.325" title="Iranian missiles injure a hundred and eighty in towns near Israel's nuclear research site" />
+      <psc:chapter start="00:02:04.138" title="Four ambulances set on fire in London in suspected antisemitic hate crime" />
+      <psc:chapter start="00:02:30.262" title="Government backtracks on artificial intelligence and copyright after outcry from artists" />
+      <psc:chapter start="00:03:05.088" title="Orbán campaigns in opposition strongholds ahead of April election" />
+      <psc:chapter start="00:03:44.668" title="Russian disinformation network spreads false assassination claims about Orbán" />
+      <psc:chapter start="00:04:18.293" title="Germany's far right reaches twenty per cent in western state election" />
+      <psc:chapter start="00:04:44.106" title="Bram Cohen outlines Mañana, a new approach to version control" />
+      <psc:chapter start="00:05:27.031" title="Reports of code's death are greatly exaggerated" />
+      <psc:chapter start="00:06:02.193" title="Flash-MoE demonstrates running a three hundred and ninety-seven billion parameter model on a laptop" />
+      <psc:chapter start="00:06:32.693" title="Quantum encryption pioneers Charles Bennett and Gilles Brassard win Turing Award" />
+      <psc:chapter start="00:07:08.418" title="Racing Bulls unveil special livery for the Japanese Grand Prix" />
+    </psc:chapters>
+  </item>
+  <item>
     <title>Daycast — 2026-03-22</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-22/index.html</link>
     <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-22</guid>
