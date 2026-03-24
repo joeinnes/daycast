@@ -13,6 +13,31 @@
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Daycast — 2026-03-24</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-24/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-24</guid>
+    <pubDate>Tue, 24 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Markets rebound as diplomatic sources describe Iran talks as "very good and productive"; Two pilots killed as Air Canada flight strikes fire truck on LaGuardia runway; Slovenia becomes the first European Union member state to ration fuel purchases; Italy's Meloni suffers defeat in constitutional referendum; Counter-terror police launch formal investigation into Golders Green ambulance arson; Reeves to set out criteria for energy bill support as household costs climb; Direkt36 investigation: secret service pressure led to raids on Tisza Party IT specialists; Hungary's diesel crisis deepens as prices hit their highest level since the Ukraine invasion; The United States bans consumer internet routers made outside America; iPhone 17 Pro demonstrated running a four-hundred-billion parameter language model; A developer argues Rust's coherence rules are holding the ecosystem back; Bombadil brings property-based testing to web user interfaces; Alonso will sit out the first Japanese Grand Prix practice session, handing his seat to Jak Crawford</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-24/audio.mp3" length="3522384" type="audio/mpeg" />
+    <itunes:duration>00:09:07</itunes:duration>
+    <itunes:summary>Markets rebound as diplomatic sources describe Iran talks as "very good and productive"; Two pilots killed as Air Canada flight strikes fire truck on LaGuardia runway; Slovenia becomes the first European Union member state to ration fuel purchases; Italy's Meloni suffers defeat in constitutional referendum; Counter-terror police launch formal investigation into Golders Green ambulance arson; Reeves to set out criteria for energy bill support as household costs climb; Direkt36 investigation: secret service pressure led to raids on Tisza Party IT specialists; Hungary's diesel crisis deepens as prices hit their highest level since the Ukraine invasion; The United States bans consumer internet routers made outside America; iPhone 17 Pro demonstrated running a four-hundred-billion parameter language model; A developer argues Rust's coherence rules are holding the ecosystem back; Bombadil brings property-based testing to web user interfaces; Alonso will sit out the first Japanese Grand Prix practice session, handing his seat to Jak Crawford</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:18.688" title='Markets rebound as diplomatic sources describe Iran talks as "very good and productive"' />
+      <psc:chapter start="00:01:06.850" title="Two pilots killed as Air Canada flight strikes fire truck on LaGuardia runway" />
+      <psc:chapter start="00:01:42.200" title="Slovenia becomes the first European Union member state to ration fuel purchases" />
+      <psc:chapter start="00:02:21.188" title="Italy's Meloni suffers defeat in constitutional referendum" />
+      <psc:chapter start="00:02:56.400" title="Counter-terror police launch formal investigation into Golders Green ambulance arson" />
+      <psc:chapter start="00:03:33.460" title="Reeves to set out criteria for energy bill support as household costs climb" />
+      <psc:chapter start="00:04:07.697" title="Direkt36 investigation: secret service pressure led to raids on Tisza Party IT specialists" />
+      <psc:chapter start="00:04:51.322" title="Hungary's diesel crisis deepens as prices hit their highest level since the Ukraine invasion" />
+      <psc:chapter start="00:05:28.385" title="The United States bans consumer internet routers made outside America" />
+      <psc:chapter start="00:06:18.210" title="iPhone 17 Pro demonstrated running a four-hundred-billion parameter language model" />
+      <psc:chapter start="00:07:02.956" title="A developer argues Rust's coherence rules are holding the ecosystem back" />
+      <psc:chapter start="00:07:52.881" title="Bombadil brings property-based testing to web user interfaces" />
+      <psc:chapter start="00:08:37.606" title="Alonso will sit out the first Japanese Grand Prix practice session, handing his seat to Jak Crawford" />
+    </psc:chapters>
+  </item>
+  <item>
     <title>Daycast — 2026-03-23</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-23/index.html</link>
     <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-23</guid>
