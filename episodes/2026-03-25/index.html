@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-03-25</title>
+<link rel="icon" type="image/png" href="/daycast/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.site-header-left{display:flex;align-items:center;gap:.6rem}
+.site-logo{width:28px;height:28px;border-radius:4px}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<div class="site-header-left"><img class="site-logo" src="/daycast/logo-180.png" alt="Daycast" width="28" height="28"><span class="wordmark">DAYCAST</span></div>
+<span class="header-date">25 March 2026<span class="header-iso">2026-03-25</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="16.1375"></div>
+<div class="chapter-tick" data-start="45.075"></div>
+<div class="chapter-tick" data-start="65.3625"></div>
+<div class="chapter-tick" data-start="85.5"></div>
+<div class="chapter-tick" data-start="105.8625"></div>
+<div class="chapter-tick" data-start="124.8375"></div>
+<div class="chapter-tick" data-start="149.7"></div>
+<div class="chapter-tick" data-start="167.55"></div>
+<div class="chapter-tick" data-start="193.3375"></div>
+<div class="chapter-tick" data-start="220.324"></div>
+<div class="chapter-tick" data-start="238.6865"></div>
+<div class="chapter-tick" data-start="265.349"></div>
+<div class="chapter-tick" data-start="289.5865"></div>
+<div class="chapter-tick" data-start="310.0115"></div>
+<div class="chapter-tick" data-start="332.8615"></div>
+<div class="chapter-tick" data-start="353.7615"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="16.1375" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">Iran says it will allow non-hostile ships through the Strait of Hormuz, with conditions</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:16</span></li>
+<li class="chapter-item" data-start="45.075" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">Israel says it will take control of a large buffer zone in southern Lebanon</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:45</span></li>
+<li class="chapter-item" data-start="65.3625" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">Russia launches nine hundred and forty-eight drones at Ukraine in its largest attack over a single day</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:05</span></li>
+<li class="chapter-item" data-start="85.5" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">Denmark's Social Democrats win the most votes but fall short of a majority</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:25</span></li>
+<li class="chapter-item" data-start="105.8625" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">Slovenia becomes the first EU country to introduce fuel rationing</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:45</span></li>
+<li class="chapter-item" data-start="124.8375" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">Social media bans and digital curfews to be trialled on UK teenagers</span><span class="chapter-section">UK</span></span><span class="chapter-ts">2:04</span></li>
+<li class="chapter-item" data-start="149.7" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">The first female Archbishop of Canterbury is enthroned today</span><span class="chapter-section">UK</span></span><span class="chapter-ts">2:29</span></li>
+<li class="chapter-item" data-start="167.55" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Record numbers register to vote at foreign missions ahead of Hungary's April election</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">2:47</span></li>
+<li class="chapter-item" data-start="193.3375" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">AI disinformation campaigns target Hungary's opposition from both sides</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">3:13</span></li>
+<li class="chapter-item" data-start="220.324" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">Slovakia's Fico warns that a Tisza victory could damage Slovak-Hungarian relations</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">3:40</span></li>
+<li class="chapter-item" data-start="238.6865" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">OpenAI shuts down Sora and ends its Disney partnership</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">3:58</span></li>
+<li class="chapter-item" data-start="265.349" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">Wine 11 rewrites how Linux runs Windows software, with major speed gains</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:25</span></li>
+<li class="chapter-item" data-start="289.5865" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">Video.js is back under its original creator, rewritten to be eighty-eight per cent smaller</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:49</span></li>
+<li class="chapter-item" data-start="310.0115" role="button" tabindex="0"><span class="chapter-num">14</span><span class="chapter-info"><span class="chapter-title">Litellm packages on PyPI found to be compromised</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:10</span></li>
+<li class="chapter-item" data-start="332.8615" role="button" tabindex="0"><span class="chapter-num">15</span><span class="chapter-info"><span class="chapter-title">Arm announces an AGI-branded CPU architecture</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:32</span></li>
+<li class="chapter-item" data-start="353.7615" role="button" tabindex="0"><span class="chapter-num">16</span><span class="chapter-info"><span class="chapter-title">Race week begins at Suzuka with special liveries and a spotlight on Tsunoda</span><span class="chapter-section">Formula 1</span></span><span class="chapter-ts">5:53</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">Iran says it will allow non-hostile ships through the Strait of Hormuz, with conditions</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Telex / BBC News</p>
+<p class="story-body">Iran has announced it will permit non-hostile commercial vessels to pass through the Strait of Hormuz, attaching conditions that have not yet been fully spelled out. The move comes as oil supplies continue to tighten and BlackRock's Larry Fink warned that sustained prices at a hundred and fifty dollars a barrel would trigger a global recession. Meanwhile, Trump surprised observers by claiming that "very good and productive" talks have been held to end the conflict, though Iran has shown no public willingness to negotiate so far.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Iran+says+it+will+allow+non-hostile+ships+through+the+Strait+of+Hormuz%2C+with+conditions&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Iran+says+it+will+allow+non-hostile+ships+through+the+Strait+of+Hormuz%2C+with+conditions%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Iran+says+it+will+allow+non-hostile+ships+through+the+Strait+of+Hormuz%2C+with+conditions&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Iran+says+it+will+allow+non-hostile+ships+through+the+Strait+of+Hormuz%2C+with+conditions%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Israel says it will take control of a large buffer zone in southern Lebanon</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Israel's leadership has said it intends to take control of a substantial buffer zone in southern Lebanon and that thousands of displaced Lebanese residents will not be allowed to return until security in northern Israel improves. This marks a shift from what was initially framed as expanded military operations into what now looks like a longer-term territorial hold.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Israel+says+it+will+take+control+of+a+large+buffer+zone+in+southern+Lebanon&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Israel+says+it+will+take+control+of+a+large+buffer+zone+in+southern+Lebanon%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Israel+says+it+will+take+control+of+a+large+buffer+zone+in+southern+Lebanon&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Israel+says+it+will+take+control+of+a+large+buffer+zone+in+southern+Lebanon%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Russia launches nine hundred and forty-eight drones at Ukraine in its largest attack over a single day</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Russia has carried out its largest drone attack on Ukraine to date, launching nine hundred and forty-eight drones over a twenty-four-hour period. Multiple cities were hit, with local officials reporting at least eight deaths and dozens of injuries. The sheer scale of the assault suggests a deliberate attempt to overwhelm Ukrainian air defences.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Russia+launches+nine+hundred+and+forty-eight+drones+at+Ukraine+in+its+largest+attack+over+a+single+day&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Russia+launches+nine+hundred+and+forty-eight+drones+at+Ukraine+in+its+largest+attack+over+a+single+day%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Russia+launches+nine+hundred+and+forty-eight+drones+at+Ukraine+in+its+largest+attack+over+a+single+day&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Russia+launches+nine+hundred+and+forty-eight+drones+at+Ukraine+in+its+largest+attack+over+a+single+day%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Denmark's Social Democrats win the most votes but fall short of a majority</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Denmark went to the polls on Tuesday and Mette Frederiksen's Social Democrats won the most votes, but fell short of a parliamentary majority. It is the party's weakest result in over a century, despite a popularity surge earlier this year when Frederiksen confronted the United States over Greenland. Tough coalition negotiations lie ahead.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Denmark%27s+Social+Democrats+win+the+most+votes+but+fall+short+of+a+majority&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Denmark%27s+Social+Democrats+win+the+most+votes+but+fall+short+of+a+majority%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Denmark%27s+Social+Democrats+win+the+most+votes+but+fall+short+of+a+majority&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Denmark%27s+Social+Democrats+win+the+most+votes+but+fall+short+of+a+majority%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Slovenia becomes the first EU country to introduce fuel rationing</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Slovenia has become the first European Union member state to introduce fuel rationing, capping purchases at fifty litres per driver per day. The measure is a direct consequence of the energy price shock from the Iran conflict. For Hungary next door, this is a signal of what could come if the crisis deepens further.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Slovenia+becomes+the+first+EU+country+to+introduce+fuel+rationing&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Slovenia+becomes+the+first+EU+country+to+introduce+fuel+rationing%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Slovenia+becomes+the+first+EU+country+to+introduce+fuel+rationing&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Slovenia+becomes+the+first+EU+country+to+introduce+fuel+rationing%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">UK</h2>
+<div class="story">
+<h3 class="story-title">Social media bans and digital curfews to be trialled on UK teenagers</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The UK government is launching a trial in which teenagers will face social media bans and digital curfews, with researchers interviewing the young people and their parents before and after to measure the impact. It follows the Netherlands' experience with phone bans in schools and a broader European push to limit children's screen time. The government will also interview participants to assess whether the restrictions actually change behaviour.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Social+media+bans+and+digital+curfews+to+be+trialled+on+UK+teenagers&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Social+media+bans+and+digital+curfews+to+be+trialled+on+UK+teenagers%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Social+media+bans+and+digital+curfews+to+be+trialled+on+UK+teenagers&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Social+media+bans+and+digital+curfews+to+be+trialled+on+UK+teenagers%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">The first female Archbishop of Canterbury is enthroned today</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The first woman to serve as Archbishop of Canterbury will be enthroned at Canterbury Cathedral today, with the Prince and Princess of Wales among the congregation. The ceremony reflects a significant milestone for the Church of England, and the new archbishop's background in nursing and care work is expected to shape her tenure.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+The+first+female+Archbishop+of+Canterbury+is+enthroned+today&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+The+first+female+Archbishop+of+Canterbury+is+enthroned+today%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+The+first+female+Archbishop+of+Canterbury+is+enthroned+today&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+The+first+female+Archbishop+of+Canterbury+is+enthroned+today%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Hungary &amp; Central Europe</h2>
+<div class="story">
+<h3 class="story-title">Record numbers register to vote at foreign missions ahead of Hungary's April election</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">A record sixty-five thousand six hundred and ninety-five Hungarians have registered to vote at diplomatic missions abroad, the highest number ever recorded. With the election now weeks away, polling from Research Centres shows ninety-eight per cent of Tisza Party supporters say they will definitely turn out. The combination of high overseas registration and strong opposition mobilisation is creating a very different electoral picture from recent years.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Record+numbers+register+to+vote+at+foreign+missions+ahead+of+Hungary%27s+April+election&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Record+numbers+register+to+vote+at+foreign+missions+ahead+of+Hungary%27s+April+election%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Record+numbers+register+to+vote+at+foreign+missions+ahead+of+Hungary%27s+April+election&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Record+numbers+register+to+vote+at+foreign+missions+ahead+of+Hungary%27s+April+election%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">AI disinformation campaigns target Hungary's opposition from both sides</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">Two separate disinformation campaigns have been identified in the run-up to Hungary's election. NewsGuard has found a thirty-four-account network on TikTok using artificial intelligence to support Orbán and attack the opposition. Separately, an AI-generated video circulating online falsely shows a Tisza Party candidate responding in Russian, in an apparent attempt to associate the opposition with Moscow. The Washington Post has reported on the latter.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+AI+disinformation+campaigns+target+Hungary%27s+opposition+from+both+sides&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+AI+disinformation+campaigns+target+Hungary%27s+opposition+from+both+sides%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+AI+disinformation+campaigns+target+Hungary%27s+opposition+from+both+sides&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+AI+disinformation+campaigns+target+Hungary%27s+opposition+from+both+sides%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Slovakia's Fico warns that a Tisza victory could damage Slovak-Hungarian relations</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">Slovak prime minister Robert Fico has warned that a Tisza Party victory in Hungary's election could harm relations between the two countries. The intervention is notable because it positions Fico as openly backing Orbán's Fidesz in a neighbouring country's election, and frames the democratic opposition as a regional threat.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Slovakia%27s+Fico+warns+that+a+Tisza+victory+could+damage+Slovak-Hungarian+relations&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Slovakia%27s+Fico+warns+that+a+Tisza+victory+could+damage+Slovak-Hungarian+relations%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Slovakia%27s+Fico+warns+that+a+Tisza+victory+could+damage+Slovak-Hungarian+relations&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Slovakia%27s+Fico+warns+that+a+Tisza+victory+could+damage+Slovak-Hungarian+relations%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Tech &amp; Developer</h2>
+<div class="story">
+<h3 class="story-title">OpenAI shuts down Sora and ends its Disney partnership</h3>
+<p class="source">Source: BBC News / Hacker News</p>
+<p class="story-body">OpenAI is closing Sora, its AI video generation tool, less than two years after its launch sent shockwaves through the media industry. The shutdown also ends a partnership with Disney. The Hacker News discussion is running at over six hundred points, with many noting how quickly the hype cycle turned. The practical reality is that video generation at the quality level Sora promised turned out to be far harder to monetise than expected.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+OpenAI+shuts+down+Sora+and+ends+its+Disney+partnership&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+OpenAI+shuts+down+Sora+and+ends+its+Disney+partnership%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+OpenAI+shuts+down+Sora+and+ends+its+Disney+partnership&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+OpenAI+shuts+down+Sora+and+ends+its+Disney+partnership%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Wine 11 rewrites how Linux runs Windows software, with major speed gains</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Wine version eleven has landed with a fundamental rewrite of how Linux runs Windows applications, making changes at the kernel interaction level that deliver what the developers describe as massive speed improvements. The project, which has been running for over thirty years, continues to be one of the more remarkable pieces of open-source infrastructure. The Hacker News thread is over eight hundred points and full of benchmarks.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Wine+11+rewrites+how+Linux+runs+Windows+software%2C+with+major+speed+gains&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Wine+11+rewrites+how+Linux+runs+Windows+software%2C+with+major+speed+gains%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Wine+11+rewrites+how+Linux+runs+Windows+software%2C+with+major+speed+gains&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Wine+11+rewrites+how+Linux+runs+Windows+software%2C+with+major+speed+gains%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Video.js is back under its original creator, rewritten to be eighty-eight per cent smaller</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">The creator of Video.js has retaken control of the project after sixteen years and released a complete rewrite that cuts the library's size by eighty-eight per cent. The new version ten beta strips out legacy compatibility in favour of modern browser APIs. For anyone building video players on the web, this is worth a look.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Video.js+is+back+under+its+original+creator%2C+rewritten+to+be+eighty-eight+per+cent+smaller&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Video.js+is+back+under+its+original+creator%2C+rewritten+to+be+eighty-eight+per+cent+smaller%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Video.js+is+back+under+its+original+creator%2C+rewritten+to+be+eighty-eight+per+cent+smaller&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Video.js+is+back+under+its+original+creator%2C+rewritten+to+be+eighty-eight+per+cent+smaller%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Litellm packages on PyPI found to be compromised</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Versions 1.82.7 and 1.82.8 of litellm, a popular Python library for working with large language model APIs, have been confirmed as compromised on PyPI. The issue was flagged as a Tell HN post and the associated GitHub issue details the supply chain attack. If you have either of those versions installed, update immediately.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Litellm+packages+on+PyPI+found+to+be+compromised&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Litellm+packages+on+PyPI+found+to+be+compromised%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Litellm+packages+on+PyPI+found+to+be+compromised&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Litellm+packages+on+PyPI+found+to+be+compromised%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Arm announces an AGI-branded CPU architecture</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Arm has announced what it is calling the Arm AGI CPU, a new processor architecture aimed at artificial intelligence workloads. The naming choice raised some eyebrows on Hacker News, since AGI in this context stands for something quite different from the usual meaning. The technical substance is a chip design optimised for inference at the edge.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Arm+announces+an+AGI-branded+CPU+architecture&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Arm+announces+an+AGI-branded+CPU+architecture%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Arm+announces+an+AGI-branded+CPU+architecture&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Arm+announces+an+AGI-branded+CPU+architecture%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula 1</h2>
+<div class="story">
+<h3 class="story-title">Race week begins at Suzuka with special liveries and a spotlight on Tsunoda</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Formula1.com</p>
+<p class="story-body">The Japanese Grand Prix weekend is approaching, with Friday practice now just days away. Mercedes have unveiled a wolf-inspired livery change and Haas have gone with a Godzilla theme, joining Racing Bulls who showed their special design earlier in the week. Yuki Tsunoda has given an exclusive interview reflecting on his past, present, and future in the sport as he prepares for his home race. After Suzuka, the calendar hits a gap with the cancelled Australian Grand Prix leaving an extended break before the next round.
+
+---
+
+That is your briefing for Wednesday the twenty-fifth of March. See you tomorrow.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Race+week+begins+at+Suzuka+with+special+liveries+and+a+spotlight+on+Tsunoda&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Race+week+begins+at+Suzuka+with+special+liveries+and+a+spotlight+on+Tsunoda%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-25+—+Race+week+begins+at+Suzuka+with+special+liveries+and+a+spotlight+on+Tsunoda&amp;labels=feedback&amp;body=Date:+2026-03-25%0AStory:+Race+week+begins+at+Suzuka+with+special+liveries+and+a+spotlight+on+Tsunoda%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "s1",
+    "title": "Iran says it will allow non-hostile ships through the Strait of Hormuz, with conditions",
+    "section": "World News",
+    "start": 16.1375
+  },
+  {
+    "id": "s2",
+    "title": "Israel says it will take control of a large buffer zone in southern Lebanon",
+    "section": "World News",
+    "start": 45.075
+  },
+  {
+    "id": "s3",
+    "title": "Russia launches nine hundred and forty-eight drones at Ukraine in its largest attack over a single day",
+    "section": "World News",
+    "start": 65.3625
+  },
+  {
+    "id": "s4",
+    "title": "Denmark's Social Democrats win the most votes but fall short of a majority",
+    "section": "World News",
+    "start": 85.5
+  },
+  {
+    "id": "s5",
+    "title": "Slovenia becomes the first EU country to introduce fuel rationing",
+    "section": "World News",
+    "start": 105.8625
+  },
+  {
+    "id": "s6",
+    "title": "Social media bans and digital curfews to be trialled on UK teenagers",
+    "section": "UK",
+    "start": 124.8375
+  },
+  {
+    "id": "s7",
+    "title": "The first female Archbishop of Canterbury is enthroned today",
+    "section": "UK",
+    "start": 149.7
+  },
+  {
+    "id": "s8",
+    "title": "Record numbers register to vote at foreign missions ahead of Hungary's April election",
+    "section": "Hungary & Central Europe",
+    "start": 167.55
+  },
+  {
+    "id": "s9",
+    "title": "AI disinformation campaigns target Hungary's opposition from both sides",
+    "section": "Hungary & Central Europe",
+    "start": 193.3375
+  },
+  {
+    "id": "s10",
+    "title": "Slovakia's Fico warns that a Tisza victory could damage Slovak-Hungarian relations",
+    "section": "Hungary & Central Europe",
+    "start": 220.324
+  },
+  {
+    "id": "s11",
+    "title": "OpenAI shuts down Sora and ends its Disney partnership",
+    "section": "Tech & Developer",
+    "start": 238.6865
+  },
+  {
+    "id": "s12",
+    "title": "Wine 11 rewrites how Linux runs Windows software, with major speed gains",
+    "section": "Tech & Developer",
+    "start": 265.349
+  },
+  {
+    "id": "s13",
+    "title": "Video.js is back under its original creator, rewritten to be eighty-eight per cent smaller",
+    "section": "Tech & Developer",
+    "start": 289.5865
+  },
+  {
+    "id": "s14",
+    "title": "Litellm packages on PyPI found to be compromised",
+    "section": "Tech & Developer",
+    "start": 310.0115
+  },
+  {
+    "id": "s15",
+    "title": "Arm announces an AGI-branded CPU architecture",
+    "section": "Tech & Developer",
+    "start": 332.8615
+  },
+  {
+    "id": "s16",
+    "title": "Race week begins at Suzuka with special liveries and a spotlight on Tsunoda",
+    "section": "Formula 1",
+    "start": 353.7615
+  }
+]
