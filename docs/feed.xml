@@ -13,6 +13,34 @@
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Daycast — 2026-03-25</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-25/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-25</guid>
+    <pubDate>Wed, 25 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Iran says it will allow non-hostile ships through the Strait of Hormuz, with conditions; Israel says it will take control of a large buffer zone in southern Lebanon; Russia launches nine hundred and forty-eight drones at Ukraine in its largest attack over a single day; Denmark's Social Democrats win the most votes but fall short of a majority; Slovenia becomes the first EU country to introduce fuel rationing; Social media bans and digital curfews to be trialled on UK teenagers; The first female Archbishop of Canterbury is enthroned today; Record numbers register to vote at foreign missions ahead of Hungary's April election; AI disinformation campaigns target Hungary's opposition from both sides; Slovakia's Fico warns that a Tisza victory could damage Slovak-Hungarian relations; OpenAI shuts down Sora and ends its Disney partnership; Wine 11 rewrites how Linux runs Windows software, with major speed gains; Video.js is back under its original creator, rewritten to be eighty-eight per cent smaller; Litellm packages on PyPI found to be compromised; Arm announces an AGI-branded CPU architecture; Race week begins at Suzuka with special liveries and a spotlight on Tsunoda</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-25/audio.mp3" length="2339568" type="audio/mpeg" />
+    <itunes:duration>00:06:23</itunes:duration>
+    <itunes:summary>Iran says it will allow non-hostile ships through the Strait of Hormuz, with conditions; Israel says it will take control of a large buffer zone in southern Lebanon; Russia launches nine hundred and forty-eight drones at Ukraine in its largest attack over a single day; Denmark's Social Democrats win the most votes but fall short of a majority; Slovenia becomes the first EU country to introduce fuel rationing; Social media bans and digital curfews to be trialled on UK teenagers; The first female Archbishop of Canterbury is enthroned today; Record numbers register to vote at foreign missions ahead of Hungary's April election; AI disinformation campaigns target Hungary's opposition from both sides; Slovakia's Fico warns that a Tisza victory could damage Slovak-Hungarian relations; OpenAI shuts down Sora and ends its Disney partnership; Wine 11 rewrites how Linux runs Windows software, with major speed gains; Video.js is back under its original creator, rewritten to be eighty-eight per cent smaller; Litellm packages on PyPI found to be compromised; Arm announces an AGI-branded CPU architecture; Race week begins at Suzuka with special liveries and a spotlight on Tsunoda</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:16.137" title="Iran says it will allow non-hostile ships through the Strait of Hormuz, with conditions" />
+      <psc:chapter start="00:00:45.075" title="Israel says it will take control of a large buffer zone in southern Lebanon" />
+      <psc:chapter start="00:01:05.362" title="Russia launches nine hundred and forty-eight drones at Ukraine in its largest attack over a single day" />
+      <psc:chapter start="00:01:25.500" title="Denmark's Social Democrats win the most votes but fall short of a majority" />
+      <psc:chapter start="00:01:45.862" title="Slovenia becomes the first EU country to introduce fuel rationing" />
+      <psc:chapter start="00:02:04.838" title="Social media bans and digital curfews to be trialled on UK teenagers" />
+      <psc:chapter start="00:02:29.700" title="The first female Archbishop of Canterbury is enthroned today" />
+      <psc:chapter start="00:02:47.550" title="Record numbers register to vote at foreign missions ahead of Hungary's April election" />
+      <psc:chapter start="00:03:13.338" title="AI disinformation campaigns target Hungary's opposition from both sides" />
+      <psc:chapter start="00:03:40.324" title="Slovakia's Fico warns that a Tisza victory could damage Slovak-Hungarian relations" />
+      <psc:chapter start="00:03:58.686" title="OpenAI shuts down Sora and ends its Disney partnership" />
+      <psc:chapter start="00:04:25.349" title="Wine 11 rewrites how Linux runs Windows software, with major speed gains" />
+      <psc:chapter start="00:04:49.587" title="Video.js is back under its original creator, rewritten to be eighty-eight per cent smaller" />
+      <psc:chapter start="00:05:10.012" title="Litellm packages on PyPI found to be compromised" />
+      <psc:chapter start="00:05:32.861" title="Arm announces an AGI-branded CPU architecture" />
+      <psc:chapter start="00:05:53.762" title="Race week begins at Suzuka with special liveries and a spotlight on Tsunoda" />
+    </psc:chapters>
+  </item>
+  <item>
     <title>Daycast — 2026-03-24</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-24/index.html</link>
     <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-24</guid>
