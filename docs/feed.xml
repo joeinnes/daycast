@@ -13,6 +13,42 @@
   <itunes:category text="News" />
   <atom:link href="https://joeinnes.github.io/daycast/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Daycast — 2026-03-28</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-28/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-28</guid>
+    <pubDate>Sat, 28 Mar 2026 06:00:00 +0000</pubDate>
+    <description>The United States says it expects the Iran war to end within weeks; A federal judge blocks the Pentagon's attempt to blacklist Anthropic; Nepal's former prime minister arrested over a deadly protest crackdown; A jury finds Meta and YouTube liable in a landmark social media addiction trial; UK petrol tops a hundred and fifty pence as the Iran crisis squeezes consumers; PlayStation 5 price rises by ninety pounds in the UK; A court rules that Orbán campaigned illegally by using a child at a rally; Tisza Party holds a nine-point lead as NER-linked stocks tumble; People inside Microsoft are fighting to drop the mandatory Microsoft Account requirement; Anatomy of the dot-claude folder; A Stanford paper argues we should go hard on agents, not on filesystems; Another PyPI supply chain attack, this time hitting Telnyx; Colorado passes a bill to limit surveillance pricing; Suzuka race weekend continues with a new energy management rule in play</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-28/audio.mp3" length="2346480" type="audio/mpeg" />
+    <itunes:duration>00:06:14</itunes:duration>
+    <itunes:summary>The United States says it expects the Iran war to end within weeks; A federal judge blocks the Pentagon's attempt to blacklist Anthropic; Nepal's former prime minister arrested over a deadly protest crackdown; A jury finds Meta and YouTube liable in a landmark social media addiction trial; UK petrol tops a hundred and fifty pence as the Iran crisis squeezes consumers; PlayStation 5 price rises by ninety pounds in the UK; A court rules that Orbán campaigned illegally by using a child at a rally; Tisza Party holds a nine-point lead as NER-linked stocks tumble; People inside Microsoft are fighting to drop the mandatory Microsoft Account requirement; Anatomy of the dot-claude folder; A Stanford paper argues we should go hard on agents, not on filesystems; Another PyPI supply chain attack, this time hitting Telnyx; Colorado passes a bill to limit surveillance pricing; Suzuka race weekend continues with a new energy management rule in play</itunes:summary>
+    <psc:chapters version="1.2" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:07.725" title="The United States says it expects the Iran war to end within weeks" />
+      <psc:chapter start="00:00:40.087" title="A federal judge blocks the Pentagon's attempt to blacklist Anthropic" />
+      <psc:chapter start="00:01:11.213" title="Nepal's former prime minister arrested over a deadly protest crackdown" />
+      <psc:chapter start="00:01:35.737" title="A jury finds Meta and YouTube liable in a landmark social media addiction trial" />
+      <psc:chapter start="00:02:08.488" title="UK petrol tops a hundred and fifty pence as the Iran crisis squeezes consumers" />
+      <psc:chapter start="00:02:30.812" title="PlayStation 5 price rises by ninety pounds in the UK" />
+      <psc:chapter start="00:02:48.762" title="A court rules that Orbán campaigned illegally by using a child at a rally" />
+      <psc:chapter start="00:03:13.963" title="Tisza Party holds a nine-point lead as NER-linked stocks tumble" />
+      <psc:chapter start="00:03:46.564" title="People inside Microsoft are fighting to drop the mandatory Microsoft Account requirement" />
+      <psc:chapter start="00:04:11.964" title="Anatomy of the dot-claude folder" />
+      <psc:chapter start="00:04:33.877" title="A Stanford paper argues we should go hard on agents, not on filesystems" />
+      <psc:chapter start="00:04:55.189" title="Another PyPI supply chain attack, this time hitting Telnyx" />
+      <psc:chapter start="00:05:22.089" title="Colorado passes a bill to limit surveillance pricing" />
+      <psc:chapter start="00:05:44.752" title="Suzuka race weekend continues with a new energy management rule in play" />
+    </psc:chapters>
+  </item>
+  <item>
+    <title>Daycast — 2026-03-26</title>
+    <link>https://joeinnes.github.io/daycast/episodes/2026-03-26/index.html</link>
+    <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-26</guid>
+    <pubDate>Thu, 26 Mar 2026 06:00:00 +0000</pubDate>
+    <description>Iran rejects the idea of negotiations even as indirect channels remain open; Stray Ukrainian drones land in Estonia and Latvia; Meta and YouTube found liable in landmark social media addiction case; British forces preparing to board Russian shadow fleet ships; Former Google executive confirmed as new BBC director general; Doctors announce six-day strike in England; US Vice President expected to visit Hungary before the April election; Allegations surface of secret intelligence operations targeting the opposition; Opposition widens its lead as polls point towards a two-party parliament; The European Parliament faces a new vote on mass scanning of private messages; GitHub changes its Copilot data usage policy; ARC-AGI-3 launches as the first interactive reasoning benchmark for AI; Prompt injection attacks remain an unsolved problem; Suzuka practice approaches as Norris backs McLaren to build the best car this year</description>
+    <enclosure url="https://joeinnes.github.io/daycast/episodes/2026-03-26/audio.mp3" length="741600" type="audio/mpeg" />
+    <itunes:duration>00:02:03</itunes:duration>
+    <itunes:summary>Iran rejects the idea of negotiations even as indirect channels remain open; Stray Ukrainian drones land in Estonia and Latvia; Meta and YouTube found liable in landmark social media addiction case; British forces preparing to board Russian shadow fleet ships; Former Google executive confirmed as new BBC director general; Doctors announce six-day strike in England; US Vice President expected to visit Hungary before the April election; Allegations surface of secret intelligence operations targeting the opposition; Opposition widens its lead as polls point towards a two-party parliament; The European Parliament faces a new vote on mass scanning of private messages; GitHub changes its Copilot data usage policy; ARC-AGI-3 launches as the first interactive reasoning benchmark for AI; Prompt injection attacks remain an unsolved problem; Suzuka practice approaches as Norris backs McLaren to build the best car this year</itunes:summary>
+  </item>
+  <item>
     <title>Daycast — 2026-03-25</title>
     <link>https://joeinnes.github.io/daycast/episodes/2026-03-25/index.html</link>
     <guid isPermaLink="true">https://joeinnes.github.io/daycast/episodes/2026-03-25</guid>
