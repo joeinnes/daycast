@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-04-22</title>
+<link rel="icon" type="image/png" href="/daycast/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.site-header-left{display:flex;align-items:center;gap:.6rem}
+.site-logo{width:28px;height:28px;border-radius:4px}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<div class="site-header-left"><img class="site-logo" src="/daycast/logo-180.png" alt="Daycast" width="28" height="28"><span class="wordmark">DAYCAST</span></div>
+<span class="header-date">22 April 2026<span class="header-iso">2026-04-22</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="28.6"></div>
+<div class="chapter-tick" data-start="64.2625"></div>
+<div class="chapter-tick" data-start="93.15"></div>
+<div class="chapter-tick" data-start="121.2875"></div>
+<div class="chapter-tick" data-start="149.3"></div>
+<div class="chapter-tick" data-start="176.4"></div>
+<div class="chapter-tick" data-start="202.012"></div>
+<div class="chapter-tick" data-start="232.787"></div>
+<div class="chapter-tick" data-start="259.687"></div>
+<div class="chapter-tick" data-start="283.962"></div>
+<div class="chapter-tick" data-start="314.837"></div>
+<div class="chapter-tick" data-start="341.587"></div>
+<div class="chapter-tick" data-start="373.0245"></div>
+<div class="chapter-tick" data-start="401.116"></div>
+<div class="chapter-tick" data-start="432.941"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="28.6" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">Trump extends the Iran ceasefire for a second time in a fortnight</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:28</span></li>
+<li class="chapter-item" data-start="64.2625" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">The European Union approves a ninety-billion-euro loan to Ukraine, and the Druzhba pipeline starts flowing again</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:04</span></li>
+<li class="chapter-item" data-start="93.15" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">Lufthansa cancels twenty thousand summer flights as fuel prices surge</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:33</span></li>
+<li class="chapter-item" data-start="121.2875" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">Taiwan's president cancels an African trip after flight permits are revoked</span><span class="chapter-section">World News</span></span><span class="chapter-ts">2:01</span></li>
+<li class="chapter-item" data-start="149.3" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">Inflation climbs to three-point-three per cent as Iran fuel costs bite</span><span class="chapter-section">United Kingdom</span></span><span class="chapter-ts">2:29</span></li>
+<li class="chapter-item" data-start="176.4" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">Starmer is questioned over a job offer to his former communications chief</span><span class="chapter-section">United Kingdom</span></span><span class="chapter-ts">2:56</span></li>
+<li class="chapter-item" data-start="202.012" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">A new poll puts Tisza sixty-six to Fidesz's twenty-five</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">3:22</span></li>
+<li class="chapter-item" data-start="232.787" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Tisza's incoming finance minister promises a nine per cent income tax floor</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">3:52</span></li>
+<li class="chapter-item" data-start="259.687" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">A fire breaks out at the Iváncsa battery factory</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">4:19</span></li>
+<li class="chapter-item" data-start="283.962" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">Anthropic investigates a claim of unauthorised access to its Mythos model</span><span class="chapter-section">Technology and Developer News</span></span><span class="chapter-ts">4:43</span></li>
+<li class="chapter-item" data-start="314.837" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">Meta plans to train artificial intelligence on its employees' clicks and keystrokes</span><span class="chapter-section">Technology and Developer News</span></span><span class="chapter-ts">5:14</span></li>
+<li class="chapter-item" data-start="341.587" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">GitHub's command-line tool quietly starts collecting telemetry</span><span class="chapter-section">Technology and Developer News</span></span><span class="chapter-ts">5:41</span></li>
+<li class="chapter-item" data-start="373.0245" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">Google announces its eighth-generation Tensor Processing Unit</span><span class="chapter-section">Technology and Developer News</span></span><span class="chapter-ts">6:13</span></li>
+<li class="chapter-item" data-start="401.116" role="button" tabindex="0"><span class="chapter-num">14</span><span class="chapter-info"><span class="chapter-title">Alibaba ships Qwen three-point-six, a twenty-seven-billion parameter coding model</span><span class="chapter-section">Technology and Developer News</span></span><span class="chapter-ts">6:41</span></li>
+<li class="chapter-item" data-start="432.941" role="button" tabindex="0"><span class="chapter-num">15</span><span class="chapter-info"><span class="chapter-title">The governing body confirms tweaks to the twenty-twenty-six regulations ahead of the Miami Grand Prix</span><span class="chapter-section">Formula One</span></span><span class="chapter-ts">7:12</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">Trump extends the Iran ceasefire for a second time in a fortnight</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The president has once again pulled back from the brink, extending the fragile ceasefire with Iran after what the BBC describes as a frantic day of diplomacy. This is the second time in a little over a fortnight that Donald Trump has backed off from threats to escalate. Pakistan is now acting as a go-between, pushing both Washington and Tehran towards talks, and the mood in the Strait of Hormuz remains what the BBC politely calls combustible. For now, the blockade is still on, the oil is still not moving through the strait at normal volumes, and everyone is waiting to see whether the next crisis is days or hours away.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Trump+extends+the+Iran+ceasefire+for+a+second+time+in+a+fortnight&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Trump+extends+the+Iran+ceasefire+for+a+second+time+in+a+fortnight%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Trump+extends+the+Iran+ceasefire+for+a+second+time+in+a+fortnight&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Trump+extends+the+Iran+ceasefire+for+a+second+time+in+a+fortnight%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">The European Union approves a ninety-billion-euro loan to Ukraine, and the Druzhba pipeline starts flowing again</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">After months of deadlock, the European Union has signed off a ninety-billion-euro loan package for Ukraine, and as part of the accompanying deal Kyiv has reopened the Druzhba pipeline, which carries Russian crude westward into Hungary and Slovakia. The stalemate had been a running sore in Brussels and a constant flashpoint for Viktor Orbán's outgoing government. With the pipeline flowing again and the loan unlocked, one of the last big Ukraine-related arguments inside the bloc has, for the moment, been settled.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+The+European+Union+approves+a+ninety-billion-euro+loan+to+Ukraine%2C+and+the+Druzhba+pipeline+starts+flowing+again&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+The+European+Union+approves+a+ninety-billion-euro+loan+to+Ukraine%2C+and+the+Druzhba+pipeline+starts+flowing+again%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+The+European+Union+approves+a+ninety-billion-euro+loan+to+Ukraine%2C+and+the+Druzhba+pipeline+starts+flowing+again&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+The+European+Union+approves+a+ninety-billion-euro+loan+to+Ukraine%2C+and+the+Druzhba+pipeline+starts+flowing+again%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Lufthansa cancels twenty thousand summer flights as fuel prices surge</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Lufthansa has announced it will cut around twenty thousand flights from its summer schedule, blaming the spike in jet fuel prices caused by the war in Iran. It joins a growing list of European carriers trimming capacity rather than eating the losses. For travellers, the practical question is whether the cuts will be concentrated on short-haul routes, where replacement rail exists, or whether long-haul schedules will thin out as well. Lufthansa has not yet published the full list.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Lufthansa+cancels+twenty+thousand+summer+flights+as+fuel+prices+surge&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Lufthansa+cancels+twenty+thousand+summer+flights+as+fuel+prices+surge%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Lufthansa+cancels+twenty+thousand+summer+flights+as+fuel+prices+surge&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Lufthansa+cancels+twenty+thousand+summer+flights+as+fuel+prices+surge%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Taiwan's president cancels an African trip after flight permits are revoked</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Taiwanese President Lai Ching-te has cancelled a planned visit to Africa after several countries on the route revoked the permits for his aircraft to cross their airspace. Taipei has publicly accused Beijing of leaning on African governments to shut the skies to him, a tactic that would mark a visible escalation in China's campaign to isolate Taiwan diplomatically. It is a small story on paper, a cancelled trip, but the mechanism, closing airspace to a head of state, is new and worth watching.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Taiwan%27s+president+cancels+an+African+trip+after+flight+permits+are+revoked&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Taiwan%27s+president+cancels+an+African+trip+after+flight+permits+are+revoked%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Taiwan%27s+president+cancels+an+African+trip+after+flight+permits+are+revoked&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Taiwan%27s+president+cancels+an+African+trip+after+flight+permits+are+revoked%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">United Kingdom</h2>
+<div class="story">
+<h3 class="story-title">Inflation climbs to three-point-three per cent as Iran fuel costs bite</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The Office for National Statistics says consumer price inflation in the United Kingdom rose to three-point-three per cent in March, and the culprit is the same one driving everything else this week: fuel. This is the first official look at how the Iran war is feeding through into British shop prices, and the answer is: noticeably. The Bank of England had been cautiously eyeing rate cuts before all this kicked off. Those cuts now look a great deal further away.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Inflation+climbs+to+three-point-three+per+cent+as+Iran+fuel+costs+bite&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Inflation+climbs+to+three-point-three+per+cent+as+Iran+fuel+costs+bite%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Inflation+climbs+to+three-point-three+per+cent+as+Iran+fuel+costs+bite&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Inflation+climbs+to+three-point-three+per+cent+as+Iran+fuel+costs+bite%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Starmer is questioned over a job offer to his former communications chief</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">At Prime Minister's Questions, Keir Starmer admitted that Number Ten had indeed made enquiries about a diplomatic posting for Matthew Doyle, his outgoing director of communications. The opposition is framing it as cronyism; Starmer's line is that an enquiry is not an appointment. It is the kind of mid-term credibility story that will not sink a government but slowly erodes the image of propriety a new administration tries to build.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Starmer+is+questioned+over+a+job+offer+to+his+former+communications+chief&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Starmer+is+questioned+over+a+job+offer+to+his+former+communications+chief%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Starmer+is+questioned+over+a+job+offer+to+his+former+communications+chief&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Starmer+is+questioned+over+a+job+offer+to+his+former+communications+chief%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Hungary</h2>
+<div class="story">
+<h3 class="story-title">A new poll puts Tisza sixty-six to Fidesz's twenty-five</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">A fresh Medián poll has the governing Tisza party at sixty-six per cent support against twenty-five for Fidesz, an even wider gap than at the election. Fifty-four per cent of respondents now say the country is moving in the right direction, a twenty-one point jump since Tisza took power. The veteran pollster Endre Hann says he cannot recall a comparable swing in such a short period. For listeners watching Hungarian politics from a distance, this is the data point that says the new government's honeymoon is not just holding, it is deepening.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+A+new+poll+puts+Tisza+sixty-six+to+Fidesz%27s+twenty-five&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+A+new+poll+puts+Tisza+sixty-six+to+Fidesz%27s+twenty-five%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+A+new+poll+puts+Tisza+sixty-six+to+Fidesz%27s+twenty-five&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+A+new+poll+puts+Tisza+sixty-six+to+Fidesz%27s+twenty-five%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Tisza's incoming finance minister promises a nine per cent income tax floor</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">István Kapitány, the minister-designate for finance, says the personal income tax rate on earnings up to the minimum wage will drop to nine per cent, and that anyone earning below the median wage will pay less overall than they do now. The move is being framed as the first concrete tax change of the new administration, and it is pitched squarely at the lower-middle income band that swung heavily away from Fidesz. The details on thresholds and timing are still to be published.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Tisza%27s+incoming+finance+minister+promises+a+nine+per+cent+income+tax+floor&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Tisza%27s+incoming+finance+minister+promises+a+nine+per+cent+income+tax+floor%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Tisza%27s+incoming+finance+minister+promises+a+nine+per+cent+income+tax+floor&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Tisza%27s+incoming+finance+minister+promises+a+nine+per+cent+income+tax+floor%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">A fire breaks out at the Iváncsa battery factory</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">There was a fire on Monday at the Korean-owned S-K On battery plant in Iváncsa, which the company says started in a municipal waste container and did not injure anyone. The plant has been a long-running source of local anxiety about water use, pollution, and fire safety, so the incident will not go unnoticed even though the official line is that it was minor. Expect the local green opposition to push for more detail.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+A+fire+breaks+out+at+the+Iv%C3%A1ncsa+battery+factory&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+A+fire+breaks+out+at+the+Iv%C3%A1ncsa+battery+factory%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+A+fire+breaks+out+at+the+Iv%C3%A1ncsa+battery+factory&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+A+fire+breaks+out+at+the+Iv%C3%A1ncsa+battery+factory%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Technology and Developer News</h2>
+<div class="story">
+<h3 class="story-title">Anthropic investigates a claim of unauthorised access to its Mythos model</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Anthropic is investigating a claim that someone has obtained unauthorised access to Mythos, the artificial intelligence model the company has publicly said is too dangerous to release because of its hacking capabilities. The claim has been circulating in security circles for a couple of days, and Anthropic is now acknowledging it formally. If true, this would be the first major leak of a frontier model explicitly withheld on safety grounds, and it would test whether the industry's voluntary containment of certain capabilities is worth anything at all.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Anthropic+investigates+a+claim+of+unauthorised+access+to+its+Mythos+model&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Anthropic+investigates+a+claim+of+unauthorised+access+to+its+Mythos+model%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Anthropic+investigates+a+claim+of+unauthorised+access+to+its+Mythos+model&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Anthropic+investigates+a+claim+of+unauthorised+access+to+its+Mythos+model%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Meta plans to train artificial intelligence on its employees' clicks and keystrokes</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Meta has told staff that it intends to capture detailed telemetry from how its own employees work, including clicks and keystrokes, and use that data to train its internal artificial intelligence models. The company frames it as an efficiency play; unions and privacy campaigners have predictably called it surveillance. The more interesting question is what this implies for any enterprise customer considering Meta's tooling, because the engineering precedent has now been set.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Meta+plans+to+train+artificial+intelligence+on+its+employees%27+clicks+and+keystrokes&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Meta+plans+to+train+artificial+intelligence+on+its+employees%27+clicks+and+keystrokes%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Meta+plans+to+train+artificial+intelligence+on+its+employees%27+clicks+and+keystrokes&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Meta+plans+to+train+artificial+intelligence+on+its+employees%27+clicks+and+keystrokes%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">GitHub's command-line tool quietly starts collecting telemetry</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">GitHub has added pseudonymous telemetry collection to its official command-line tool, and the Hacker News thread on the change has turned into a referendum on developer tooling trust. The company says the data is limited to command names and aggregate usage, not arguments or repository content. Critics point out that the opt-out is buried and that the change landed without a prominent release note. For anyone scripting GitHub's tool into their workflows, it is worth a quick look at the opt-out environment variable before the next update rolls through.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+GitHub%27s+command-line+tool+quietly+starts+collecting+telemetry&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+GitHub%27s+command-line+tool+quietly+starts+collecting+telemetry%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+GitHub%27s+command-line+tool+quietly+starts+collecting+telemetry&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+GitHub%27s+command-line+tool+quietly+starts+collecting+telemetry%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Google announces its eighth-generation Tensor Processing Unit</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Google has unveiled its eighth generation of the Tensor Processing Unit, the custom silicon it designs for artificial intelligence workloads. The new generation ships as two separate chips rather than one, which Google is pitching as better suited to what it calls the agentic era, where long-running model sessions matter more than one-shot queries. For developers, the practical takeaway is that Google Cloud inference pricing is about to shift, and quite possibly downward for certain workloads.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Google+announces+its+eighth-generation+Tensor+Processing+Unit&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Google+announces+its+eighth-generation+Tensor+Processing+Unit%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Google+announces+its+eighth-generation+Tensor+Processing+Unit&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Google+announces+its+eighth-generation+Tensor+Processing+Unit%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Alibaba ships Qwen three-point-six, a twenty-seven-billion parameter coding model</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Alibaba's Qwen team has released version three-point-six of its model family, with a twenty-seven-billion parameter dense model aimed squarely at coding tasks. The benchmarks being circulated put it in the same bracket as much larger closed models from Anthropic and OpenAI, at a size that will comfortably run on a single high-end graphics card. That combination, open weights plus flagship coding performance at laptop-adjacent scale, is the pattern the Chinese labs keep landing on, and it keeps changing what a reasonable local development setup looks like.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Alibaba+ships+Qwen+three-point-six%2C+a+twenty-seven-billion+parameter+coding+model&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Alibaba+ships+Qwen+three-point-six%2C+a+twenty-seven-billion+parameter+coding+model%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+Alibaba+ships+Qwen+three-point-six%2C+a+twenty-seven-billion+parameter+coding+model&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+Alibaba+ships+Qwen+three-point-six%2C+a+twenty-seven-billion+parameter+coding+model%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula One</h2>
+<div class="story">
+<h3 class="story-title">The governing body confirms tweaks to the twenty-twenty-six regulations ahead of the Miami Grand Prix</h3>
+<p class="source">Source: motorsport.com</p>
+<p class="story-body">The Fédération Internationale de l'Automobile has formally confirmed a set of targeted changes to the current season's rules, intended to land before the Miami Grand Prix. The headline fixes concern qualifying, where drivers have been unable to push flat out because of heavy energy management, and a handful of power unit clauses. Toto Wolff, who has been the loudest voice for caution, says the sport needs a scalpel rather than a baseball bat. Max Verstappen, for his part, has made no secret of his dislike of the whole twenty-twenty-six package and is openly spending time racing grand touring cars in Germany instead.
+
+---
+
+That is your Wednesday briefing. The common thread, whether you are looking at a British inflation print, a German airline's summer timetable, or a pipeline that suddenly started flowing into Hungary, is that the Iran war is quietly rewiring an awful lot more than the Middle East. Back tomorrow.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+The+governing+body+confirms+tweaks+to+the+twenty-twenty-six+regulations+ahead+of+the+Miami+Grand+Prix&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+The+governing+body+confirms+tweaks+to+the+twenty-twenty-six+regulations+ahead+of+the+Miami+Grand+Prix%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-22+—+The+governing+body+confirms+tweaks+to+the+twenty-twenty-six+regulations+ahead+of+the+Miami+Grand+Prix&amp;labels=feedback&amp;body=Date:+2026-04-22%0AStory:+The+governing+body+confirms+tweaks+to+the+twenty-twenty-six+regulations+ahead+of+the+Miami+Grand+Prix%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

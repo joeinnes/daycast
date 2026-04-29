@@ -1,0 +1,86 @@
+[
+  {
+    "id": "s1",
+    "title": "Iran Conflict Deepens as Israel Strikes Tehran Again",
+    "section": "World News",
+    "start": 12.3625
+  },
+  {
+    "id": "s2",
+    "title": "Denmark Had Plans to Blow Up Greenland Runways If the US Invaded",
+    "section": "World News",
+    "start": 65.875
+  },
+  {
+    "id": "s3",
+    "title": "Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy",
+    "section": "UK News",
+    "start": 88.6875
+  },
+  {
+    "id": "s4",
+    "title": "COVID Inquiry Finds NHS Came Close to Collapse",
+    "section": "UK News",
+    "start": 113.825
+  },
+  {
+    "id": "s5",
+    "title": "EU Leaders Line Up Against Orbán Over Ukrainian Loan",
+    "section": "Hungary",
+    "start": 133.9875
+  },
+  {
+    "id": "s6",
+    "title": "Fuel Crisis Hits Hungarian Gas Stations",
+    "section": "Hungary",
+    "start": 165.3875
+  },
+  {
+    "id": "s7",
+    "title": "Hungarian Soldiers Return from Iraq as NATO Withdraws",
+    "section": "Hungary",
+    "start": 191.625
+  },
+  {
+    "id": "s8",
+    "title": "Bahrain and Saudi Grands Prix Cancelled as Season Shrinks",
+    "section": "Formula 1",
+    "start": 218.2375
+  },
+  {
+    "id": "s9",
+    "title": "Newey Departs Aston Martin",
+    "section": "Formula 1",
+    "start": 249.8375
+  },
+  {
+    "id": "s10",
+    "title": "Astral Joins OpenAI",
+    "section": "Tech and Developer",
+    "start": 268.1125
+  },
+  {
+    "id": "s11",
+    "title": "Claude Code Gets Channels for Pushing Events into Running Sessions",
+    "section": "Tech and Developer",
+    "start": 292.275
+  },
+  {
+    "id": "s12",
+    "title": "Noq: A New QUIC Implementation in Rust",
+    "section": "Tech and Developer",
+    "start": 312.025
+  },
+  {
+    "id": "s13",
+    "title": "KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes",
+    "section": "Tech and Developer",
+    "start": 335.4
+  },
+  {
+    "id": "s14",
+    "title": "CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider",
+    "section": "Tech and Developer",
+    "start": 354.925
+  }
+]

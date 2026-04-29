@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-03-28</title>
+<link rel="icon" type="image/png" href="/daycast/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.site-header-left{display:flex;align-items:center;gap:.6rem}
+.site-logo{width:28px;height:28px;border-radius:4px}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<div class="site-header-left"><img class="site-logo" src="/daycast/logo-180.png" alt="Daycast" width="28" height="28"><span class="wordmark">DAYCAST</span></div>
+<span class="header-date">28 March 2026<span class="header-iso">2026-03-28</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="7.725"></div>
+<div class="chapter-tick" data-start="40.0875"></div>
+<div class="chapter-tick" data-start="71.2125"></div>
+<div class="chapter-tick" data-start="95.7375"></div>
+<div class="chapter-tick" data-start="128.4875"></div>
+<div class="chapter-tick" data-start="150.8125"></div>
+<div class="chapter-tick" data-start="168.7625"></div>
+<div class="chapter-tick" data-start="193.9625"></div>
+<div class="chapter-tick" data-start="226.564"></div>
+<div class="chapter-tick" data-start="251.964"></div>
+<div class="chapter-tick" data-start="273.8765"></div>
+<div class="chapter-tick" data-start="295.189"></div>
+<div class="chapter-tick" data-start="322.089"></div>
+<div class="chapter-tick" data-start="344.7515"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="7.725" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">The United States says it expects the Iran war to end within weeks</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:07</span></li>
+<li class="chapter-item" data-start="40.0875" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">A federal judge blocks the Pentagon's attempt to blacklist Anthropic</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:40</span></li>
+<li class="chapter-item" data-start="71.2125" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">Nepal's former prime minister arrested over a deadly protest crackdown</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:11</span></li>
+<li class="chapter-item" data-start="95.7375" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">A jury finds Meta and YouTube liable in a landmark social media addiction trial</span><span class="chapter-section">UK</span></span><span class="chapter-ts">1:35</span></li>
+<li class="chapter-item" data-start="128.4875" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">UK petrol tops a hundred and fifty pence as the Iran crisis squeezes consumers</span><span class="chapter-section">UK</span></span><span class="chapter-ts">2:08</span></li>
+<li class="chapter-item" data-start="150.8125" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">PlayStation 5 price rises by ninety pounds in the UK</span><span class="chapter-section">UK</span></span><span class="chapter-ts">2:30</span></li>
+<li class="chapter-item" data-start="168.7625" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">A court rules that Orbán campaigned illegally by using a child at a rally</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">2:48</span></li>
+<li class="chapter-item" data-start="193.9625" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Tisza Party holds a nine-point lead as NER-linked stocks tumble</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">3:13</span></li>
+<li class="chapter-item" data-start="226.564" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">People inside Microsoft are fighting to drop the mandatory Microsoft Account requirement</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">3:46</span></li>
+<li class="chapter-item" data-start="251.964" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">Anatomy of the dot-claude folder</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:11</span></li>
+<li class="chapter-item" data-start="273.8765" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">A Stanford paper argues we should go hard on agents, not on filesystems</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:33</span></li>
+<li class="chapter-item" data-start="295.189" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">Another PyPI supply chain attack, this time hitting Telnyx</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:55</span></li>
+<li class="chapter-item" data-start="322.089" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">Colorado passes a bill to limit surveillance pricing</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:22</span></li>
+<li class="chapter-item" data-start="344.7515" role="button" tabindex="0"><span class="chapter-num">14</span><span class="chapter-info"><span class="chapter-title">Suzuka race weekend continues with a new energy management rule in play</span><span class="chapter-section">Formula 1</span></span><span class="chapter-ts">5:44</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">The United States says it expects the Iran war to end within weeks</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The United States Secretary of State Marco Rubio has said Washington expects to conclude its military operations against Iran in the coming weeks. The statement is the most specific timeline any senior US official has offered since the conflict began. It comes as Iran-backed hackers have breached the personal email of FBI Director Kash Patel, with the group sharing what they describe as historical documents and photos. The energy picture remains fragile, with UK petrol prices now above a hundred and fifty pence per litre and no sign of relief before Easter.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+The+United+States+says+it+expects+the+Iran+war+to+end+within+weeks&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+The+United+States+says+it+expects+the+Iran+war+to+end+within+weeks%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+The+United+States+says+it+expects+the+Iran+war+to+end+within+weeks&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+The+United+States+says+it+expects+the+Iran+war+to+end+within+weeks%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">A federal judge blocks the Pentagon's attempt to blacklist Anthropic</h3>
+<p class="source">Source: BBC News / Hacker News</p>
+<p class="story-body">A federal judge in California has issued a preliminary injunction blocking the Pentagon from enforcing its designation of Anthropic as a supply chain risk. Judge Rita Lin wrote that the government was attempting to cripple the company and chill public debate, calling the action classic First Amendment retaliation. The dispute centres on Anthropic's refusal to accept new contract terms that it feared would open the door to mass surveillance and fully autonomous weapons. For now, Claude and Anthropic's other tools will continue to be used across government.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+federal+judge+blocks+the+Pentagon%27s+attempt+to+blacklist+Anthropic&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+federal+judge+blocks+the+Pentagon%27s+attempt+to+blacklist+Anthropic%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+federal+judge+blocks+the+Pentagon%27s+attempt+to+blacklist+Anthropic&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+federal+judge+blocks+the+Pentagon%27s+attempt+to+blacklist+Anthropic%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Nepal's former prime minister arrested over a deadly protest crackdown</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Nepal's former prime minister K.P. Sharma Oli has been arrested in connection with a crackdown on protests last year that killed more than seventy people. The uprising ultimately toppled his government, and the country recently swore in a new prime minister, Balendra Shah, a former rapper who won office on an anti-corruption platform. The arrest signals that accountability for the crackdown is being pursued under the new administration.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Nepal%27s+former+prime+minister+arrested+over+a+deadly+protest+crackdown&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Nepal%27s+former+prime+minister+arrested+over+a+deadly+protest+crackdown%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Nepal%27s+former+prime+minister+arrested+over+a+deadly+protest+crackdown&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Nepal%27s+former+prime+minister+arrested+over+a+deadly+protest+crackdown%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">UK</h2>
+<div class="story">
+<h3 class="story-title">A jury finds Meta and YouTube liable in a landmark social media addiction trial</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">A California jury has found Meta and YouTube liable on all counts in what is being called a landmark case on social media addiction. The plaintiff, a twenty-year-old woman who began using YouTube at six and Instagram at nine, was awarded six million dollars in combined compensatory and punitive damages. The jury concluded that both platforms were deliberately designed to be addictive and that executives knew this. Hundreds of similar cases are now in the pipeline, and the ruling could force significant changes to how these platforms handle younger users.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+jury+finds+Meta+and+YouTube+liable+in+a+landmark+social+media+addiction+trial&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+jury+finds+Meta+and+YouTube+liable+in+a+landmark+social+media+addiction+trial%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+jury+finds+Meta+and+YouTube+liable+in+a+landmark+social+media+addiction+trial&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+jury+finds+Meta+and+YouTube+liable+in+a+landmark+social+media+addiction+trial%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">UK petrol tops a hundred and fifty pence as the Iran crisis squeezes consumers</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Asda's boss has rejected profiteering claims as UK petrol prices push past a hundred and fifty pence per litre ahead of Easter. The price surge is a direct consequence of the Iran conflict and the disruption to oil shipments through the Strait of Hormuz. Consumer confidence surveys show a ripple of fear spreading through the UK economy, with half the public reportedly cutting their spending.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+UK+petrol+tops+a+hundred+and+fifty+pence+as+the+Iran+crisis+squeezes+consumers&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+UK+petrol+tops+a+hundred+and+fifty+pence+as+the+Iran+crisis+squeezes+consumers%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+UK+petrol+tops+a+hundred+and+fifty+pence+as+the+Iran+crisis+squeezes+consumers&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+UK+petrol+tops+a+hundred+and+fifty+pence+as+the+Iran+crisis+squeezes+consumers%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">PlayStation 5 price rises by ninety pounds in the UK</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Sony has increased the recommended retail price of the PlayStation 5 in the UK from four hundred and eighty pounds to five hundred and seventy pounds, blaming global economic pressures. The ninety-pound hike is steep by any measure and will hit just as the cost-of-living squeeze from rising fuel prices bites harder.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+PlayStation+5+price+rises+by+ninety+pounds+in+the+UK&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+PlayStation+5+price+rises+by+ninety+pounds+in+the+UK%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+PlayStation+5+price+rises+by+ninety+pounds+in+the+UK&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+PlayStation+5+price+rises+by+ninety+pounds+in+the+UK%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Hungary &amp; Central Europe</h2>
+<div class="story">
+<h3 class="story-title">A court rules that Orbán campaigned illegally by using a child at a rally</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Telex</p>
+<p class="story-body">A Budapest court has found that Prime Minister Viktor Orbán broke campaigning regulations by using a young child at a Fidesz event in Kaposvár. The ruling adds to the growing legal and political pressure on Orbán as the April election approaches. Separately, a mayor from the junior coalition party KDNP has left the party and publicly endorsed the opposition Tisza Party candidate, a notable defection this close to polling day.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+court+rules+that+Orb%C3%A1n+campaigned+illegally+by+using+a+child+at+a+rally&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+court+rules+that+Orb%C3%A1n+campaigned+illegally+by+using+a+child+at+a+rally%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+court+rules+that+Orb%C3%A1n+campaigned+illegally+by+using+a+child+at+a+rally&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+court+rules+that+Orb%C3%A1n+campaigned+illegally+by+using+a+child+at+a+rally%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Tisza Party holds a nine-point lead as NER-linked stocks tumble</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">The latest Republikon Institute poll puts Péter Magyar's Tisza Party nine points ahead of Fidesz, with a three-party parliament looking increasingly likely if current trends hold. Markets appear to be pricing in the possibility of change: shares in Opus Global and 4iG, both closely linked to the ruling party's network, fell more than ten per cent on Thursday. Meanwhile, a crowdfunding campaign for a former National Information Agency officer who alleges an intelligence operation against the Tisza Party raised a hundred and sixty million forints within hours.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Tisza+Party+holds+a+nine-point+lead+as+NER-linked+stocks+tumble&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Tisza+Party+holds+a+nine-point+lead+as+NER-linked+stocks+tumble%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Tisza+Party+holds+a+nine-point+lead+as+NER-linked+stocks+tumble&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Tisza+Party+holds+a+nine-point+lead+as+NER-linked+stocks+tumble%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Tech &amp; Developer</h2>
+<div class="story">
+<h3 class="story-title">People inside Microsoft are fighting to drop the mandatory Microsoft Account requirement</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">An internal push within Microsoft is gaining traction to remove the requirement for a Microsoft Account during Windows 11 setup. The story, which has drawn over six hundred points on Hacker News, resonates with a long-running frustration among both developers and regular users who want local accounts without workarounds. Whether the internal advocates can overcome the commercial logic of tying every install to an online account remains to be seen.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+People+inside+Microsoft+are+fighting+to+drop+the+mandatory+Microsoft+Account+requirement&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+People+inside+Microsoft+are+fighting+to+drop+the+mandatory+Microsoft+Account+requirement%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+People+inside+Microsoft+are+fighting+to+drop+the+mandatory+Microsoft+Account+requirement&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+People+inside+Microsoft+are+fighting+to+drop+the+mandatory+Microsoft+Account+requirement%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Anatomy of the dot-claude folder</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">A detailed walkthrough of the dot-claude configuration folder has been published, breaking down how Claude Code organises its project context, settings, and commands. The post has picked up nearly five hundred points, reflecting growing interest in the practical mechanics of AI-assisted development workflows. If you use Claude Code, this is worth a read.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Anatomy+of+the+dot-claude+folder&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Anatomy+of+the+dot-claude+folder%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Anatomy+of+the+dot-claude+folder&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Anatomy+of+the+dot-claude+folder%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">A Stanford paper argues we should go hard on agents, not on filesystems</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">A new paper from Stanford proposes rethinking how AI agents interact with computer systems, arguing that the focus should be on making agents more capable rather than restructuring the systems they operate on. The work sits at the intersection of operating systems research and AI tooling, and has practical implications for anyone building agent-based developer tools.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+Stanford+paper+argues+we+should+go+hard+on+agents%2C+not+on+filesystems&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+Stanford+paper+argues+we+should+go+hard+on+agents%2C+not+on+filesystems%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+A+Stanford+paper+argues+we+should+go+hard+on+agents%2C+not+on+filesystems&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+A+Stanford+paper+argues+we+should+go+hard+on+agents%2C+not+on+filesystems%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Another PyPI supply chain attack, this time hitting Telnyx</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Just days after the litellm package was found to be compromised on PyPI, the Telnyx Python SDK has been hit by a similar supply chain attack. Telnyx has published a detailed security notice about the incident. The pattern of successive attacks on popular Python packages suggests this is a coordinated campaign rather than isolated incidents. If you maintain Python dependencies, now is a good time to audit your lock files.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Another+PyPI+supply+chain+attack%2C+this+time+hitting+Telnyx&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Another+PyPI+supply+chain+attack%2C+this+time+hitting+Telnyx%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Another+PyPI+supply+chain+attack%2C+this+time+hitting+Telnyx&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Another+PyPI+supply+chain+attack%2C+this+time+hitting+Telnyx%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Colorado passes a bill to limit surveillance pricing</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">The Colorado House has passed a bill that would restrict the use of surveillance pricing, where companies use personal data to charge different customers different prices for the same product. The bill also covers algorithmic wage-setting. It is one of the first pieces of US state legislation to directly target this practice, and privacy advocates are watching closely to see if it survives the Senate.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Colorado+passes+a+bill+to+limit+surveillance+pricing&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Colorado+passes+a+bill+to+limit+surveillance+pricing%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Colorado+passes+a+bill+to+limit+surveillance+pricing&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Colorado+passes+a+bill+to+limit+surveillance+pricing%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula 1</h2>
+<div class="story">
+<h3 class="story-title">Suzuka race weekend continues with a new energy management rule in play</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Formula1.com</p>
+<p class="story-body">The Japanese Grand Prix weekend at Suzuka has brought a notable rule tweak. All five power unit manufacturers have agreed with the FIA to reduce the permitted energy recharge per lap during qualifying from nine megajoules to eight, aimed at cutting the amount of lifting and coasting drivers need to do on their fast laps. On the competitive side, McLaren looked much more like their championship-winning selves on Friday, with strong pace after a difficult start to the twenty-twenty-six season. The special liveries are out in force, with Mercedes running a wolf-inspired design and Haas going with a Godzilla theme for the occasion.
+
+---
+
+That is your briefing for Saturday the twenty-eighth of March. The clocks spring forward tonight, so set your alarms accordingly. Enjoy the rest of your weekend.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Suzuka+race+weekend+continues+with+a+new+energy+management+rule+in+play&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Suzuka+race+weekend+continues+with+a+new+energy+management+rule+in+play%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-28+—+Suzuka+race+weekend+continues+with+a+new+energy+management+rule+in+play&amp;labels=feedback&amp;body=Date:+2026-03-28%0AStory:+Suzuka+race+weekend+continues+with+a+new+energy+management+rule+in+play%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

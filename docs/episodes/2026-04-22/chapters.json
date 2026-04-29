@@ -1,0 +1,92 @@
+[
+  {
+    "id": "s1",
+    "title": "Trump extends the Iran ceasefire for a second time in a fortnight",
+    "section": "World News",
+    "start": 28.6
+  },
+  {
+    "id": "s2",
+    "title": "The European Union approves a ninety-billion-euro loan to Ukraine, and the Druzhba pipeline starts flowing again",
+    "section": "World News",
+    "start": 64.2625
+  },
+  {
+    "id": "s3",
+    "title": "Lufthansa cancels twenty thousand summer flights as fuel prices surge",
+    "section": "World News",
+    "start": 93.15
+  },
+  {
+    "id": "s4",
+    "title": "Taiwan's president cancels an African trip after flight permits are revoked",
+    "section": "World News",
+    "start": 121.2875
+  },
+  {
+    "id": "s5",
+    "title": "Inflation climbs to three-point-three per cent as Iran fuel costs bite",
+    "section": "United Kingdom",
+    "start": 149.3
+  },
+  {
+    "id": "s6",
+    "title": "Starmer is questioned over a job offer to his former communications chief",
+    "section": "United Kingdom",
+    "start": 176.4
+  },
+  {
+    "id": "s7",
+    "title": "A new poll puts Tisza sixty-six to Fidesz's twenty-five",
+    "section": "Hungary",
+    "start": 202.012
+  },
+  {
+    "id": "s8",
+    "title": "Tisza's incoming finance minister promises a nine per cent income tax floor",
+    "section": "Hungary",
+    "start": 232.787
+  },
+  {
+    "id": "s9",
+    "title": "A fire breaks out at the Iváncsa battery factory",
+    "section": "Hungary",
+    "start": 259.687
+  },
+  {
+    "id": "s10",
+    "title": "Anthropic investigates a claim of unauthorised access to its Mythos model",
+    "section": "Technology and Developer News",
+    "start": 283.962
+  },
+  {
+    "id": "s11",
+    "title": "Meta plans to train artificial intelligence on its employees' clicks and keystrokes",
+    "section": "Technology and Developer News",
+    "start": 314.837
+  },
+  {
+    "id": "s12",
+    "title": "GitHub's command-line tool quietly starts collecting telemetry",
+    "section": "Technology and Developer News",
+    "start": 341.587
+  },
+  {
+    "id": "s13",
+    "title": "Google announces its eighth-generation Tensor Processing Unit",
+    "section": "Technology and Developer News",
+    "start": 373.0245
+  },
+  {
+    "id": "s14",
+    "title": "Alibaba ships Qwen three-point-six, a twenty-seven-billion parameter coding model",
+    "section": "Technology and Developer News",
+    "start": 401.116
+  },
+  {
+    "id": "s15",
+    "title": "The governing body confirms tweaks to the twenty-twenty-six regulations ahead of the Miami Grand Prix",
+    "section": "Formula One",
+    "start": 432.941
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "s1",
+    "title": "The United States says it expects the Iran war to end within weeks",
+    "section": "World News",
+    "start": 7.725
+  },
+  {
+    "id": "s2",
+    "title": "A federal judge blocks the Pentagon's attempt to blacklist Anthropic",
+    "section": "World News",
+    "start": 40.0875
+  },
+  {
+    "id": "s3",
+    "title": "Nepal's former prime minister arrested over a deadly protest crackdown",
+    "section": "World News",
+    "start": 71.2125
+  },
+  {
+    "id": "s4",
+    "title": "A jury finds Meta and YouTube liable in a landmark social media addiction trial",
+    "section": "UK",
+    "start": 95.7375
+  },
+  {
+    "id": "s5",
+    "title": "UK petrol tops a hundred and fifty pence as the Iran crisis squeezes consumers",
+    "section": "UK",
+    "start": 128.4875
+  },
+  {
+    "id": "s6",
+    "title": "PlayStation 5 price rises by ninety pounds in the UK",
+    "section": "UK",
+    "start": 150.8125
+  },
+  {
+    "id": "s7",
+    "title": "A court rules that Orbán campaigned illegally by using a child at a rally",
+    "section": "Hungary & Central Europe",
+    "start": 168.7625
+  },
+  {
+    "id": "s8",
+    "title": "Tisza Party holds a nine-point lead as NER-linked stocks tumble",
+    "section": "Hungary & Central Europe",
+    "start": 193.9625
+  },
+  {
+    "id": "s9",
+    "title": "People inside Microsoft are fighting to drop the mandatory Microsoft Account requirement",
+    "section": "Tech & Developer",
+    "start": 226.564
+  },
+  {
+    "id": "s10",
+    "title": "Anatomy of the dot-claude folder",
+    "section": "Tech & Developer",
+    "start": 251.964
+  },
+  {
+    "id": "s11",
+    "title": "A Stanford paper argues we should go hard on agents, not on filesystems",
+    "section": "Tech & Developer",
+    "start": 273.8765
+  },
+  {
+    "id": "s12",
+    "title": "Another PyPI supply chain attack, this time hitting Telnyx",
+    "section": "Tech & Developer",
+    "start": 295.189
+  },
+  {
+    "id": "s13",
+    "title": "Colorado passes a bill to limit surveillance pricing",
+    "section": "Tech & Developer",
+    "start": 322.089
+  },
+  {
+    "id": "s14",
+    "title": "Suzuka race weekend continues with a new energy management rule in play",
+    "section": "Formula 1",
+    "start": 344.7515
+  }
+]

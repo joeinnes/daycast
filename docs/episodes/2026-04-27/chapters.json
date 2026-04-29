@@ -1,0 +1,86 @@
+[
+  {
+    "id": "s1",
+    "title": "A gunman opens fire at the Washington Hilton with the president and senior officials in the room",
+    "section": "World News",
+    "start": 31.4625
+  },
+  {
+    "id": "s2",
+    "title": "The Iran ceasefire wobbles as Trump cancels his envoys' trip to Pakistan",
+    "section": "World News",
+    "start": 77.65
+  },
+  {
+    "id": "s3",
+    "title": "Netanyahu orders the Israeli army to vigorously attack Hezbollah in Lebanon",
+    "section": "World News",
+    "start": 110.3
+  },
+  {
+    "id": "s4",
+    "title": "A Pentagon memo reportedly raises the option of suspending Spain from NATO",
+    "section": "World News",
+    "start": 140.4125
+  },
+  {
+    "id": "s5",
+    "title": "A government minister warns that higher prices could last another eight months",
+    "section": "United Kingdom",
+    "start": 171.55
+  },
+  {
+    "id": "s6",
+    "title": "The European Union's anti-fraud office formally opens an investigation into Peter Mandelson",
+    "section": "United Kingdom",
+    "start": 200.644
+  },
+  {
+    "id": "s7",
+    "title": "Sabastian Sawe runs the first sub-two-hour marathon in a competitive race",
+    "section": "United Kingdom",
+    "start": 235.544
+  },
+  {
+    "id": "s8",
+    "title": "Viktor Orbán steps down from his parliamentary seat",
+    "section": "Hungary",
+    "start": 269.819
+  },
+  {
+    "id": "s9",
+    "title": "The Guardian reports that Orbán's circle is rapidly moving wealth out of Hungary",
+    "section": "Hungary",
+    "start": 300.6315
+  },
+  {
+    "id": "s10",
+    "title": "UK Biobank patient data has been listed for sale in China",
+    "section": "Technology and Developer",
+    "start": 337.6565
+  },
+  {
+    "id": "s11",
+    "title": "Meta cuts roughly one in ten jobs after a year of heavy artificial intelligence spending",
+    "section": "Technology and Developer",
+    "start": 376.3315
+  },
+  {
+    "id": "s12",
+    "title": "OpenAI says SWE-bench Verified no longer measures frontier coding capabilities",
+    "section": "Technology and Developer",
+    "start": 410.692
+  },
+  {
+    "id": "s13",
+    "title": "A coding agent deletes a production database, and then writes a confession",
+    "section": "Technology and Developer",
+    "start": 450.217
+  },
+  {
+    "id": "s14",
+    "title": "McLaren teases a Senna tribute livery for the Miami Grand Prix",
+    "section": "Formula One",
+    "start": 487.3795
+  }
+]

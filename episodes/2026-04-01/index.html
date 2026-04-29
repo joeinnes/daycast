@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-04-01</title>
+<link rel="icon" type="image/png" href="/daycast/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.site-header-left{display:flex;align-items:center;gap:.6rem}
+.site-logo{width:28px;height:28px;border-radius:4px}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<div class="site-header-left"><img class="site-logo" src="/daycast/logo-180.png" alt="Daycast" width="28" height="28"><span class="wordmark">DAYCAST</span></div>
+<span class="header-date">1 April 2026<span class="header-iso">2026-04-01</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="11.0875"></div>
+<div class="chapter-tick" data-start="56.3875"></div>
+<div class="chapter-tick" data-start="84.8"></div>
+<div class="chapter-tick" data-start="102.2125"></div>
+<div class="chapter-tick" data-start="133.9125"></div>
+<div class="chapter-tick" data-start="165.575"></div>
+<div class="chapter-tick" data-start="194.4875"></div>
+<div class="chapter-tick" data-start="211.492"></div>
+<div class="chapter-tick" data-start="245.267"></div>
+<div class="chapter-tick" data-start="270.6295"></div>
+<div class="chapter-tick" data-start="290.692"></div>
+<div class="chapter-tick" data-start="311.9045"></div>
+<div class="chapter-tick" data-start="331.0045"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="11.0875" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">Iran signals readiness to end the war, but the path is far from clear</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:11</span></li>
+<li class="chapter-item" data-start="56.3875" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">Israel says it will hold a permanent buffer zone in southern Lebanon as peacekeepers are killed</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:56</span></li>
+<li class="chapter-item" data-start="84.8" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">India begins its mammoth census, counting more than a billion people</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:24</span></li>
+<li class="chapter-item" data-start="102.2125" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">The Tisza Party's lead widens as Hungary's election enters its final days</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">1:42</span></li>
+<li class="chapter-item" data-start="133.9125" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">European leaders openly question Hungary's loyalty as Szijjarto's contacts draw scrutiny</span><span class="chapter-section">Hungary &amp; Central Europe</span></span><span class="chapter-ts">2:13</span></li>
+<li class="chapter-item" data-start="165.575" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">Energy bill support will be means-tested as April price rises take effect</span><span class="chapter-section">UK</span></span><span class="chapter-ts">2:45</span></li>
+<li class="chapter-item" data-start="194.4875" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">More British troops headed to the Middle East</span><span class="chapter-section">UK</span></span><span class="chapter-ts">3:14</span></li>
+<li class="chapter-item" data-start="211.492" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Axios compromised on NPM in a major supply chain attack</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">3:31</span></li>
+<li class="chapter-item" data-start="245.267" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">Claude Code's source code leaked through an NPM source map</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:05</span></li>
+<li class="chapter-item" data-start="270.6295" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">Ollama is now powered by MLX on Apple Silicon</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:30</span></li>
+<li class="chapter-item" data-start="290.692" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">OkCupid handed three million dating photos to a facial recognition company</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:50</span></li>
+<li class="chapter-item" data-start="311.9045" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">GitHub reverses course on Copilot adverts in pull requests</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:11</span></li>
+<li class="chapter-item" data-start="331.0045" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">The paddock regroups after Suzuka as Audi reveal a radically different aero concept</span><span class="chapter-section">Formula 1</span></span><span class="chapter-ts">5:31</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">Iran signals readiness to end the war, but the path is far from clear</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News / Telex</p>
+<p class="story-body">Iran's president has spoken with the European Union Council president about ceasefire conditions, saying Tehran is ready to end the war but wants security guarantees before any deal. Donald Trump has weighed in from Washington, claiming the United States will resolve the conflict within two to three weeks. Meanwhile, the human cost continues to mount. Reports from the BBC say Iran is now using children in security roles, with witnesses describing an eleven-year-old killed in an air strike while manning a checkpoint in Tehran. The broader economic fallout is deepening too, with United States petrol prices crossing four dollars a gallon for the first time since the Ukraine conflict began, and fuel rationing and free bus schemes spreading across multiple countries.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Iran+signals+readiness+to+end+the+war%2C+but+the+path+is+far+from+clear&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Iran+signals+readiness+to+end+the+war%2C+but+the+path+is+far+from+clear%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Iran+signals+readiness+to+end+the+war%2C+but+the+path+is+far+from+clear&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Iran+signals+readiness+to+end+the+war%2C+but+the+path+is+far+from+clear%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Israel says it will hold a permanent buffer zone in southern Lebanon as peacekeepers are killed</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Israel's defence minister has said the military will take permanent control of a large buffer zone in southern Lebanon and that houses in villages near the border will be demolished. Displaced Lebanese residents will not be allowed to return until security conditions are met, though what that means in practice remains undefined. In a grim development, two Indonesian United Nations peacekeepers were killed by a roadside explosion, less than a day after a third Indonesian peacekeeper died in a separate incident.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Israel+says+it+will+hold+a+permanent+buffer+zone+in+southern+Lebanon+as+peacekeepers+are+killed&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Israel+says+it+will+hold+a+permanent+buffer+zone+in+southern+Lebanon+as+peacekeepers+are+killed%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Israel+says+it+will+hold+a+permanent+buffer+zone+in+southern+Lebanon+as+peacekeepers+are+killed&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Israel+says+it+will+hold+a+permanent+buffer+zone+in+southern+Lebanon+as+peacekeepers+are+killed%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">India begins its mammoth census, counting more than a billion people</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">India has launched the world's most ambitious census exercise, deploying three million officials to count every person in the country. The two-phase operation will cover more than a billion people and is expected to shape policy decisions on everything from parliamentary representation to welfare spending for years to come.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+India+begins+its+mammoth+census%2C+counting+more+than+a+billion+people&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+India+begins+its+mammoth+census%2C+counting+more+than+a+billion+people%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+India+begins+its+mammoth+census%2C+counting+more+than+a+billion+people&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+India+begins+its+mammoth+census%2C+counting+more+than+a+billion+people%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Hungary &amp; Central Europe</h2>
+<div class="story">
+<h3 class="story-title">The Tisza Party's lead widens as Hungary's election enters its final days</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Telex</p>
+<p class="story-body">With Hungary's April election now imminent, the latest polls show Tisza pulling further ahead of Fidesz, leading 56 to 37 among committed voters. Magyar Peter has been crisscrossing the country with marathon campaign days, while a hundred and eighty-one thousand first-time voters prepare to cast ballots, all of them having grown up under Orban governments. Separately, unusual fake profiles have begun following Tisza politicians in large numbers, in what analysts describe as a more sophisticated influence operation than previous efforts.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+The+Tisza+Party%27s+lead+widens+as+Hungary%27s+election+enters+its+final+days&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+The+Tisza+Party%27s+lead+widens+as+Hungary%27s+election+enters+its+final+days%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+The+Tisza+Party%27s+lead+widens+as+Hungary%27s+election+enters+its+final+days&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+The+Tisza+Party%27s+lead+widens+as+Hungary%27s+election+enters+its+final+days%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">European leaders openly question Hungary's loyalty as Szijjarto's contacts draw scrutiny</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">The Czech president has said it is unacceptable for a European Union and NATO member to share sensitive information with Moscow, in remarks clearly directed at Hungary. Poland's prime minister Donald Tusk went further, saying that Orban and his foreign minister have left Europe. The comments follow revelations about foreign minister Peter Szijjarto's contacts with Russian officials, which opposition leader Magyar Peter has publicly linked to Hungary's treason laws. Szijjarto denies any wrongdoing, saying no oligarch has ever asked him for anything.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+European+leaders+openly+question+Hungary%27s+loyalty+as+Szijjarto%27s+contacts+draw+scrutiny&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+European+leaders+openly+question+Hungary%27s+loyalty+as+Szijjarto%27s+contacts+draw+scrutiny%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+European+leaders+openly+question+Hungary%27s+loyalty+as+Szijjarto%27s+contacts+draw+scrutiny&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+European+leaders+openly+question+Hungary%27s+loyalty+as+Szijjarto%27s+contacts+draw+scrutiny%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">UK</h2>
+<div class="story">
+<h3 class="story-title">Energy bill support will be means-tested as April price rises take effect</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The chancellor has confirmed that any government support for rising energy bills will be based on household income, though the details remain vague and help is unlikely to arrive before autumn. The announcement comes as a string of price increases takes effect today, including higher energy costs, water bills, and council tax. On the other side of the ledger, the minimum wage has also risen, benefiting two point seven million workers, though businesses have warned they will pass the costs on to customers.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Energy+bill+support+will+be+means-tested+as+April+price+rises+take+effect&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Energy+bill+support+will+be+means-tested+as+April+price+rises+take+effect%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Energy+bill+support+will+be+means-tested+as+April+price+rises+take+effect&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Energy+bill+support+will+be+means-tested+as+April+price+rises+take+effect%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">More British troops headed to the Middle East</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The UK government has announced it is sending additional air defence systems and personnel to countries in the Middle East region. The deployment adds to Britain's existing military commitment, which already includes Royal Air Force tankers refuelling jets flying defensive missions against Iranian drones.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+More+British+troops+headed+to+the+Middle+East&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+More+British+troops+headed+to+the+Middle+East%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+More+British+troops+headed+to+the+Middle+East&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+More+British+troops+headed+to+the+Middle+East%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Tech &amp; Developer</h2>
+<div class="story">
+<h3 class="story-title">Axios compromised on NPM in a major supply chain attack</h3>
+<div class="badge-row"><span class="badge then-now">Then &amp; Now</span></div>
+<blockquote class="historical-note">Litellm packages on PyPI were confirmed compromised on 25 March, making this the second major package registry supply chain attack in a week.</blockquote>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Malicious versions of Axios, one of the most widely used JavaScript HTTP libraries, have been published to NPM. The compromised packages drop a remote access trojan, and the story has become the most discussed item on Hacker News this week with nearly two thousand points. This comes barely a week after the litellm Python library was found compromised on PyPI. Two major package registries hit by supply chain attacks in the space of seven days is a worrying pattern, and developers relying on either library should audit their dependency trees immediately.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Axios+compromised+on+NPM+in+a+major+supply+chain+attack&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Axios+compromised+on+NPM+in+a+major+supply+chain+attack%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Axios+compromised+on+NPM+in+a+major+supply+chain+attack&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Axios+compromised+on+NPM+in+a+major+supply+chain+attack%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Claude Code's source code leaked through an NPM source map</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Anthropic's Claude Code command-line tool has had its source code exposed after a source map file was left in the NPM package registry. The leak has drawn enormous attention on Hacker News, with researchers picking through the code and finding what they describe as fake tools, frustration detection regexes, and an undercover mode. Anthropic has acknowledged the leak was caused by a developer packaging error rather than a security breach.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Claude+Code%27s+source+code+leaked+through+an+NPM+source+map&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Claude+Code%27s+source+code+leaked+through+an+NPM+source+map%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Claude+Code%27s+source+code+leaked+through+an+NPM+source+map&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Claude+Code%27s+source+code+leaked+through+an+NPM+source+map%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Ollama is now powered by MLX on Apple Silicon</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Ollama, the popular tool for running large language models locally, has released a preview build that uses Apple's MLX framework on Apple Silicon Macs instead of the generic inference path. The switch should bring meaningful performance improvements for anyone running models on M-series hardware, taking better advantage of the unified memory architecture.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Ollama+is+now+powered+by+MLX+on+Apple+Silicon&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Ollama+is+now+powered+by+MLX+on+Apple+Silicon%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+Ollama+is+now+powered+by+MLX+on+Apple+Silicon&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+Ollama+is+now+powered+by+MLX+on+Apple+Silicon%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">OkCupid handed three million dating photos to a facial recognition company</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">The United States Federal Trade Commission has revealed that OkCupid's parent company Match Group provided three million user photos from the dating app to a facial recognition firm. The disclosure has reignited the debate about how dating platforms handle biometric data, and whether users had any meaningful awareness that their photos would end up training surveillance technology.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+OkCupid+handed+three+million+dating+photos+to+a+facial+recognition+company&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+OkCupid+handed+three+million+dating+photos+to+a+facial+recognition+company%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+OkCupid+handed+three+million+dating+photos+to+a+facial+recognition+company&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+OkCupid+handed+three+million+dating+photos+to+a+facial+recognition+company%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">GitHub reverses course on Copilot adverts in pull requests</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">GitHub has killed its experiment of showing Copilot advertisements inside pull requests after a swift and vocal backlash from developers. The ads had appeared as suggestions within the code review workflow, and the community response was overwhelmingly negative. GitHub has confirmed the feature has been removed entirely.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+GitHub+reverses+course+on+Copilot+adverts+in+pull+requests&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+GitHub+reverses+course+on+Copilot+adverts+in+pull+requests%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+GitHub+reverses+course+on+Copilot+adverts+in+pull+requests&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+GitHub+reverses+course+on+Copilot+adverts+in+pull+requests%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula 1</h2>
+<div class="story">
+<h3 class="story-title">The paddock regroups after Suzuka as Audi reveal a radically different aero concept</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Formula1.com</p>
+<p class="story-body">The Formula One paddock is looking ahead after the Japanese Grand Prix weekend at Suzuka. The technical talking point is Audi's aerodynamic concept for their car, which Formula One's analysts describe as radically different from anything else on the grid. Red Bull's Laurent Mekies has publicly named the areas his team needs to work on, while Franco Colapinto has been confirmed for a special event driving an Alpine Formula One car on the streets of Buenos Aires.
+
+---
+
+That is Wednesday's briefing. The Iran war's economic shockwaves, Hungary's fast-approaching election, and a troubling week for open-source supply chain security are the threads to watch.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+The+paddock+regroups+after+Suzuka+as+Audi+reveal+a+radically+different+aero+concept&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+The+paddock+regroups+after+Suzuka+as+Audi+reveal+a+radically+different+aero+concept%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-01+—+The+paddock+regroups+after+Suzuka+as+Audi+reveal+a+radically+different+aero+concept&amp;labels=feedback&amp;body=Date:+2026-04-01%0AStory:+The+paddock+regroups+after+Suzuka+as+Audi+reveal+a+radically+different+aero+concept%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

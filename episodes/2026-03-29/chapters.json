@@ -1,0 +1,86 @@
+[
+  {
+    "id": "s1",
+    "title": "The Iran conflict enters its second month, and questions mount over Trump's approach",
+    "section": "World News",
+    "start": 12.025
+  },
+  {
+    "id": "s2",
+    "title": "Three Lebanese journalists killed in an Israeli strike",
+    "section": "World News",
+    "start": 38.3
+  },
+  {
+    "id": "s3",
+    "title": "A car bomb attack foiled outside the Bank of America building in Paris",
+    "section": "World News",
+    "start": 58.95
+  },
+  {
+    "id": "s4",
+    "title": "The US government shutdown drags on as House Republicans reject a Senate deal",
+    "section": "World News",
+    "start": 76.2
+  },
+  {
+    "id": "s5",
+    "title": "Campaign tensions boil over at Orbán's forum in Pécel",
+    "section": "Hungary",
+    "start": 93.5875
+  },
+  {
+    "id": "s6",
+    "title": "David Cornstein, Trump's former ambassador to Budapest, has died",
+    "section": "Hungary",
+    "start": 126.1125
+  },
+  {
+    "id": "s7",
+    "title": "Clocks spring forward — one hour lost overnight",
+    "section": "Hungary",
+    "start": 143.6375
+  },
+  {
+    "id": "s8",
+    "title": "New EU border checks at Dover face yet another delay",
+    "section": "United Kingdom",
+    "start": 153.925
+  },
+  {
+    "id": "s9",
+    "title": "A federal judge blocks the Pentagon from banning Anthropic's tools",
+    "section": "Tech & Developer",
+    "start": 171.725
+  },
+  {
+    "id": "s10",
+    "title": "A landmark social media addiction verdict could reshape big tech",
+    "section": "Tech & Developer",
+    "start": 189.625
+  },
+  {
+    "id": "s11",
+    "title": "Spanish legislation tracked as a Git repository",
+    "section": "Tech & Developer",
+    "start": 210.34
+  },
+  {
+    "id": "s12",
+    "title": "Someone has rendered the original Doom entirely in CSS",
+    "section": "Tech & Developer",
+    "start": 245.24
+  },
+  {
+    "id": "s13",
+    "title": "The argument that Linux is really an interpreter",
+    "section": "Tech & Developer",
+    "start": 281.615
+  },
+  {
+    "id": "s14",
+    "title": "Race day arrives at Suzuka for the Japanese Grand Prix",
+    "section": "Formula 1",
+    "start": 310.6275
+  }
+]

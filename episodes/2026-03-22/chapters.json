@@ -1,0 +1,92 @@
+[
+  {
+    "id": "s1",
+    "title": "Iran strikes towns near Israel's nuclear research centre at Dimona",
+    "section": "World News",
+    "start": 15.65
+  },
+  {
+    "id": "s2",
+    "title": "Iran fires missiles at Diego Garcia, revealing range far beyond official claims",
+    "section": "World News",
+    "start": 65.5
+  },
+  {
+    "id": "s3",
+    "title": "Trump at a crossroads as conditions on the ground defy talk of a quick end",
+    "section": "World News",
+    "start": 103.5125
+  },
+  {
+    "id": "s4",
+    "title": "Robert Mueller, former FBI director who led the Trump-Russia inquiry, dies at eighty-one",
+    "section": "World News",
+    "start": 131.2875
+  },
+  {
+    "id": "s5",
+    "title": "Food prices set to rise within weeks as Iran war disrupts supply chains",
+    "section": "UK",
+    "start": 165.5
+  },
+  {
+    "id": "s6",
+    "title": "Foreign Secretary Cooper says UK does not agree with Trump on every issue",
+    "section": "UK",
+    "start": 196.9875
+  },
+  {
+    "id": "s7",
+    "title": "CPAC Hungary and Patriots assembly bring Europe's populist right to Budapest",
+    "section": "Hungary",
+    "start": 219.95
+  },
+  {
+    "id": "s8",
+    "title": "Orbán's Slovenian ally Janša faces tight race in parliamentary election",
+    "section": "Hungary",
+    "start": 258.1375
+  },
+  {
+    "id": "s9",
+    "title": "Entire Carpathian Basin faces critically low soil moisture ahead of planting season",
+    "section": "Hungary",
+    "start": 287.05
+  },
+  {
+    "id": "s10",
+    "title": "Tens of thousands protest in Prague against Babiš government",
+    "section": "Hungary",
+    "start": 316.275
+  },
+  {
+    "id": "s11",
+    "title": "The three pillars of JavaScript bloat",
+    "section": "Tech & Developer",
+    "start": 338.2875
+  },
+  {
+    "id": "s12",
+    "title": "Armin Ronacher argues that some things just take time",
+    "section": "Tech & Developer",
+    "start": 374.95
+  },
+  {
+    "id": "s13",
+    "title": "Ubuntu 26.04 ends forty-six years of silent sudo password entry",
+    "section": "Tech & Developer",
+    "start": 410.4375
+  },
+  {
+    "id": "s14",
+    "title": "European digital rights groups warn against turning child protection into internet access control",
+    "section": "Tech & Developer",
+    "start": 443.125
+  },
+  {
+    "id": "s15",
+    "title": "Japanese Grand Prix at Suzuka next weekend as season enters five-week gap",
+    "section": "Formula 1",
+    "start": 476.35
+  }
+]

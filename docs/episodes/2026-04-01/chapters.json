@@ -1,0 +1,80 @@
+[
+  {
+    "id": "s1",
+    "title": "Iran signals readiness to end the war, but the path is far from clear",
+    "section": "World News",
+    "start": 11.0875
+  },
+  {
+    "id": "s2",
+    "title": "Israel says it will hold a permanent buffer zone in southern Lebanon as peacekeepers are killed",
+    "section": "World News",
+    "start": 56.3875
+  },
+  {
+    "id": "s3",
+    "title": "India begins its mammoth census, counting more than a billion people",
+    "section": "World News",
+    "start": 84.8
+  },
+  {
+    "id": "s4",
+    "title": "The Tisza Party's lead widens as Hungary's election enters its final days",
+    "section": "Hungary & Central Europe",
+    "start": 102.2125
+  },
+  {
+    "id": "s5",
+    "title": "European leaders openly question Hungary's loyalty as Szijjarto's contacts draw scrutiny",
+    "section": "Hungary & Central Europe",
+    "start": 133.9125
+  },
+  {
+    "id": "s6",
+    "title": "Energy bill support will be means-tested as April price rises take effect",
+    "section": "UK",
+    "start": 165.575
+  },
+  {
+    "id": "s7",
+    "title": "More British troops headed to the Middle East",
+    "section": "UK",
+    "start": 194.4875
+  },
+  {
+    "id": "s8",
+    "title": "Axios compromised on NPM in a major supply chain attack",
+    "section": "Tech & Developer",
+    "start": 211.492
+  },
+  {
+    "id": "s9",
+    "title": "Claude Code's source code leaked through an NPM source map",
+    "section": "Tech & Developer",
+    "start": 245.267
+  },
+  {
+    "id": "s10",
+    "title": "Ollama is now powered by MLX on Apple Silicon",
+    "section": "Tech & Developer",
+    "start": 270.6295
+  },
+  {
+    "id": "s11",
+    "title": "OkCupid handed three million dating photos to a facial recognition company",
+    "section": "Tech & Developer",
+    "start": 290.692
+  },
+  {
+    "id": "s12",
+    "title": "GitHub reverses course on Copilot adverts in pull requests",
+    "section": "Tech & Developer",
+    "start": 311.9045
+  },
+  {
+    "id": "s13",
+    "title": "The paddock regroups after Suzuka as Audi reveal a radically different aero concept",
+    "section": "Formula 1",
+    "start": 331.0045
+  }
+]

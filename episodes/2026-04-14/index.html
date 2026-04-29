@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-04-14</title>
+<link rel="icon" type="image/png" href="/daycast/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.site-header-left{display:flex;align-items:center;gap:.6rem}
+.site-logo{width:28px;height:28px;border-radius:4px}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<div class="site-header-left"><img class="site-logo" src="/daycast/logo-180.png" alt="Daycast" width="28" height="28"><span class="wordmark">DAYCAST</span></div>
+<span class="header-date">14 April 2026<span class="header-iso">2026-04-14</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="6.0375"></div>
+<div class="chapter-tick" data-start="39.975"></div>
+<div class="chapter-tick" data-start="66.7875"></div>
+<div class="chapter-tick" data-start="101.325"></div>
+<div class="chapter-tick" data-start="136.9125"></div>
+<div class="chapter-tick" data-start="156.075"></div>
+<div class="chapter-tick" data-start="172.8625"></div>
+<div class="chapter-tick" data-start="192.65"></div>
+<div class="chapter-tick" data-start="211.85"></div>
+<div class="chapter-tick" data-start="230.548"></div>
+<div class="chapter-tick" data-start="248.7605"></div>
+<div class="chapter-tick" data-start="272.273"></div>
+<div class="chapter-tick" data-start="291.9355"></div>
+<div class="chapter-tick" data-start="313.498"></div>
+<div class="chapter-tick" data-start="338.0605"></div>
+<div class="chapter-tick" data-start="357.498"></div>
+<div class="chapter-tick" data-start="379.648"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="6.0375" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">Péter Magyar's Tisza Party wins a two-thirds supermajority, ending sixteen years of Orbán rule</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">0:06</span></li>
+<li class="chapter-item" data-start="39.975" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">What happens next before the new government takes office</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">0:39</span></li>
+<li class="chapter-item" data-start="66.7875" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">Markets surge on the Tisza victory as the forint hits record strength against the euro</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">1:06</span></li>
+<li class="chapter-item" data-start="101.325" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">The United States begins a naval blockade of the Strait of Hormuz</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:41</span></li>
+<li class="chapter-item" data-start="136.9125" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">Lebanon enters peace talks with limited leverage over Hezbollah</span><span class="chapter-section">World News</span></span><span class="chapter-ts">2:16</span></li>
+<li class="chapter-item" data-start="156.075" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">Greek police using masked migrants to conduct illegal pushbacks at the border</span><span class="chapter-section">World News</span></span><span class="chapter-ts">2:36</span></li>
+<li class="chapter-item" data-start="172.8625" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">Italian prime minister condemns Trump's criticism of Pope Leo the Fourteenth</span><span class="chapter-section">World News</span></span><span class="chapter-ts">2:52</span></li>
+<li class="chapter-item" data-start="192.65" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Former NATO chief warns UK national security is in peril</span><span class="chapter-section">UK</span></span><span class="chapter-ts">3:12</span></li>
+<li class="chapter-item" data-start="211.85" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">UK could adopt EU single market rules under new legislation</span><span class="chapter-section">UK</span></span><span class="chapter-ts">3:31</span></li>
+<li class="chapter-item" data-start="230.548" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">EasyJet passengers describe EU border nightmare as new digital system launches</span><span class="chapter-section">UK</span></span><span class="chapter-ts">3:50</span></li>
+<li class="chapter-item" data-start="248.7605" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">Someone bought thirty WordPress plugins and planted a backdoor in all of them</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:08</span></li>
+<li class="chapter-item" data-start="272.273" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">GitHub launches native support for stacked pull requests</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:32</span></li>
+<li class="chapter-item" data-start="291.9355" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">Google declares back-button hijacking a spam violation</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:51</span></li>
+<li class="chapter-item" data-start="313.498" role="button" tabindex="0"><span class="chapter-num">14</span><span class="chapter-info"><span class="chapter-title">Lean proved this program correct, and then the author found a bug</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:13</span></li>
+<li class="chapter-item" data-start="338.0605" role="button" tabindex="0"><span class="chapter-num">15</span><span class="chapter-info"><span class="chapter-title">TanStack Start now supports React Server Components</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:38</span></li>
+<li class="chapter-item" data-start="357.498" role="button" tabindex="0"><span class="chapter-num">16</span><span class="chapter-info"><span class="chapter-title">Android now strips location data from shared photos by default</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:57</span></li>
+<li class="chapter-item" data-start="379.648" role="button" tabindex="0"><span class="chapter-num">17</span><span class="chapter-info"><span class="chapter-title">The FIA outlines a timeline for twenty twenty-six regulation tweaks after constructive talks</span><span class="chapter-section">Formula 1</span></span><span class="chapter-ts">6:19</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">Hungary</h2>
+<div class="story">
+<h3 class="story-title">Péter Magyar's Tisza Party wins a two-thirds supermajority, ending sixteen years of Orbán rule</h3>
+<div class="badge-row"><span class="badge then-now">Then &amp; Now</span></div>
+<blockquote class="historical-note">First covered 2026-03-25 when record overseas voter registrations signalled high turnout</blockquote>
+<p class="source">Source: BBC News / Telex</p>
+<p class="story-body">Hungary held parliamentary elections on Sunday and the result was decisive. Péter Magyar's Tisza Party has won a two-thirds constitutional supermajority, ending Viktor Orbán's sixteen-year grip on power. Magyar, a forty-five-year-old former Fidesz insider turned opposition leader, described the result as the end of a two-decade nightmare and the beginning of Hungary's awakening. European leaders have welcomed the outcome, while Moscow has been notably silent. Orbán has called a Fidesz assembly for the twenty-eighth of April but has not yet conceded publicly.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+P%C3%A9ter+Magyar%27s+Tisza+Party+wins+a+two-thirds+supermajority%2C+ending+sixteen+years+of+Orb%C3%A1n+rule&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+P%C3%A9ter+Magyar%27s+Tisza+Party+wins+a+two-thirds+supermajority%2C+ending+sixteen+years+of+Orb%C3%A1n+rule%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+P%C3%A9ter+Magyar%27s+Tisza+Party+wins+a+two-thirds+supermajority%2C+ending+sixteen+years+of+Orb%C3%A1n+rule&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+P%C3%A9ter+Magyar%27s+Tisza+Party+wins+a+two-thirds+supermajority%2C+ending+sixteen+years+of+Orb%C3%A1n+rule%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">What happens next before the new government takes office</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">The constitutional clock is now ticking. President Tamás Sulyok must convene the inaugural session of the new parliament by the twelfth of May, at which point he will formally propose a candidate for prime minister. Until then, the outgoing Fidesz government retains full authority and the current parliament can still pass legislation, though a Tisza supermajority can subsequently repeal anything passed in the interim. Magyar is meeting Sulyok on Wednesday.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+What+happens+next+before+the+new+government+takes+office&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+What+happens+next+before+the+new+government+takes+office%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+What+happens+next+before+the+new+government+takes+office&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+What+happens+next+before+the+new+government+takes+office%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Markets surge on the Tisza victory as the forint hits record strength against the euro</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">Financial markets have responded with enthusiasm. The forint has strengthened so sharply that Hungarian average wages now exceed those of three other European Union member states in euro terms. Bond and equity prices have also risen. Analysts say the rally reflects expectations that frozen EU funds will now be unlocked, but caution that the incoming government faces serious fiscal challenges, including a large first-quarter budget deficit. Fitch Ratings says the change of government improves the outlook for EU funding, though it warns the economic headwinds are real.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Markets+surge+on+the+Tisza+victory+as+the+forint+hits+record+strength+against+the+euro&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Markets+surge+on+the+Tisza+victory+as+the+forint+hits+record+strength+against+the+euro%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Markets+surge+on+the+Tisza+victory+as+the+forint+hits+record+strength+against+the+euro&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Markets+surge+on+the+Tisza+victory+as+the+forint+hits+record+strength+against+the+euro%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">The United States begins a naval blockade of the Strait of Hormuz</h3>
+<div class="badge-row"><span class="badge then-now">Then &amp; Now</span></div>
+<blockquote class="historical-note">First covered 2026-03-25 when Iran announced conditional passage for non-hostile ships</blockquote>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The United States has begun enforcing a naval blockade of Iranian ports through the Strait of Hormuz, following the failure of peace talks in Pakistan over the weekend. The move is designed to pressure Iran into reopening the strait to international shipping unconditionally. The United Kingdom has said it will not join the blockade, though British minesweepers and anti-drone assets remain in the region. Talks may resume in Pakistan later this week, with Washington saying the next move belongs to Tehran. Iran has offered to suspend nuclear activities for five years, but the US is insisting on twenty.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+The+United+States+begins+a+naval+blockade+of+the+Strait+of+Hormuz&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+The+United+States+begins+a+naval+blockade+of+the+Strait+of+Hormuz%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+The+United+States+begins+a+naval+blockade+of+the+Strait+of+Hormuz&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+The+United+States+begins+a+naval+blockade+of+the+Strait+of+Hormuz%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Lebanon enters peace talks with limited leverage over Hezbollah</h3>
+<div class="badge-row"><span class="badge then-now">Then &amp; Now</span></div>
+<blockquote class="historical-note">First covered 2026-03-23 when Israel announced expanded operations against Hezbollah in Lebanon</blockquote>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The Lebanese government is heading into peace negotiations, but its influence over Hezbollah remains limited. Israeli strikes continue in the south of the country, with the city of Nabatieh now largely abandoned. The talks face the fundamental challenge that the Lebanese state does not control the armed group at the centre of the conflict.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Lebanon+enters+peace+talks+with+limited+leverage+over+Hezbollah&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Lebanon+enters+peace+talks+with+limited+leverage+over+Hezbollah%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Lebanon+enters+peace+talks+with+limited+leverage+over+Hezbollah&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Lebanon+enters+peace+talks+with+limited+leverage+over+Hezbollah%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Greek police using masked migrants to conduct illegal pushbacks at the border</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">A BBC investigation has found that Greek police have been recruiting migrants as mercenaries since at least twenty twenty to carry out illegal pushbacks of other migrants at the border. The masked recruits forcibly push people back across the frontier, in a practice that violates international law.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Greek+police+using+masked+migrants+to+conduct+illegal+pushbacks+at+the+border&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Greek+police+using+masked+migrants+to+conduct+illegal+pushbacks+at+the+border%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Greek+police+using+masked+migrants+to+conduct+illegal+pushbacks+at+the+border&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Greek+police+using+masked+migrants+to+conduct+illegal+pushbacks+at+the+border%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Italian prime minister condemns Trump's criticism of Pope Leo the Fourteenth</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Giorgia Meloni has publicly rebuked her ally Donald Trump after he called Pope Leo the Fourteenth "very weak" and refused to apologise. The Pope has begun a major tour of Africa, starting with Algeria, the first papal visit to the country. The diplomatic spat is unusual given the close relationship between Meloni and Trump.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Italian+prime+minister+condemns+Trump%27s+criticism+of+Pope+Leo+the+Fourteenth&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Italian+prime+minister+condemns+Trump%27s+criticism+of+Pope+Leo+the+Fourteenth%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Italian+prime+minister+condemns+Trump%27s+criticism+of+Pope+Leo+the+Fourteenth&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Italian+prime+minister+condemns+Trump%27s+criticism+of+Pope+Leo+the+Fourteenth%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">UK</h2>
+<div class="story">
+<h3 class="story-title">Former NATO chief warns UK national security is in peril</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Lord George Robertson, a former Labour defence secretary and NATO secretary-general, is using a speech today to accuse Treasury officials of "vandalism" against Britain's defence capabilities. The warning comes as the government faces pressure from multiple directions on military spending amid the deteriorating global security environment.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Former+NATO+chief+warns+UK+national+security+is+in+peril&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Former+NATO+chief+warns+UK+national+security+is+in+peril%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Former+NATO+chief+warns+UK+national+security+is+in+peril&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Former+NATO+chief+warns+UK+national+security+is+in+peril%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">UK could adopt EU single market rules under new legislation</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The UK government is introducing legislation that would allow it to adopt European Union single market rules directly, raising questions about parliamentary scrutiny of future regulatory alignment. The move is part of planned deals with Brussels but critics say it amounts to rule-taking without adequate democratic oversight.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+UK+could+adopt+EU+single+market+rules+under+new+legislation&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+UK+could+adopt+EU+single+market+rules+under+new+legislation%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+UK+could+adopt+EU+single+market+rules+under+new+legislation&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+UK+could+adopt+EU+single+market+rules+under+new+legislation%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">EasyJet passengers describe EU border nightmare as new digital system launches</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Airlines are warning of further disruption as the European Union's new Entry/Exit System for digital border controls goes live. EasyJet passengers have reported significant delays, and the airline industry says teething problems could persist for some time as the biometric checks are rolled out across Schengen borders.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+EasyJet+passengers+describe+EU+border+nightmare+as+new+digital+system+launches&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+EasyJet+passengers+describe+EU+border+nightmare+as+new+digital+system+launches%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+EasyJet+passengers+describe+EU+border+nightmare+as+new+digital+system+launches&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+EasyJet+passengers+describe+EU+border+nightmare+as+new+digital+system+launches%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Tech &amp; Developer</h2>
+<div class="story">
+<h3 class="story-title">Someone bought thirty WordPress plugins and planted a backdoor in all of them</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">A security researcher has documented a supply chain attack in which an unknown buyer acquired thirty WordPress plugins and then injected a backdoor into every one of them. The compromised plugins were distributed through legitimate channels, meaning site owners who updated them unknowingly installed malicious code. It is a stark reminder of how plugin acquisition can be weaponised in open-source ecosystems.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Someone+bought+thirty+WordPress+plugins+and+planted+a+backdoor+in+all+of+them&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Someone+bought+thirty+WordPress+plugins+and+planted+a+backdoor+in+all+of+them%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Someone+bought+thirty+WordPress+plugins+and+planted+a+backdoor+in+all+of+them&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Someone+bought+thirty+WordPress+plugins+and+planted+a+backdoor+in+all+of+them%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">GitHub launches native support for stacked pull requests</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">GitHub has shipped a first-party tool called gh-stack for managing stacked pull requests, a workflow where a chain of dependent changes is reviewed incrementally rather than in one large diff. The feature has been a long-standing request from developers working on large codebases where breaking changes into small, reviewable units is essential.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+GitHub+launches+native+support+for+stacked+pull+requests&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+GitHub+launches+native+support+for+stacked+pull+requests%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+GitHub+launches+native+support+for+stacked+pull+requests&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+GitHub+launches+native+support+for+stacked+pull+requests%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Google declares back-button hijacking a spam violation</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Google has announced a new spam policy targeting websites that hijack the browser's back button to trap users on a page. The practice, which uses JavaScript history manipulation to prevent navigation away from a site, will now be treated as a ranking violation in Google Search. Developers who rely on this dark pattern will need to remove it or face demotion.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Google+declares+back-button+hijacking+a+spam+violation&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Google+declares+back-button+hijacking+a+spam+violation%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Google+declares+back-button+hijacking+a+spam+violation&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Google+declares+back-button+hijacking+a+spam+violation%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Lean proved this program correct, and then the author found a bug</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">A developer has written up a case where the Lean theorem prover formally verified a program as correct, only for a real-world bug to surface afterwards. The issue turned out to be a mismatch between the formal specification and the actual intended behaviour, a reminder that formal verification proves adherence to a spec, not that the spec itself is right. It is an instructive read on the limits and value of formal methods.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Lean+proved+this+program+correct%2C+and+then+the+author+found+a+bug&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Lean+proved+this+program+correct%2C+and+then+the+author+found+a+bug%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Lean+proved+this+program+correct%2C+and+then+the+author+found+a+bug&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Lean+proved+this+program+correct%2C+and+then+the+author+found+a+bug%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">TanStack Start now supports React Server Components</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">TanStack Start has added support for React Server Components, giving developers using the TanStack router ecosystem access to server-side rendering patterns that were previously exclusive to Next.js. The move broadens the choices available to React developers who want server component support without being locked into a specific framework.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+TanStack+Start+now+supports+React+Server+Components&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+TanStack+Start+now+supports+React+Server+Components%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+TanStack+Start+now+supports+React+Server+Components&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+TanStack+Start+now+supports+React+Server+Components%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Android now strips location data from shared photos by default</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Android has introduced a default behaviour change that automatically removes GPS location metadata from photos when they are shared. The feature addresses a long-standing privacy concern, since location data embedded in images can reveal where a photo was taken with high precision. Users can still opt in to sharing location data, but the safe default is a welcome change.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Android+now+strips+location+data+from+shared+photos+by+default&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Android+now+strips+location+data+from+shared+photos+by+default%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+Android+now+strips+location+data+from+shared+photos+by+default&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+Android+now+strips+location+data+from+shared+photos+by+default%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula 1</h2>
+<div class="story">
+<h3 class="story-title">The FIA outlines a timeline for twenty twenty-six regulation tweaks after constructive talks</h3>
+<div class="badge-row"><span class="badge then-now">Then &amp; Now</span></div>
+<blockquote class="historical-note">First covered 2026-03-20 when the Bahrain and Saudi GPs were cancelled and the season calendar shrank</blockquote>
+<p class="source">Source: Motorsport.com</p>
+<p class="story-body">Formula One is in its April break following the cancellation of the Bahrain and Saudi Arabian rounds, and the focus has shifted to the regulations. The FIA says it has held a first round of constructive discussions with teams and power unit manufacturers about adjustments to the twenty twenty-six technical and sporting rules, particularly around energy management. A decision timeline has been laid out, though specifics remain under wraps. Mercedes have dominated the opening three races at Melbourne, Shanghai, and Suzuka, and the early question is whether Ferrari or anyone else can close the gap before Miami.
+
+---
+
+That is your briefing for Tuesday the fourteenth of April. See you tomorrow.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+The+FIA+outlines+a+timeline+for+twenty+twenty-six+regulation+tweaks+after+constructive+talks&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+The+FIA+outlines+a+timeline+for+twenty+twenty-six+regulation+tweaks+after+constructive+talks%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-14+—+The+FIA+outlines+a+timeline+for+twenty+twenty-six+regulation+tweaks+after+constructive+talks&amp;labels=feedback&amp;body=Date:+2026-04-14%0AStory:+The+FIA+outlines+a+timeline+for+twenty+twenty-six+regulation+tweaks+after+constructive+talks%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

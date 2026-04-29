@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-04-17</title>
+<link rel="icon" type="image/png" href="/daycast/favicon.png">
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.site-header-left{display:flex;align-items:center;gap:.6rem}
+.site-logo{width:28px;height:28px;border-radius:4px}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<div class="site-header-left"><img class="site-logo" src="/daycast/logo-180.png" alt="Daycast" width="28" height="28"><span class="wordmark">DAYCAST</span></div>
+<span class="header-date">17 April 2026<span class="header-iso">2026-04-17</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="17.3375"></div>
+<div class="chapter-tick" data-start="49.2875"></div>
+<div class="chapter-tick" data-start="79.8875"></div>
+<div class="chapter-tick" data-start="109.1125"></div>
+<div class="chapter-tick" data-start="131.2625"></div>
+<div class="chapter-tick" data-start="160.775"></div>
+<div class="chapter-tick" data-start="188.6625"></div>
+<div class="chapter-tick" data-start="213.628"></div>
+<div class="chapter-tick" data-start="240.2905"></div>
+<div class="chapter-tick" data-start="268.2155"></div>
+<div class="chapter-tick" data-start="298.6155"></div>
+<div class="chapter-tick" data-start="328.078"></div>
+<div class="chapter-tick" data-start="356.2905"></div>
+<div class="chapter-tick" data-start="388.253"></div>
+<div class="chapter-tick" data-start="417.4655"></div>
+<div class="chapter-tick" data-start="441.628"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="17.3375" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">Nagy Márton retires from politics</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">0:17</span></li>
+<li class="chapter-item" data-start="49.2875" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">Tisza wants Hungary to adopt the euro by twenty thirty</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">0:49</span></li>
+<li class="chapter-item" data-start="79.8875" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">Removing President Sulyok may be harder than the supermajority suggests</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">1:19</span></li>
+<li class="chapter-item" data-start="109.1125" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">András Schiff will play in Hungary again</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">1:49</span></li>
+<li class="chapter-item" data-start="131.2625" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">Israel and Lebanon begin a ten-day ceasefire</span><span class="chapter-section">World News</span></span><span class="chapter-ts">2:11</span></li>
+<li class="chapter-item" data-start="160.775" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">Russia launches its deadliest aerial attack on Ukraine in months</span><span class="chapter-section">World News</span></span><span class="chapter-ts">2:40</span></li>
+<li class="chapter-item" data-start="188.6625" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">A Russian drone briefly enters Romanian airspace</span><span class="chapter-section">World News</span></span><span class="chapter-ts">3:08</span></li>
+<li class="chapter-item" data-start="213.628" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Pope Leo criticises 'tyrants' who spend billions on wars</span><span class="chapter-section">World News</span></span><span class="chapter-ts">3:33</span></li>
+<li class="chapter-item" data-start="240.2905" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">The Mandelson security clearance row leaves Downing Street furious</span><span class="chapter-section">UK</span></span><span class="chapter-ts">4:00</span></li>
+<li class="chapter-item" data-start="268.2155" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">Andy Kershaw, Radio One DJ and Live Aid presenter, dies at sixty-six</span><span class="chapter-section">UK</span></span><span class="chapter-ts">4:28</span></li>
+<li class="chapter-item" data-start="298.6155" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">Anthropic releases Claude Opus four point seven</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">4:58</span></li>
+<li class="chapter-item" data-start="328.078" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">Alibaba's Qwen three point six is a small open model with frontier-class coding</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:28</span></li>
+<li class="chapter-item" data-start="356.2905" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">Finance ministers raise serious alarms over the Mythos artificial intelligence model</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">5:56</span></li>
+<li class="chapter-item" data-start="388.253" role="button" tabindex="0"><span class="chapter-num">14</span><span class="chapter-info"><span class="chapter-title">Aphyr argues that the future of everything is lies</span><span class="chapter-section">Tech &amp; Developer</span></span><span class="chapter-ts">6:28</span></li>
+<li class="chapter-item" data-start="417.4655" role="button" tabindex="0"><span class="chapter-num">15</span><span class="chapter-info"><span class="chapter-title">Gianpiero Lambiase moves from Red Bull to McLaren</span><span class="chapter-section">Formula One</span></span><span class="chapter-ts">6:57</span></li>
+<li class="chapter-item" data-start="441.628" role="button" tabindex="0"><span class="chapter-num">16</span><span class="chapter-info"><span class="chapter-title">Stefano Domenicali holds 'constructive' talks with Verstappen over twenty twenty-six rules</span><span class="chapter-section">Formula One</span></span><span class="chapter-ts">7:21</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">Hungary</h2>
+<div class="story">
+<h3 class="story-title">Nagy Márton retires from politics</h3>
+<p class="source">Source: Telex.hu</p>
+<p class="story-body">Five days after Fidesz's landslide defeat, outgoing economy minister Nagy Márton has announced he is quitting politics altogether. Nagy was one of the most prominent architects of the last government's economic policy, and his exit is another sign that senior Fidesz figures are reading the writing on the wall rather than regrouping for opposition. Telex notes the detail, much mocked during the campaign, that Nagy had been staying in Brussels hotels at seven to eight hundred thousand forints a night — a symbol for many voters of how out of touch the outgoing government had become.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Nagy+M%C3%A1rton+retires+from+politics&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Nagy+M%C3%A1rton+retires+from+politics%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Nagy+M%C3%A1rton+retires+from+politics&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Nagy+M%C3%A1rton+retires+from+politics%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Tisza wants Hungary to adopt the euro by twenty thirty</h3>
+<p class="source">Source: Telex.hu</p>
+<p class="story-body">Péter Magyar's incoming Tisza government has set itself a striking new economic target: to create the conditions for Hungary to adopt the euro by twenty thirty. Tisza's fiscal policy expert told Telex that under favourable circumstances, it could happen even sooner. Euro adoption was a firm political red line under Fidesz, so this is one of the clearest signals yet that economic policy will look fundamentally different under Magyar, and a direct bet that tighter integration with the European Union will unlock growth the old model could not.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Tisza+wants+Hungary+to+adopt+the+euro+by+twenty+thirty&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Tisza+wants+Hungary+to+adopt+the+euro+by+twenty+thirty%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Tisza+wants+Hungary+to+adopt+the+euro+by+twenty+thirty&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Tisza+wants+Hungary+to+adopt+the+euro+by+twenty+thirty%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Removing President Sulyok may be harder than the supermajority suggests</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Telex.hu</p>
+<p class="story-body">Péter Magyar has called on President Tamás Sulyok to step aside, but Telex has walked through what happens if he refuses. Any impeachment route passes through the Constitutional Court, whose members Parliament cannot remove. There is a more convoluted legal workaround, but constitutional lawyers say it would look very bad for a government that has just campaigned on restoring the rule of law. In other words, the two-thirds supermajority is powerful, but it does not simply delete the old guard.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Removing+President+Sulyok+may+be+harder+than+the+supermajority+suggests&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Removing+President+Sulyok+may+be+harder+than+the+supermajority+suggests%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Removing+President+Sulyok+may+be+harder+than+the+supermajority+suggests&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Removing+President+Sulyok+may+be+harder+than+the+supermajority+suggests%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">András Schiff will play in Hungary again</h3>
+<p class="source">Source: Telex.hu</p>
+<p class="story-body">The world-renowned pianist András Schiff has announced he will perform in Hungary again, after spending much of the Orbán era refusing to play his home country. Schiff said that for the first time in sixteen years, he is proud of Hungary, and that he plans to play before as large an audience as possible. His return is a small but resonant cultural marker of the change now under way.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Andr%C3%A1s+Schiff+will+play+in+Hungary+again&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Andr%C3%A1s+Schiff+will+play+in+Hungary+again%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Andr%C3%A1s+Schiff+will+play+in+Hungary+again&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Andr%C3%A1s+Schiff+will+play+in+Hungary+again%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">Israel and Lebanon begin a ten-day ceasefire</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">A ten-day ceasefire between Israel and Lebanon is now in effect, with Iran-backed Hezbollah voicing support, while United States–Iran negotiations continue in parallel. The BBC's Lucy Williamson reports that few Israelis see the truce as a durable way out of the conflict with Hezbollah, and the pause took the Israeli public largely by surprise. Still, it is the first real break in months of escalation along the border, and the diplomatic window it opens is what matters most over the next ten days.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Israel+and+Lebanon+begin+a+ten-day+ceasefire&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Israel+and+Lebanon+begin+a+ten-day+ceasefire%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Israel+and+Lebanon+begin+a+ten-day+ceasefire&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Israel+and+Lebanon+begin+a+ten-day+ceasefire%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Russia launches its deadliest aerial attack on Ukraine in months</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Russia has carried out its deadliest aerial assault on Ukraine in several months, killing at least eighteen people in overnight strikes across multiple cities. Moscow says a Ukrainian drone attack in reply killed two people inside Russia. Both exchanges came after a short-lived Orthodox Easter truce, and the scale of the Russian barrage is a blunt signal that even as the Middle East edges towards calm, the war in Ukraine is intensifying rather than fading into the background.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Russia+launches+its+deadliest+aerial+attack+on+Ukraine+in+months&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Russia+launches+its+deadliest+aerial+attack+on+Ukraine+in+months%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Russia+launches+its+deadliest+aerial+attack+on+Ukraine+in+months&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Russia+launches+its+deadliest+aerial+attack+on+Ukraine+in+months%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">A Russian drone briefly enters Romanian airspace</h3>
+<p class="source">Source: Telex.hu</p>
+<p class="story-body">Romanian air defence radars detected two Russian drones near the border overnight, one of which briefly entered Romanian airspace before turning back. No damage or injuries have been reported, but the incursion is the latest in a growing pattern of spillover from the war in Ukraine into neighbouring European Union and NATO territory. For Hungary's neighbours in particular, the edges of the conflict are becoming uncomfortably close.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+A+Russian+drone+briefly+enters+Romanian+airspace&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+A+Russian+drone+briefly+enters+Romanian+airspace%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+A+Russian+drone+briefly+enters+Romanian+airspace&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+A+Russian+drone+briefly+enters+Romanian+airspace%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Pope Leo criticises 'tyrants' who spend billions on wars</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Pope Leo the Fourteenth has hit back at United States President Donald Trump, who recently called him "very weak on crime," by criticising "tyrants" who spend billions on wars while the poor go hungry. The remarks are unusually pointed for the new pontiff, and they come as he continues his tour of Africa. Italian Prime Minister Giorgia Meloni had already publicly defended the Pope earlier in the week, so this is the Pope himself entering the fray rather than leaving it to others.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Pope+Leo+criticises+%27tyrants%27+who+spend+billions+on+wars&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Pope+Leo+criticises+%27tyrants%27+who+spend+billions+on+wars%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Pope+Leo+criticises+%27tyrants%27+who+spend+billions+on+wars&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Pope+Leo+criticises+%27tyrants%27+who+spend+billions+on+wars%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">UK</h2>
+<div class="story">
+<h3 class="story-title">The Mandelson security clearance row leaves Downing Street furious</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Prime Minister Keir Starmer is reported to be privately furious over the handling of Lord Mandelson's Developed Vetting security clearance. The former ambassador to the United States was reportedly granted the clearance despite concerns raised during the checks, and the BBC's Chris Mason describes it as a nightmare returning to haunt Starmer. It drags a set of politically toxic associations back into the foreground at a moment when Number Ten would rather be talking about almost anything else.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+The+Mandelson+security+clearance+row+leaves+Downing+Street+furious&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+The+Mandelson+security+clearance+row+leaves+Downing+Street+furious%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+The+Mandelson+security+clearance+row+leaves+Downing+Street+furious&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+The+Mandelson+security+clearance+row+leaves+Downing+Street+furious%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Andy Kershaw, Radio One DJ and Live Aid presenter, dies at sixty-six</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Andy Kershaw, the former BBC Radio One DJ who helped champion world music on British airwaves and presented the Live Aid concert in nineteen eighty-five, has died at the age of sixty-six. Kershaw's eclectic taste, his reporting from war zones, and his relentless advocacy for music from outside the Anglo-American mainstream made him one of the most distinctive voices in Radio One's history. His death marks the end of an era for a generation of listeners who discovered entire continents of music through his shows.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Andy+Kershaw%2C+Radio+One+DJ+and+Live+Aid+presenter%2C+dies+at+sixty-six&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Andy+Kershaw%2C+Radio+One+DJ+and+Live+Aid+presenter%2C+dies+at+sixty-six%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Andy+Kershaw%2C+Radio+One+DJ+and+Live+Aid+presenter%2C+dies+at+sixty-six&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Andy+Kershaw%2C+Radio+One+DJ+and+Live+Aid+presenter%2C+dies+at+sixty-six%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Tech &amp; Developer</h2>
+<div class="story">
+<h3 class="story-title">Anthropic releases Claude Opus four point seven</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Anthropic has released Claude Opus four point seven, the latest generation of its flagship large language model. The Hacker News thread, with more than eighteen hundred points, is heavily focused on how the new model performs on coding tasks and long-horizon agentic workflows, particularly against Claude Sonnet and a new crop of open-weights competitors from Chinese labs. For anyone building with Claude, the headline is that the performance jump on genuinely long tasks is the most substantial upgrade so far this year.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Anthropic+releases+Claude+Opus+four+point+seven&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Anthropic+releases+Claude+Opus+four+point+seven%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Anthropic+releases+Claude+Opus+four+point+seven&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Anthropic+releases+Claude+Opus+four+point+seven%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Alibaba's Qwen three point six is a small open model with frontier-class coding</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Alibaba has released Qwen three point six thirty-five B A three B, an open-weights coding model using a mixture-of-experts design, under what the team calls agentic coding capabilities now open to everyone. With over eleven hundred points on Hacker News, the discussion centres on how a relatively small model can hold its own against closed frontier systems, and what it means for the open ecosystem that the best open weights are now routinely arriving from Chinese labs rather than American ones.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Alibaba%27s+Qwen+three+point+six+is+a+small+open+model+with+frontier-class+coding&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Alibaba%27s+Qwen+three+point+six+is+a+small+open+model+with+frontier-class+coding%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Alibaba%27s+Qwen+three+point+six+is+a+small+open+model+with+frontier-class+coding&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Alibaba%27s+Qwen+three+point+six+is+a+small+open+model+with+frontier-class+coding%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Finance ministers raise serious alarms over the Mythos artificial intelligence model</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">Finance ministers and senior bankers are raising serious concerns about a new artificial intelligence model called Mythos, which experts say has an unprecedented ability to identify and exploit cyber-security weaknesses. The worry is that Mythos dramatically lowers the bar for sophisticated attacks on banking and financial infrastructure. This is a rare moment of high-level financial policy attention directed at a specific model, and a sign that the cyber-security implications of frontier artificial intelligence are becoming concrete rather than theoretical.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Finance+ministers+raise+serious+alarms+over+the+Mythos+artificial+intelligence+model&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Finance+ministers+raise+serious+alarms+over+the+Mythos+artificial+intelligence+model%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Finance+ministers+raise+serious+alarms+over+the+Mythos+artificial+intelligence+model&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Finance+ministers+raise+serious+alarms+over+the+Mythos+artificial+intelligence+model%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Aphyr argues that the future of everything is lies</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Distributed systems researcher Kyle Kingsbury, writing under the handle Aphyr, has published a sprawling post arguing that generative artificial intelligence is quietly collapsing the trust we place in text, images, and the web itself. The piece is less about any specific product and more about the infrastructure of truth, and what needs to change if what we read online can no longer be taken at anything like face value. With more than six hundred points on Hacker News, it is one of the week's most discussed essays.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Aphyr+argues+that+the+future+of+everything+is+lies&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Aphyr+argues+that+the+future+of+everything+is+lies%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Aphyr+argues+that+the+future+of+everything+is+lies&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Aphyr+argues+that+the+future+of+everything+is+lies%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula One</h2>
+<div class="story">
+<h3 class="story-title">Gianpiero Lambiase moves from Red Bull to McLaren</h3>
+<p class="source">Source: Motorsport.com</p>
+<p class="story-body">Max Verstappen's long-time race engineer, Gianpiero Lambiase, is leaving Red Bull for McLaren. Verstappen himself has said he fully backs the move and that Lambiase would have been, in his words, stupid not to take it. It is the latest in a wave of senior technical departures from Red Bull, a pattern that will raise fresh questions about how much of the team's championship-era infrastructure is still in place.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Gianpiero+Lambiase+moves+from+Red+Bull+to+McLaren&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Gianpiero+Lambiase+moves+from+Red+Bull+to+McLaren%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Gianpiero+Lambiase+moves+from+Red+Bull+to+McLaren&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Gianpiero+Lambiase+moves+from+Red+Bull+to+McLaren%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Stefano Domenicali holds 'constructive' talks with Verstappen over twenty twenty-six rules</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Motorsport.com</p>
+<p class="story-body">Formula One chief executive Stefano Domenicali has given an update after what he described as constructive talks with Max Verstappen about next year's regulations. The twenty twenty-six rules, built around new power units and a reworked aerodynamic package, have drawn heavy criticism from drivers and teams worried about unbalanced racing. With the April break giving everyone time to breathe, the sport's decision-makers are using the pause to fine-tune the rules before the racing resumes.
+
+---
+
+That is your briefing for Friday the seventeenth of April. A new political chapter in Hungary is already shaping up to look very different, an uneasy pause has arrived between Israel and Lebanon while Ukraine takes fresh punishment, and frontier artificial intelligence is turning from a tech story into a financial stability one. Have a good weekend.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Stefano+Domenicali+holds+%27constructive%27+talks+with+Verstappen+over+twenty+twenty-six+rules&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Stefano+Domenicali+holds+%27constructive%27+talks+with+Verstappen+over+twenty+twenty-six+rules%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-04-17+—+Stefano+Domenicali+holds+%27constructive%27+talks+with+Verstappen+over+twenty+twenty-six+rules&amp;labels=feedback&amp;body=Date:+2026-04-17%0AStory:+Stefano+Domenicali+holds+%27constructive%27+talks+with+Verstappen+over+twenty+twenty-six+rules%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

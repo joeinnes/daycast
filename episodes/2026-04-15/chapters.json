@@ -1,0 +1,92 @@
+[
+  {
+    "id": "s1",
+    "title": "Peter Magyar meets the president and calls for a swift transfer of power",
+    "section": "Hungary",
+    "start": 17.5875
+  },
+  {
+    "id": "s2",
+    "title": "The world of science asks whether Hungarian research can recover under the new government",
+    "section": "Hungary",
+    "start": 50.25
+  },
+  {
+    "id": "s3",
+    "title": "The outgoing government quietly awarded three hundred and ninety billion forints in IT contracts two days after the election",
+    "section": "Hungary",
+    "start": 74.6875
+  },
+  {
+    "id": "s4",
+    "title": "Israel and Lebanon hold their first direct talks since nineteen ninety-three",
+    "section": "World News",
+    "start": 91.475
+  },
+  {
+    "id": "s5",
+    "title": "The US says economic pain from the Iran blockade is worth it for long-term security",
+    "section": "World News",
+    "start": 111.9375
+  },
+  {
+    "id": "s6",
+    "title": "Hamas rejects Gaza disarmament plan",
+    "section": "World News",
+    "start": 142.9375
+  },
+  {
+    "id": "s7",
+    "title": "Two hundred and fifty missing after migrant boat sinks in the Indian Ocean",
+    "section": "World News",
+    "start": 157.1
+  },
+  {
+    "id": "s8",
+    "title": "Ukraine's military to receive the largest-ever shipment of UK drones",
+    "section": "UK News",
+    "start": 171.05
+  },
+  {
+    "id": "s9",
+    "title": "The UK could adopt EU single market rules under new legislation",
+    "section": "UK News",
+    "start": 187.4875
+  },
+  {
+    "id": "s10",
+    "title": "Flock's domestic surveillance network faces a growing backlash",
+    "section": "Tech & Developer",
+    "start": 202.4875
+  },
+  {
+    "id": "s11",
+    "title": "Fiverr left customer files publicly accessible and searchable",
+    "section": "Tech & Developer",
+    "start": 230.524
+  },
+  {
+    "id": "s12",
+    "title": "Claude Code introduces routines for repeatable AI-assisted workflows",
+    "section": "Tech & Developer",
+    "start": 248.6365
+  },
+  {
+    "id": "s13",
+    "title": "Fifth Normal Form and database design",
+    "section": "Tech & Developer",
+    "start": 270.124
+  },
+  {
+    "id": "s14",
+    "title": "The debate over dependency update cooldowns",
+    "section": "Tech & Developer",
+    "start": 288.449
+  },
+  {
+    "id": "s15",
+    "title": "Helmut Marko predicts Mercedes will win the twenty twenty-six title",
+    "section": "Formula 1",
+    "start": 309.649
+  }
+]

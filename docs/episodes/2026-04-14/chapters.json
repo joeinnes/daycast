@@ -1,0 +1,104 @@
+[
+  {
+    "id": "s1",
+    "title": "Péter Magyar's Tisza Party wins a two-thirds supermajority, ending sixteen years of Orbán rule",
+    "section": "Hungary",
+    "start": 6.0375
+  },
+  {
+    "id": "s2",
+    "title": "What happens next before the new government takes office",
+    "section": "Hungary",
+    "start": 39.975
+  },
+  {
+    "id": "s3",
+    "title": "Markets surge on the Tisza victory as the forint hits record strength against the euro",
+    "section": "Hungary",
+    "start": 66.7875
+  },
+  {
+    "id": "s4",
+    "title": "The United States begins a naval blockade of the Strait of Hormuz",
+    "section": "World News",
+    "start": 101.325
+  },
+  {
+    "id": "s5",
+    "title": "Lebanon enters peace talks with limited leverage over Hezbollah",
+    "section": "World News",
+    "start": 136.9125
+  },
+  {
+    "id": "s6",
+    "title": "Greek police using masked migrants to conduct illegal pushbacks at the border",
+    "section": "World News",
+    "start": 156.075
+  },
+  {
+    "id": "s7",
+    "title": "Italian prime minister condemns Trump's criticism of Pope Leo the Fourteenth",
+    "section": "World News",
+    "start": 172.8625
+  },
+  {
+    "id": "s8",
+    "title": "Former NATO chief warns UK national security is in peril",
+    "section": "UK",
+    "start": 192.65
+  },
+  {
+    "id": "s9",
+    "title": "UK could adopt EU single market rules under new legislation",
+    "section": "UK",
+    "start": 211.85
+  },
+  {
+    "id": "s10",
+    "title": "EasyJet passengers describe EU border nightmare as new digital system launches",
+    "section": "UK",
+    "start": 230.548
+  },
+  {
+    "id": "s11",
+    "title": "Someone bought thirty WordPress plugins and planted a backdoor in all of them",
+    "section": "Tech & Developer",
+    "start": 248.7605
+  },
+  {
+    "id": "s12",
+    "title": "GitHub launches native support for stacked pull requests",
+    "section": "Tech & Developer",
+    "start": 272.273
+  },
+  {
+    "id": "s13",
+    "title": "Google declares back-button hijacking a spam violation",
+    "section": "Tech & Developer",
+    "start": 291.9355
+  },
+  {
+    "id": "s14",
+    "title": "Lean proved this program correct, and then the author found a bug",
+    "section": "Tech & Developer",
+    "start": 313.498
+  },
+  {
+    "id": "s15",
+    "title": "TanStack Start now supports React Server Components",
+    "section": "Tech & Developer",
+    "start": 338.0605
+  },
+  {
+    "id": "s16",
+    "title": "Android now strips location data from shared photos by default",
+    "section": "Tech & Developer",
+    "start": 357.498
+  },
+  {
+    "id": "s17",
+    "title": "The FIA outlines a timeline for twenty twenty-six regulation tweaks after constructive talks",
+    "section": "Formula 1",
+    "start": 379.648
+  }
+]

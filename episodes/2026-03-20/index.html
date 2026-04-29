@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daycast — 2026-03-20</title>
+<link rel="alternate" type="application/rss+xml" title="Daycast" href="/daycast/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;--surface:#161616;--elevated:#1e1e1e;
+  --text:#e8e0d4;--text-secondary:#8a8279;
+  --accent:#c4956a;--accent-hover:#d4a87a;
+  --followup:#4a6fa5;--followup-bg:#1a2a3d;
+  --thennow:#8a6a9a;--thennow-bg:#2a1a3d;
+  --source:#6b8f71;--divider:#2a2a2a;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);line-height:1.6;
+}
+.container{max-width:680px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* --- Header --- */
+.site-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:1.25rem 0;border-bottom:1px solid var(--divider);margin-bottom:2rem;
+}
+.wordmark{
+  font-family:var(--sans);font-weight:600;font-size:.8rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.header-date{font-size:.85rem;color:var(--text-secondary)}
+.header-iso{font-size:.7rem;color:var(--text-secondary);opacity:.5;margin-left:.5rem}
+
+/* --- Player --- */
+.player-card{
+  background:var(--surface);border-radius:12px;
+  padding:1.5rem;margin-bottom:2rem;
+}
+audio{width:0;height:0;position:absolute;opacity:0}
+.player-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.btn-play{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent);color:var(--bg);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.btn-play:hover{background:var(--accent-hover)}
+.btn-skip{
+  background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:.75rem;padding:.35rem;transition:color .15s;
+}
+.btn-skip:hover{color:var(--text)}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.3rem}
+.progress-bar{
+  position:relative;width:100%;height:4px;background:var(--divider);
+  border-radius:2px;cursor:pointer;
+}
+.progress-fill{
+  height:100%;background:var(--accent);border-radius:2px;width:0%;
+  pointer-events:none;transition:width .1s linear;
+}
+.chapter-tick{
+  position:absolute;top:-2px;width:2px;height:8px;
+  background:var(--text-secondary);opacity:.45;border-radius:1px;
+  pointer-events:none;
+}
+.time-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary)}
+
+/* --- Speed --- */
+.speed-row{display:flex;gap:.4rem;justify-content:center;margin-top:.5rem}
+.speed-btn{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  padding:.3rem .65rem;border-radius:999px;border:1px solid var(--divider);
+  background:transparent;color:var(--text-secondary);cursor:pointer;
+  transition:all .15s;
+}
+.speed-btn:hover{border-color:var(--accent);color:var(--text)}
+.speed-btn.active{
+  background:var(--accent);color:var(--bg);border-color:var(--accent);
+}
+
+/* --- Chapters --- */
+.chapters-section{margin-bottom:2rem}
+.chapters-toggle{
+  font-family:var(--sans);font-size:.8rem;font-weight:500;
+  color:var(--text-secondary);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.4rem;padding:.5rem 0;
+  transition:color .15s;
+}
+.chapters-toggle:hover{color:var(--text)}
+.chapters-toggle .arrow{transition:transform .2s;display:inline-block}
+.chapters-toggle.open .arrow{transform:rotate(90deg)}
+.chapter-list{
+  list-style:none;overflow:hidden;max-height:0;
+  transition:max-height .35s ease;
+}
+.chapter-list.expanded{max-height:2000px}
+.chapter-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;cursor:pointer;
+  transition:background .15s;
+}
+.chapter-item:hover{background:var(--elevated)}
+.chapter-item.active{background:var(--elevated);border-left:3px solid var(--accent)}
+.chapter-num{
+  font-size:.7rem;font-weight:600;color:var(--text-secondary);
+  min-width:1.5rem;text-align:right;
+}
+.chapter-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.chapter-title{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapter-section{font-size:.68rem;color:var(--text-secondary)}
+.chapter-ts{font-size:.72rem;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+
+/* --- Transcript --- */
+.transcript{margin-top:1rem}
+.section-heading{
+  font-family:var(--sans);font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--text-secondary);padding:1.5rem 0 .75rem;
+  border-bottom:1px solid var(--divider);margin-bottom:1rem;
+}
+.story{
+  background:var(--surface);border-radius:10px;
+  padding:1.5rem;margin-bottom:1.25rem;
+  border-left:3px solid transparent;
+  transition:border-color .3s,box-shadow .3s;
+}
+.story.active{border-left-color:var(--accent);box-shadow:0 0 20px rgba(196,149,106,.06)}
+.story-title{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  line-height:1.35;margin-bottom:.6rem;color:var(--text);
+}
+.badge-row{display:flex;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;padding:.2rem .55rem;border-radius:999px;
+}
+.badge.follow-up{background:var(--followup-bg);color:var(--followup)}
+.badge.then-now{background:var(--thennow-bg);color:var(--thennow)}
+.historical-note{
+  font-family:var(--serif);font-style:italic;font-size:.88rem;
+  color:var(--text-secondary);line-height:1.55;
+  border-left:2px solid var(--divider);padding:.5rem 0 .5rem 1rem;
+  margin:0 0 .75rem;
+}
+.source{font-size:.75rem;color:var(--source);margin-bottom:.6rem}
+.story-body{
+  font-family:var(--sans);font-size:.95rem;line-height:1.7;
+  color:var(--text);margin-bottom:.75rem;
+}
+.feedback-row{display:flex;gap:.75rem;padding-top:.25rem}
+.feedback{
+  text-decoration:none;font-size:1rem;opacity:.25;
+  transition:opacity .2s;
+}
+.feedback:hover{opacity:.85}
+
+/* --- Footer --- */
+.site-footer{
+  text-align:center;padding:2rem 0 1rem;
+  font-size:.65rem;color:var(--text-secondary);opacity:.35;
+  border-top:1px solid var(--divider);margin-top:2rem;
+}
+.site-footer a{color:var(--text-secondary);text-decoration:none}
+
+@media(max-width:480px){
+  .container{padding:1rem}
+  .player-card{padding:1rem}
+  .story{padding:1.1rem}
+  .story-title{font-size:1.1rem}
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header class="site-header">
+<span class="wordmark">DAYCAST</span>
+<span class="header-date">20 March 2026<span class="header-iso">2026-03-20</span></span>
+</header>
+<div class="player-card">
+<audio src="audio.mp3" controls></audio>
+<div class="player-controls">
+<button class="btn-skip" id="prev-ch" title="Previous chapter">◀◀</button>
+<button class="btn-play" id="play-btn" title="Play">▶</button>
+<button class="btn-skip" id="next-ch" title="Next chapter">▶▶</button>
+<div class="progress-wrap">
+<div class="progress-bar" id="progress-bar">
+<div class="progress-fill" id="progress-fill"></div>
+<div class="chapter-tick" data-start="12.3625"></div>
+<div class="chapter-tick" data-start="65.875"></div>
+<div class="chapter-tick" data-start="88.6875"></div>
+<div class="chapter-tick" data-start="113.825"></div>
+<div class="chapter-tick" data-start="133.9875"></div>
+<div class="chapter-tick" data-start="165.3875"></div>
+<div class="chapter-tick" data-start="191.625"></div>
+<div class="chapter-tick" data-start="218.2375"></div>
+<div class="chapter-tick" data-start="249.8375"></div>
+<div class="chapter-tick" data-start="268.1125"></div>
+<div class="chapter-tick" data-start="292.275"></div>
+<div class="chapter-tick" data-start="312.025"></div>
+<div class="chapter-tick" data-start="335.4"></div>
+<div class="chapter-tick" data-start="354.925"></div>
+</div>
+<div class="time-row"><span id="cur-time">0:00</span><span id="tot-time">0:00</span></div>
+</div>
+</div>
+<div class="speed-row"><button class="speed-btn" data-speed="0.85">0.85x</button><button class="speed-btn active" data-speed="1">1x</button><button class="speed-btn" data-speed="1.15">1.15x</button><button class="speed-btn" data-speed="1.3">1.3x</button></div>
+</div>
+<div class="chapters-section">
+<button class="chapters-toggle" id="ch-toggle"><span class="arrow">▶</span> Chapters</button>
+<ul class="chapter-list" id="chapter-list">
+<li class="chapter-item" data-start="12.3625" role="button" tabindex="0"><span class="chapter-num">01</span><span class="chapter-info"><span class="chapter-title">Iran Conflict Deepens as Israel Strikes Tehran Again</span><span class="chapter-section">World News</span></span><span class="chapter-ts">0:12</span></li>
+<li class="chapter-item" data-start="65.875" role="button" tabindex="0"><span class="chapter-num">02</span><span class="chapter-info"><span class="chapter-title">Denmark Had Plans to Blow Up Greenland Runways If the US Invaded</span><span class="chapter-section">World News</span></span><span class="chapter-ts">1:05</span></li>
+<li class="chapter-item" data-start="88.6875" role="button" tabindex="0"><span class="chapter-num">03</span><span class="chapter-info"><span class="chapter-title">Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy</span><span class="chapter-section">UK News</span></span><span class="chapter-ts">1:28</span></li>
+<li class="chapter-item" data-start="113.825" role="button" tabindex="0"><span class="chapter-num">04</span><span class="chapter-info"><span class="chapter-title">COVID Inquiry Finds NHS Came Close to Collapse</span><span class="chapter-section">UK News</span></span><span class="chapter-ts">1:53</span></li>
+<li class="chapter-item" data-start="133.9875" role="button" tabindex="0"><span class="chapter-num">05</span><span class="chapter-info"><span class="chapter-title">EU Leaders Line Up Against Orbán Over Ukrainian Loan</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">2:13</span></li>
+<li class="chapter-item" data-start="165.3875" role="button" tabindex="0"><span class="chapter-num">06</span><span class="chapter-info"><span class="chapter-title">Fuel Crisis Hits Hungarian Gas Stations</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">2:45</span></li>
+<li class="chapter-item" data-start="191.625" role="button" tabindex="0"><span class="chapter-num">07</span><span class="chapter-info"><span class="chapter-title">Hungarian Soldiers Return from Iraq as NATO Withdraws</span><span class="chapter-section">Hungary</span></span><span class="chapter-ts">3:11</span></li>
+<li class="chapter-item" data-start="218.2375" role="button" tabindex="0"><span class="chapter-num">08</span><span class="chapter-info"><span class="chapter-title">Bahrain and Saudi Grands Prix Cancelled as Season Shrinks</span><span class="chapter-section">Formula 1</span></span><span class="chapter-ts">3:38</span></li>
+<li class="chapter-item" data-start="249.8375" role="button" tabindex="0"><span class="chapter-num">09</span><span class="chapter-info"><span class="chapter-title">Newey Departs Aston Martin</span><span class="chapter-section">Formula 1</span></span><span class="chapter-ts">4:09</span></li>
+<li class="chapter-item" data-start="268.1125" role="button" tabindex="0"><span class="chapter-num">10</span><span class="chapter-info"><span class="chapter-title">Astral Joins OpenAI</span><span class="chapter-section">Tech and Developer</span></span><span class="chapter-ts">4:28</span></li>
+<li class="chapter-item" data-start="292.275" role="button" tabindex="0"><span class="chapter-num">11</span><span class="chapter-info"><span class="chapter-title">Claude Code Gets Channels for Pushing Events into Running Sessions</span><span class="chapter-section">Tech and Developer</span></span><span class="chapter-ts">4:52</span></li>
+<li class="chapter-item" data-start="312.025" role="button" tabindex="0"><span class="chapter-num">12</span><span class="chapter-info"><span class="chapter-title">Noq: A New QUIC Implementation in Rust</span><span class="chapter-section">Tech and Developer</span></span><span class="chapter-ts">5:12</span></li>
+<li class="chapter-item" data-start="335.4" role="button" tabindex="0"><span class="chapter-num">13</span><span class="chapter-info"><span class="chapter-title">KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes</span><span class="chapter-section">Tech and Developer</span></span><span class="chapter-ts">5:35</span></li>
+<li class="chapter-item" data-start="354.925" role="button" tabindex="0"><span class="chapter-num">14</span><span class="chapter-info"><span class="chapter-title">CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider</span><span class="chapter-section">Tech and Developer</span></span><span class="chapter-ts">5:54</span></li>
+</ul>
+</div>
+<div class="transcript">
+<h2 class="section-heading">World News</h2>
+<div class="story">
+<h3 class="story-title">Iran Conflict Deepens as Israel Strikes Tehran Again</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News / Telex</p>
+<p class="story-body">The Middle East situation is escalating fast. Israel has carried out another attack on Tehran, with Benjamin Netanyahu confirming Israel acted alone in the earlier strike on an Iranian gas field and indicating that Donald Trump requested no further such operations. A drone strike hit a Kuwaiti refinery on Friday morning, raising the prospect of disruption spreading beyond Iran itself. Nearly a hundred ships have passed through the Strait of Hormuz since the crisis began, and the question of who is getting through, and who is not, is becoming a geopolitical story in its own right. Trump is reportedly furious with European allies over what he sees as insufficient support, and some European leaders are quietly debating whether to push back or comply. The knock-on effects are already tangible: India faces gas shortages that may push the country back towards dirtier fuels, and energy markets are in turmoil.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Iran+Conflict+Deepens+as+Israel+Strikes+Tehran+Again&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Iran+Conflict+Deepens+as+Israel+Strikes+Tehran+Again%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Iran+Conflict+Deepens+as+Israel+Strikes+Tehran+Again&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Iran+Conflict+Deepens+as+Israel+Strikes+Tehran+Again%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Denmark Had Plans to Blow Up Greenland Runways If the US Invaded</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">A Danish broadcaster reports that Denmark drew up contingency plans to destroy airfield runways in Greenland in the event of a United States military incursion. The plans were apparently triggered by concerns following American action in Venezuela. It is a remarkable detail that underscores just how seriously Copenhagen has taken the threat of American territorial ambitions in the Arctic.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Denmark+Had+Plans+to+Blow+Up+Greenland+Runways+If+the+US+Invaded&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Denmark+Had+Plans+to+Blow+Up+Greenland+Runways+If+the+US+Invaded%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Denmark+Had+Plans+to+Blow+Up+Greenland+Runways+If+the+US+Invaded&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Denmark+Had+Plans+to+Blow+Up+Greenland+Runways+If+the+US+Invaded%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">UK News</h2>
+<div class="story">
+<h3 class="story-title">Bank of England Holds Rates as Iran War Sends Energy Shock Through Economy</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The Bank of England voted unanimously to hold interest rates at three point seven five per cent, citing the energy price shock from the Iran conflict as the key factor. Policymakers had been expected to continue cutting borrowing costs, but the war has reversed that trajectory entirely. The BBC's economics editor Faisal Islam notes the effects will reverberate through the UK economy for months and extend well beyond interest rates alone.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Bank+of+England+Holds+Rates+as+Iran+War+Sends+Energy+Shock+Through+Economy&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Bank+of+England+Holds+Rates+as+Iran+War+Sends+Energy+Shock+Through+Economy%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Bank+of+England+Holds+Rates+as+Iran+War+Sends+Energy+Shock+Through+Economy&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Bank+of+England+Holds+Rates+as+Iran+War+Sends+Energy+Shock+Through+Economy%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">COVID Inquiry Finds NHS Came Close to Collapse</h3>
+<p class="source">Source: BBC News</p>
+<p class="story-body">The official COVID pandemic inquiry has concluded that patients were harmed and the National Health Service came dangerously close to collapse during the crisis. The report finds that both patients and staff were failed as the health service barely managed to cope. Key findings include questions over stay-at-home advice and whether lockdown rules were too severe.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+COVID+Inquiry+Finds+NHS+Came+Close+to+Collapse&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+COVID+Inquiry+Finds+NHS+Came+Close+to+Collapse%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+COVID+Inquiry+Finds+NHS+Came+Close+to+Collapse&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+COVID+Inquiry+Finds+NHS+Came+Close+to+Collapse%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Hungary</h2>
+<div class="story">
+<h3 class="story-title">EU Leaders Line Up Against Orbán Over Ukrainian Loan</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Telex</p>
+<p class="story-body">The European Union summit delivered a sharp rebuke to Viktor Orbán, with twenty of twenty-six leaders speaking out against Hungary's decision to block a Ukrainian loan that Orbán himself had previously approved. EU Council President Costa said leaders clearly condemned Orbán's approach. The reversal is tied to a dispute over the Friendship oil pipeline, and Slovakia's Fico is standing alongside Orbán. Zelenskyy, who addressed the summit, urged the lifting of ninety billion euros in aid currently frozen by the two countries.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+EU+Leaders+Line+Up+Against+Orb%C3%A1n+Over+Ukrainian+Loan&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+EU+Leaders+Line+Up+Against+Orb%C3%A1n+Over+Ukrainian+Loan%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+EU+Leaders+Line+Up+Against+Orb%C3%A1n+Over+Ukrainian+Loan&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+EU+Leaders+Line+Up+Against+Orb%C3%A1n+Over+Ukrainian+Loan%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Fuel Crisis Hits Hungarian Gas Stations</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">Hungary's fuel situation is deteriorating. Increasing numbers of small petrol stations are restricting how much fuel customers can buy at one time, with some imposing two-litre limits. Operators say most have not received state fuel reserves that would allow them to sell at price-capped rates profitably. Some station owners are now planning pre-election protests, calling the situation worse than the energy crisis of twenty twenty-two.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Fuel+Crisis+Hits+Hungarian+Gas+Stations&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Fuel+Crisis+Hits+Hungarian+Gas+Stations%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Fuel+Crisis+Hits+Hungarian+Gas+Stations&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Fuel+Crisis+Hits+Hungarian+Gas+Stations%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Hungarian Soldiers Return from Iraq as NATO Withdraws</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">Hungarian soldiers serving in the NATO mission in Iraq have arrived home after the alliance withdrew all Baghdad-based troops due to the Iranian situation. It is a quiet but significant moment, another ripple from the Middle East conflict reaching directly into Hungarian daily life. Hungary has also moved to connect its natural gas network with Slovenia, signing an agreement on Thursday as Budapest looks to diversify energy routes.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Hungarian+Soldiers+Return+from+Iraq+as+NATO+Withdraws&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Hungarian+Soldiers+Return+from+Iraq+as+NATO+Withdraws%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Hungarian+Soldiers+Return+from+Iraq+as+NATO+Withdraws&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Hungarian+Soldiers+Return+from+Iraq+as+NATO+Withdraws%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Formula 1</h2>
+<div class="story">
+<h3 class="story-title">Bahrain and Saudi Grands Prix Cancelled as Season Shrinks</h3>
+<p class="source">Source: Formula1.com</p>
+<p class="story-body">The twenty twenty-six Formula One season has lost two races. The Bahrain and Saudi Arabian Grands Prix, originally scheduled for April, have been cancelled due to the conflict in the Middle East, bringing the calendar down to twenty-two races. The paddock is currently between rounds, with the Japanese Grand Prix at Suzuka coming up on the twenty-ninth of March. Red Bull have admitted to significant shortcomings with their car after a difficult start to the new regulations era, and the team faces a busy week of development before Japan.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Bahrain+and+Saudi+Grands+Prix+Cancelled+as+Season+Shrinks&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Bahrain+and+Saudi+Grands+Prix+Cancelled+as+Season+Shrinks%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Bahrain+and+Saudi+Grands+Prix+Cancelled+as+Season+Shrinks&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Bahrain+and+Saudi+Grands+Prix+Cancelled+as+Season+Shrinks%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Newey Departs Aston Martin</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Telex</p>
+<p class="story-body">Adrian Newey has formally stepped down from his position at the Aston Martin Formula One team, with Jonathan Wheatley confirmed as his replacement. Wheatley transitions from Audi. It is a significant leadership change at a team that had banked heavily on Newey's design expertise to challenge at the front of the grid.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Newey+Departs+Aston+Martin&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Newey+Departs+Aston+Martin%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Newey+Departs+Aston+Martin&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Newey+Departs+Aston+Martin%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<h2 class="section-heading">Tech and Developer</h2>
+<div class="story">
+<h3 class="story-title">Astral Joins OpenAI</h3>
+<div class="badge-row"><span class="badge follow-up">Follow-up</span></div>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">The community reaction to Astral, the makers of Ruff and uv, joining OpenAI continues to dominate developer discussion. The Hacker News thread has become the highest-scoring story of the week. The concern remains the same: Ruff and uv have become critical Python infrastructure, and their absorption into OpenAI raises questions about long-term stewardship and whether the tools will remain genuinely open.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Astral+Joins+OpenAI&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Astral+Joins+OpenAI%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Astral+Joins+OpenAI&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Astral+Joins+OpenAI%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Claude Code Gets Channels for Pushing Events into Running Sessions</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">Anthropic has shipped a new feature for Claude Code that lets external processes push events into a running coding session via channels. It is a meaningful step for developer tooling, enabling tighter integration between Claude-powered agents and the rest of a development workflow. The feature is documented at code.claude.com.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Claude+Code+Gets+Channels+for+Pushing+Events+into+Running+Sessions&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Claude+Code+Gets+Channels+for+Pushing+Events+into+Running+Sessions%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Claude+Code+Gets+Channels+for+Pushing+Events+into+Running+Sessions&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Claude+Code+Gets+Channels+for+Pushing+Events+into+Running+Sessions%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">Noq: A New QUIC Implementation in Rust</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">The team behind Iroh, a peer-to-peer networking library, has announced Noq, a fresh QUIC protocol implementation written in Rust. QUIC underpins HTTP/3 and is increasingly important for low-latency networking. The project joins a growing ecosystem of Rust networking primitives and is designed to be modular enough for use outside the Iroh stack.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Noq%3A+A+New+QUIC+Implementation+in+Rust&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Noq%3A+A+New+QUIC+Implementation+in+Rust%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+Noq%3A+A+New+QUIC+Implementation+in+Rust&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+Noq%3A+A+New+QUIC+Implementation+in+Rust%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">KittenTTS: Text-to-Speech Models Under Twenty-Five Megabytes</h3>
+<p class="source">Source: Hacker News</p>
+<p class="story-body">A new open-source project called KittenTTS has released three text-to-speech models, the smallest of which weighs in at under twenty-five megabytes. That is small enough to run on-device with minimal overhead. For anyone building voice interfaces or accessibility features in constrained environments, this is worth a look.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+KittenTTS%3A+Text-to-Speech+Models+Under+Twenty-Five+Megabytes&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+KittenTTS%3A+Text-to-Speech+Models+Under+Twenty-Five+Megabytes%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+KittenTTS%3A+Text-to-Speech+Models+Under+Twenty-Five+Megabytes&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+KittenTTS%3A+Text-to-Speech+Models+Under+Twenty-Five+Megabytes%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+<div class="story">
+<h3 class="story-title">CERN Discovers New Subatomic Particle with Upgraded Large Hadron Collider</h3>
+<p class="source">Source: Telex</p>
+<p class="story-body">Scientists at CERN have discovered a new subatomic particle using the recently upgraded Large Hadron Collider. The particle weighs roughly four times more than a proton. The discovery comes shortly after the collider received a significant performance boost and adds to the growing catalogue of particles that help explain the behaviour of matter at the quantum level.
+
+---
+
+That is your briefing for Friday the twentieth of March. The Japanese Grand Prix is a week away, the Middle East crisis continues to reshape energy markets and calendars alike, and the Python community is still processing the Astral news. Have a good weekend.</p>
+<div class="feedback-row">
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+CERN+Discovers+New+Subatomic+Particle+with+Upgraded+Large+Hadron+Collider&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+CERN+Discovers+New+Subatomic+Particle+with+Upgraded+Large+Hadron+Collider%0ASignal:+%F0%9F%91%8D%0ANote:" target="_blank" title="Useful">👍</a>
+<a class="feedback" href="https://github.com/joeinnes/daycast/issues/new?title=Feedback:+2026-03-20+—+CERN+Discovers+New+Subatomic+Particle+with+Upgraded+Large+Hadron+Collider&amp;labels=feedback&amp;body=Date:+2026-03-20%0AStory:+CERN+Discovers+New+Subatomic+Particle+with+Upgraded+Large+Hadron+Collider%0ASignal:+%F0%9F%91%8E%0ANote:" target="_blank" title="Not useful">👎</a>
+</div>
+</div>
+</div>
+<footer class="site-footer"><a href="/daycast/archive.html">Archive</a> &middot; Powered by Daycast</footer>
+</div>
+<script>
+(function(){
+  var audio = document.querySelector('audio');
+  var playBtn = document.getElementById('play-btn');
+  var bar = document.getElementById('progress-bar');
+  var fill = document.getElementById('progress-fill');
+  var curTime = document.getElementById('cur-time');
+  var totTime = document.getElementById('tot-time');
+  var prevBtn = document.getElementById('prev-ch');
+  var nextBtn = document.getElementById('next-ch');
+  var toggle = document.getElementById('ch-toggle');
+  var chList = document.getElementById('chapter-list');
+  var chItems = document.querySelectorAll('.chapter-item');
+  var stories = document.querySelectorAll('.story');
+  var ticks = document.querySelectorAll('.chapter-tick');
+
+  function fmt(t){
+    if(!isFinite(t))return '0:00';
+    var m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  /* Play / Pause */
+  playBtn.addEventListener('click',function(){
+    if(audio.paused){audio.play()}else{audio.pause()}
+  });
+  audio.addEventListener('play',function(){playBtn.textContent='\u275A\u275A'});
+  audio.addEventListener('pause',function(){playBtn.textContent='\u25B6'});
+
+  /* Progress */
+  audio.addEventListener('timeupdate',function(){
+    if(audio.duration){
+      fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+      curTime.textContent=fmt(audio.currentTime);
+    }
+    highlightChapter();
+  });
+  audio.addEventListener('loadedmetadata',function(){
+    totTime.textContent=fmt(audio.duration);
+    positionTicks();
+  });
+
+  /* Seek */
+  bar.addEventListener('click',function(e){
+    if(audio.duration){
+      var r=bar.getBoundingClientRect();
+      audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;
+    }
+  });
+
+  /* Ticks */
+  function positionTicks(){
+    if(!audio.duration)return;
+    ticks.forEach(function(t){
+      var s=parseFloat(t.getAttribute('data-start'));
+      t.style.left=(s/audio.duration*100)+'%';
+    });
+  }
+
+  /* Chapter skip */
+  function getStarts(){
+    var a=[];chItems.forEach(function(c){a.push(parseFloat(c.getAttribute('data-start')))});
+    return a;
+  }
+  prevBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime,prev=0;
+    for(var i=starts.length-1;i>=0;i--){if(starts[i]<cur-1){prev=starts[i];break}}
+    audio.currentTime=prev;
+  });
+  nextBtn.addEventListener('click',function(){
+    var starts=getStarts(),cur=audio.currentTime;
+    for(var i=0;i<starts.length;i++){if(starts[i]>cur+.5){audio.currentTime=starts[i];return}}
+  });
+
+  /* Speed */
+  document.querySelectorAll('.speed-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      audio.playbackRate=parseFloat(b.getAttribute('data-speed'));
+    });
+  });
+
+  /* Chapter list toggle */
+  toggle.addEventListener('click',function(){
+    toggle.classList.toggle('open');
+    chList.classList.toggle('expanded');
+  });
+
+  /* Chapter click seek */
+  chItems.forEach(function(c){
+    c.addEventListener('click',function(){
+      audio.currentTime=parseFloat(c.getAttribute('data-start'));
+      if(audio.paused)audio.play();
+    });
+  });
+
+  /* Highlight active chapter & story */
+  function highlightChapter(){
+    var cur=audio.currentTime,activeIdx=-1;
+    var starts=getStarts();
+    for(var i=starts.length-1;i>=0;i--){if(cur>=starts[i]){activeIdx=i;break}}
+    chItems.forEach(function(c,i){
+      if(i===activeIdx){c.classList.add('active')}else{c.classList.remove('active')}
+    });
+    stories.forEach(function(s,i){
+      if(i===activeIdx){
+        if(!s.classList.contains('active')){
+          s.classList.add('active');
+          s.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      }else{s.classList.remove('active')}
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

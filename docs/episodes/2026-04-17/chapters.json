@@ -1,0 +1,98 @@
+[
+  {
+    "id": "s1",
+    "title": "Nagy Márton retires from politics",
+    "section": "Hungary",
+    "start": 17.3375
+  },
+  {
+    "id": "s2",
+    "title": "Tisza wants Hungary to adopt the euro by twenty thirty",
+    "section": "Hungary",
+    "start": 49.2875
+  },
+  {
+    "id": "s3",
+    "title": "Removing President Sulyok may be harder than the supermajority suggests",
+    "section": "Hungary",
+    "start": 79.8875
+  },
+  {
+    "id": "s4",
+    "title": "András Schiff will play in Hungary again",
+    "section": "Hungary",
+    "start": 109.1125
+  },
+  {
+    "id": "s5",
+    "title": "Israel and Lebanon begin a ten-day ceasefire",
+    "section": "World News",
+    "start": 131.2625
+  },
+  {
+    "id": "s6",
+    "title": "Russia launches its deadliest aerial attack on Ukraine in months",
+    "section": "World News",
+    "start": 160.775
+  },
+  {
+    "id": "s7",
+    "title": "A Russian drone briefly enters Romanian airspace",
+    "section": "World News",
+    "start": 188.6625
+  },
+  {
+    "id": "s8",
+    "title": "Pope Leo criticises 'tyrants' who spend billions on wars",
+    "section": "World News",
+    "start": 213.628
+  },
+  {
+    "id": "s9",
+    "title": "The Mandelson security clearance row leaves Downing Street furious",
+    "section": "UK",
+    "start": 240.2905
+  },
+  {
+    "id": "s10",
+    "title": "Andy Kershaw, Radio One DJ and Live Aid presenter, dies at sixty-six",
+    "section": "UK",
+    "start": 268.2155
+  },
+  {
+    "id": "s11",
+    "title": "Anthropic releases Claude Opus four point seven",
+    "section": "Tech & Developer",
+    "start": 298.6155
+  },
+  {
+    "id": "s12",
+    "title": "Alibaba's Qwen three point six is a small open model with frontier-class coding",
+    "section": "Tech & Developer",
+    "start": 328.078
+  },
+  {
+    "id": "s13",
+    "title": "Finance ministers raise serious alarms over the Mythos artificial intelligence model",
+    "section": "Tech & Developer",
+    "start": 356.2905
+  },
+  {
+    "id": "s14",
+    "title": "Aphyr argues that the future of everything is lies",
+    "section": "Tech & Developer",
+    "start": 388.253
+  },
+  {
+    "id": "s15",
+    "title": "Gianpiero Lambiase moves from Red Bull to McLaren",
+    "section": "Formula One",
+    "start": 417.4655
+  },
+  {
+    "id": "s16",
+    "title": "Stefano Domenicali holds 'constructive' talks with Verstappen over twenty twenty-six rules",
+    "section": "Formula One",
+    "start": 441.628
+  }
+]
